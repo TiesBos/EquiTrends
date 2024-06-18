@@ -9,3 +9,5 @@ Description: One paragraph description of what the package does as one or more f
 License: MIT + file LICENSE
 Imports: Rcpp (>= 1.0.12)
 LinkingTo: Rcpp
+URL: https://github.com/TiesBos/EquiTrends
+BugReports: https://github.com/TiesBos/EquiTrends/issues
