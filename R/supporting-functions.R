@@ -170,6 +170,13 @@ maxTestBoot <- function(data, delta, alpha, n, B, no.periods,
 
 #   ---- Supporting functions for the Bootstrap Approach ----
 # Calculating Double Demeaned Data:
+#' @title Double Demeaning a data.frame object
+#'
+#' @param df The data.frame object to double-demean. It should contain a column with names "ID" and "period" representing the unit and time period, respectively, over which the data is double-demeaned.
+#'
+#' @return a data.frame object with the double demeaned data.
+#'
+#' @importFrom dplyr %>% group_by_at summarise across all_of left_join
 double.demean <- function(df){
   # Finding all variables that need to be double demeaned
   placebo_names <- grep("placebo_", names(df), value=TRUE)

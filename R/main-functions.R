@@ -139,7 +139,6 @@ print.maxTestIU <- function(x){
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
-
 print.maxTestBoot <- function(x){
   cat("\n")
   width <- getOption("width")
