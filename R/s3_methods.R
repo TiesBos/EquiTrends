@@ -41,7 +41,7 @@ print.maxTestIU <- function(x, ...){
     colnames(df.print) <- c("Abs. Estimate", "Std. Error", "Critical Value", "p-value")
   } else {
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.\n")
-    cat("Minimum equivalence threshold to reject H0:", x$minimum.delta, "\n")
+    cat("Minimum equivalence threshold to accept the alternative:", formatC(x$minimum.delta, format = "g", digits = 4), "\n")
     df.print <- data.frame(as.numeric(formatC(x$absolute.placebo.coefs, format = "g", digits = 4)), 
                            as.numeric(formatC(x$standard.errors, format = "g", digits = 4)), 
                            as.numeric(formatC(x$minimum.deltas, format = "g", digits = 4)))
