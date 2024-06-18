@@ -4,7 +4,7 @@ Title: Equivalence Testing for the Pre-Trends
 Version: 1.0
 Authors@R: c(
     person("Ties", "Bos", email = "tc.bos@student.maastrichtuniversity.nl", role = c("aut","cre")),
-    person("Martin", "Schumann", email = "m.schumann@maastrichtuniversity.nl", role = "ctb")
+    person("Martin", "Schumann", email = "m.schumann@maastrichtuniversity.nl", role = "ctb"))
 Maintainer: Ties Bos <tc.bos@student.maastrichtuniversity.nl>
 Description: One paragraph description of what the package does as one or more full sentences.
 License: MIT + file LICENSE
