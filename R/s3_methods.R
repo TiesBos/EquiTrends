@@ -30,7 +30,7 @@ print.maxTestIU <- function(x, ...){
   cat("Significance level:", x$sign.level, "\n")
   if(x$delta.specified){  
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
-    df.print <- data.frame(as.numeric(formatC(x$placebo.coefs, format = "g", digits = 4)),
+    df.print <- data.frame(as.numeric(formatC(x$absolute.placebo.coefs, format = "g", digits = 4)),
                            as.numeric(formatC(x$standard.errors, format = "g", digits = 4)),
                            as.numeric(formatC(x$critical.values, format = "g", digits = 4)),
                            as.numeric(formatC(x$p.values, format = "g", digits = 4)))
