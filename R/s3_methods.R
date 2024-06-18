@@ -68,7 +68,10 @@ print.maxEquivTestIU <- function(x, ...){
   cat("Significance level:", x$sign.level, "\n")
   if(x$delta.specified){  
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
-    df.print <- number_rep(data.frame(x$absolute.placebo.coefs, x$standard.errors, x$critical.values, x$p.values))
+    df.print <- data.frame(number_rep(x$absolute.placebo.coefs),
+                           number_rep(x$standard.errors),
+                           number_rep(x$critical.values),
+                           number_rep(x$p.values))
     
     rownames(df.print) <- x$coef.names
     colnames(df.print) <- c("Abs. Estimate", "Std. Error", "Critical Value", "p-value")
@@ -187,9 +190,9 @@ print.meanEquivTest <- function(x, ...){
   } else {
     cat("Significance level:", x$sign.level, "\n")
     cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.\n")
-    df.print <- data.frame(as.numeric(formatC(x$abs.mean.placebo, format = "g", digits = 4)), 
-                           as.numeric(formatC(sqrt(x$placebo_var), format = "g", digits = 4)), 
-                           as.numeric(formatC(x$minimum.delta, format = "g", digits = 4)))
+    df.print <- data.frame(number_rep(x$abs.mean.placebo), 
+                           number_rep(sqrt(x$placebo_var)), 
+                           number_rep(x$minimum.delta))
     colnames(df.print) <- c("Abs. Mean Placebo Effect", "Std. Error", "Min. Equiv. Threshold")
     rownames(df.print) <- c("")  
   }
@@ -234,15 +237,15 @@ print.rmsEquivTest <- function(x, ...){
   if(x$delta.specified){
     cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
     
-    df.print <- data.frame(as.numeric(formatC(x$RMS, format = "g", digits = 4)),
-                           as.numeric(formatC(x$critical.value, format = "g", digits = 4)))
+    df.print <- data.frame(number_rep(x$RMS),
+                           number_rep(x$critical.value))
     colnames(df.print) <- c("RMS Placebo Effect", "Simulated Crit. Val.")
     rownames(df.print) <- c("")
   } else {
     cat("Significance level:", x$sign.level, "\n")
     cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.\n")
-    df.print <- data.frame(as.numeric(formatC(x$RMS, format = "g", digits = 4)), 
-                           as.numeric(formatC(x$minimum.delta, format = "g", digits = 4)))
+    df.print <- data.frame(number_rep(x$RMS), 
+                           number_rep(x$minimum.delta))
     colnames(df.print) <- c("RMS Placebo Effect", "Min. Equiv. Threshold")
     rownames(df.print) <- c("")  
   }
