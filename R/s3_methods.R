@@ -1,7 +1,7 @@
 # A Function for nice representation of small numbers:
 number_rep <- function(x){
   new.x <- ifelse(abs(x) < 1e-4, format(x, scientific = TRUE), format(x, digits = 4))
-  new.x <- ifelse(abs(as.numeric(new.x)) < 2e-16,  "<2e-6", new.x)
+  new.x <- ifelse(abs(as.numeric(new.x)) < 2e-16,  "<2e-16", new.x)
   return(new.x)
 }
 
@@ -68,18 +68,8 @@ print.maxEquivTestIU <- function(x, ...){
   cat("Significance level:", x$sign.level, "\n")
   if(x$delta.specified){  
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
-    df.print <- data.frame(number_rep(x$absolute.placebo.coefs),
-                           number_rep(x$standard.errors),
-                           number_rep(x$critical.values),
-                           number_rep(x$p.values))
+    df.print <- number_rep(data.frame(x$absolute.placebo.coefs, x$standard.errors, x$critical.values, x$p.values))
     
-    # df.print <- data.frame(as.numeric(formatC(x$absolute.placebo.coefs, format = "g", digits = 4)),
-    #                        as.numeric(formatC(x$standard.errors, format = "g", digits = 4)),
-    #                        as.numeric(formatC(x$critical.values, format = "g", digits = 4)),
-    #                        as.numeric(formatC(x$p.values, format = "g", digits = 4)))
-    
-    # Convert the formatted values back to numeric
-    #df.print <- apply(df.print, MARGIN = c(1,2), FUN = function(x){as.numeric(x)})
     rownames(df.print) <- x$coef.names
     colnames(df.print) <- c("Abs. Estimate", "Std. Error", "Critical Value", "p-value")
   } else {
@@ -143,8 +133,8 @@ print.maxEquivTestBoot <- function(x, ...){
   
   # Display results
   if (x$delta.specified) {
-    output.df <- data.frame(as.numeric(formatC(x$max.coefs, format = "g", digits = 4)), 
-                            as.numeric(formatC(x$critical.values, format = "g", digits = 4)),
+    output.df <- data.frame(number_rep(x$max.coefs), 
+                            number_rep(x$critical.values),
                             x$reject.H0)
     colnames(output.df) <- c("Max. Abs. Coefficient", "Bootstrap Critical Value", "Reject H0")
     rownames(output.df) <- c("")
@@ -189,9 +179,9 @@ print.meanEquivTest <- function(x, ...){
   if(x$delta.specified){
     cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
     
-    df.print <- data.frame(as.numeric(formatC(x$abs.mean.placebo, format = "g", digits = 4)),
-                           as.numeric(formatC(sqrt(x$placebo_var), format = "g", digits = 4)), 
-                           as.numeric(formatC(x$p.value, format = "g", digits = 4)))
+    df.print <- data.frame(number_rep(x$abs.mean.placebo),
+                           number_rep(sqrt(x$placebo_var)), 
+                           number_rep(x$p.value))
     colnames(df.print) <- c("Abs. Mean Placebo Effect", "Std. Error", "p-value")
     rownames(df.print) <- c("")
   } else {
