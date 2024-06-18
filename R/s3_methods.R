@@ -1,3 +1,25 @@
+# A function to print data.frame objects:
+pretty_print <- function(df) {
+  # Get the column names
+  col_names <- colnames(df)
+  
+  # Determine the maximum width for each column
+  max_widths <- apply(df, 2, function(col) max(nchar(as.character(col))))
+  max_widths <- pmax(max_widths, nchar(col_names))
+  
+  # Format the column names and the data frame
+  formatted_col_names <- mapply(function(name, width) format(name, width = width), name = col_names, width = max_widths)
+  formatted_df <- apply(df, 2, function(col) format(as.character(col), width = max(nchar(as.character(col)))))
+  
+  # Print the column names
+  cat(paste(formatted_col_names, collapse = "\t"), "\n")
+  
+  # Print each row
+  apply(formatted_df, 1, function(row) {
+    cat(paste(row, collapse = "\t"), "\n")
+  })
+}
+
 # ---- Summary Function for the Intersection-Union Approach --------------------
 #' @title Print maxTestIU objects
 #'
@@ -47,10 +69,9 @@ print.maxTestIU <- function(x, ...){
                            as.numeric(formatC(x$minimum.deltas, format = "g", digits = 4)))
     colnames(df.print) <- c(" Estimate", "Std. Error ", " Minimum Equivalence Threshold")
     rownames(df.print) <- x$coef.names
-    tibble.print <- tibble::as_tibble(df.print)
   }
   cat("---\n")
-  tibble::print(tibble.print, ...)
+  pretty_print(df.print)
   cat("---\n")
   
   # Summary statistics
