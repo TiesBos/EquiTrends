@@ -1,6 +1,5 @@
 #include <RcppArmadillo.h>
 #include <RcppParallel.h>
-#include <atomic>
 using namespace Rcpp;
 using namespace arma;
 // [[Rcpp::depends(RcppArmadillo, RcppParallel)]]

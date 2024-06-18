@@ -21,3 +21,5 @@ Imports:
 LinkingTo: Rcpp
 URL: https://github.com/TiesBos/EquiTrends
 BugReports: https://github.com/TiesBos/EquiTrends/issues
+RoxygenNote: 7.3.1
+Encoding: UTF-8
