@@ -14,6 +14,7 @@ pretty_print <- function(df) {
   # Print the column names
   cat(paste(formatted_col_names, collapse = "\t"), "\n")
   
+  print(dim(formatted_df))
   # Print each row
   if(dim(formatted_df)[1] == 1){
     cat(paste(formatted_df, collapse = "\t"), "\n")
