@@ -5,6 +5,7 @@ using namespace arma;
 // [[Rcpp::depends(RcppArmadillo, RcppParallel)]]
 
 // Function that calculates the mean for each group:
+
 // [[Rcpp::export]]
 arma::vec groupMeans(arma::vec x, arma::vec group) {
   arma::vec unique_groups = arma::unique(group);
