@@ -71,7 +71,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
   return(invisible(test_results))
 }
 
-#' Equivalence Test for Pre-trends based on the Mean Placebo Coefficient 
+#' @title Equivalence Test for Pre-trends based on the Mean Placebo Coefficient 
 #'
 #' @description This function performs an equivalence test for pre-trends based on the maximum absolute placebo coefficient. The test can be performed using the intersection-union approach (IU), a bootstrap procedure for spherical errors (Boot) and a wild bootstrap procedure (Wild).
 #'
