@@ -302,7 +302,6 @@ maxTest.error <- function(type, delta, vcov){
   return(list(error=FALSE))
 }
 
-############ Supporting Functions of meanTest ###################################
 
 
 

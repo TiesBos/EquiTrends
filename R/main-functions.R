@@ -18,8 +18,6 @@
 #' @param B If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.
 #' @param verbose A logical object indicating if test results need to be printed. The default is TRUE.
 #' 
-#' @importFrom Rcpp sourceCpp 
-#' @importFrom RcppParallel RcppParallelLibs
 #' 
 #'
 #' @return hoi
