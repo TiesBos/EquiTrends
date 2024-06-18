@@ -4,10 +4,12 @@
 \alias{print.maxTestIU}
 \title{Print maxTestIU objects}
 \usage{
-\method{print}{maxTestIU}(x)
+\method{print}{maxTestIU}(x, ...)
 }
 \arguments{
 \item{x}{An object of class 'maxTestIU' containing the results of the maximum test based on the intersection-union approach.}
+
+\item{...}{urther arguments passed to or from other methods.}
 }
 \value{
 The function prints a summary of the results of the maximum test based on the intersection-union approach.

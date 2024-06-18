@@ -17,6 +17,10 @@
 #' @param type The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2023) and "Wild" for the Wild bootstrap procedure.
 #' @param B If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.
 #' @param verbose A logical object indicating if test results need to be printed. The default is TRUE.
+#' 
+#' @importFrom Rcpp sourceCpp 
+#' @importFrom RcppParallel RcppParallelLibs
+#' 
 #'
 #' @return hoi
 #' @export
@@ -38,13 +42,13 @@ maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
   if(error.maxTest$error){stop(error.maxTest$message)}
   
   # General error checking:
-  error.test <- EquiTrend.inputcheck(Y, ID, G, period, X, data, delta, pretreatment.period, 
+  error.test <- EquiTrends.inputcheck(Y, ID, G, period, X, data, delta, pretreatment.period, 
                                      base.period, cluster, alpha)
   
   if(error.test$error){stop(error.test$message)}
   
   # Structuring the data:
-  data.constr <- DStest.dataconstr(Y, ID, G, period, X, data, pretreatment.period, base.period,
+  data.constr <- EquiTrends.dataconstr(Y, ID, G, period, X, data, pretreatment.period, base.period,
                                    cluster)
   # The dataframe:
   df <- data.constr$dataset
@@ -76,11 +80,12 @@ maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
 #' @description Print method for objects of class 'maxTestIU'.
 #'
 #' @param x An object of class 'maxTestIU' containing the results of the maximum test based on the intersection-union approach.
-#'
+#' @param ... urther arguments passed to or from other methods.
+#' @method print maxTestIU
 #' @return The function prints a summary of the results of the maximum test based on the intersection-union approach.
 #' @export
 #'
-print.maxTestIU <- function(x){
+print.maxTestIU <- function(x, ...){
   cat("\n")
   width <- getOption("width")
   title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
@@ -120,7 +125,7 @@ print.maxTestIU <- function(x){
     rownames(df.print) <- x$coef.names
   }
   cat("---\n")
-  print(df.print)
+  print.default(df.print, ...)
   cat("---\n")
   
   # Summary statistics
@@ -132,14 +137,15 @@ print.maxTestIU <- function(x){
 }
 
 
-#' Title
+#' @title Print maxTestBoot objects
 #'
 #' @param x An object of class 'maxTestBoot' containing the results of the maximum test based on the bootstrap procedure.
-#'
+#' @param ... Further arguments passed to or from other methods.
+#' @method print maxTestBoot
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
-print.maxTestBoot <- function(x){
+print.maxTestBoot <- function(x, ...){
   cat("\n")
   width <- getOption("width")
   title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
@@ -175,7 +181,7 @@ print.maxTestBoot <- function(x){
                             x$reject.H0)
     colnames(output.df) <- c("Max. Abs. Coefficient", "    Bootstrap Critical Value", "  Reject H0")
     rownames(output.df) <- c("")
-    print(output.df, row.names = FALSE)
+    print.default(output.df, ...)
   }
   
   # Summary statistics

@@ -1,5 +1,18 @@
 ############ Supporting Functions of maxTest ###################################
 # ----------- Intersection Union Approach --------------------------------------
+#' @title maxTestIU
+#'
+#' @param data the dataframe containing the data from the dataconstruction function
+#' @param delta the equivalence threshold
+#' @param vcov the type of variance-covariance matrix to be used
+#' @param cluster the cluster variable
+#' @param alpha the significance level
+#' @param n the number of individuals
+#' @param no.periods the number of periods
+#' @param base.period the base period
+#'
+#' @return a list containing the results of the maxTestIU function
+#' @importFrom stats as.formula quantile
 maxTestIU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base.period){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)

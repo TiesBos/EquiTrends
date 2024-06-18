@@ -13,7 +13,6 @@ Imports:
     nloptr,
     plm,
     Rcpp (>= 1.0.12),
-    RcppArmadillo,
     RcppParallel,
     sandwich,
     stats,

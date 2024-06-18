@@ -2,16 +2,18 @@
 % Please edit documentation in R/main-functions.R
 \name{print.maxTestBoot}
 \alias{print.maxTestBoot}
-\title{Title}
+\title{Print maxTestBoot objects}
 \usage{
-\method{print}{maxTestBoot}(x)
+\method{print}{maxTestBoot}(x, ...)
 }
 \arguments{
 \item{x}{An object of class 'maxTestBoot' containing the results of the maximum test based on the bootstrap procedure.}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 }
 \description{
-Title
+Print maxTestBoot objects
 }
