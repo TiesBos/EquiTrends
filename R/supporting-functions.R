@@ -1,6 +1,6 @@
 ############ Supporting Functions of maxTest ###################################
 # ----------- Intersection Union Approach --------------------------------------
-DStest.max.IU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base.period){
+maxTestIU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base.period){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
@@ -65,7 +65,7 @@ DStest.max.IU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base
   } else{
     
     # Calculating the minimum deltas
-    min.deltas <- base::mapply(FUN = function(x,y){DStest.optim.func(coef=x, sd=y, alpha=alpha)}, betas.placebo, beta.SE)
+    min.deltas <- base::mapply(FUN = function(x,y){maxTestIU.optim.func(coef=x, sd=y, alpha=alpha)}, betas.placebo, beta.SE)
     # Then, the minimum delta is the maximum value over all these values:
     min.delta <- max(min.deltas)
     
@@ -81,13 +81,13 @@ DStest.max.IU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base
   }
 }
 
-# Functions to help find the minimum delta such that the p-value is 0.05
-DStest.obj.func <- function(coef, mean, sd, alpha){
+# Functions to help find the minimum delta such that the p-value is alpha
+maxTestIU.obj.func <- function(coef, mean, sd, alpha){
   return(1e20*(VGAM::pfoldnorm(coef, mean, sd) - alpha)^2)
 }
 
-DStest.optim.func <- function(coef, sd, alpha){
-  obj.wrapper <- function(x) DStest.obj.func(coef=coef, mean=x, sd=sd, alpha=alpha)
+maxTestIU.optim.func <- function(coef, sd, alpha){
+  obj.wrapper <- function(x) maxTestIU.obj.func(coef=coef, mean=x, sd=sd, alpha=alpha)
   
   
   result <- nloptr::nloptr(x0 = coef,
@@ -106,7 +106,7 @@ DStest.optim.func <- function(coef, sd, alpha){
 }
 
 # ----------- The Bootstrap Approaches -----------------------------------------
-DStest.max.bootstrap <- function(data, delta, alpha, n, B, no.periods, 
+maxTestBoot <- function(data, delta, alpha, n, B, no.periods, 
                                  base.period, type){
   # Obtain the double demeaned data:
   dd.data <- double.demean(data)
@@ -137,17 +137,17 @@ DStest.max.bootstrap <- function(data, delta, alpha, n, B, no.periods,
                                      x=X, y=Y,
                                      no.periods = no.periods)
     # Run the Bootstrap:
-    bootstrap.maxcoefs <- dstest_bootstrap(Xb = X%*%constrained.coefs, X=X, B=B,
-                                           variance = resid.variance, ID = dd.data$ID,
-                                           period = dd.data$period, no_placebos = length(placebo_names))
+    bootstrap.maxcoefs <- maxTestBoot_bootstrap(Xb = X%*%constrained.coefs, X=X, B=B,
+                                                variance = resid.variance, ID = dd.data$ID,
+                                                period = dd.data$period, no_placebos = length(placebo_names))
   } else {
     u_ddot <- Y - X%*%constrained.coefs
     
     # Run the Wild Bootstrap:
-    bootstrap.maxcoefs <- dstest_wildbootstrap(Xb = X%*%constrained.coefs, X=X, B=B,
-                                               u_ddot = u_ddot,
-                                               ID = dd.data$ID, period = dd.data$period,
-                                               no_placebos = length(placebo_names))
+    bootstrap.maxcoefs <- maxTestBoot_wildbootstrap(Xb = X%*%constrained.coefs, X=X, B=B,
+                                                     u_ddot = u_ddot,
+                                                     ID = dd.data$ID, period = dd.data$period,
+                                                     no_placebos = length(placebo_names))
   }
   
   # Find the critical value at the alpha level:
@@ -281,3 +281,14 @@ maxTest.error <- function(type, delta, vcov){
   
   return(list(error=FALSE))
 }
+
+############ Supporting Functions of meanTest ###################################
+
+
+
+
+
+
+
+
+

@@ -56,13 +56,12 @@ maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
   no.periods <- length(df[unique(df$period), "period"])
   
   if(type=="IU"){
-    test_results <- DStest.max.IU(df, delta, vcov, cluster, alpha, N, no.periods, base.period)
+    test_results <- maxTestIU(df, delta, vcov, cluster, alpha, N, no.periods, base.period)
     class(test_results) <- "maxTestIU"
   } else if (type == "Boot" || type == "Wild"){
-    test_results <- DStest.max.bootstrap(df, delta, alpha, N, B, no.periods, base.period, type)
+    test_results <- maxTestBoot(df, delta, alpha, N, B, no.periods, base.period, type)
     class(test_results) <- "maxTestBoot"
   }
-  
   
   if(verbose){print(test_results)}
   return(invisible(test_results))
