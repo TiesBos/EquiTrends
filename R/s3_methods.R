@@ -127,7 +127,7 @@ print.maxTestBoot <- function(x, ...){
                             x$reject.H0)
     colnames(output.df) <- c("Max. Abs. Coefficient", "    Bootstrap Critical Value", "  Reject H0")
     rownames(output.df) <- c("")
-    print.default(output.df, ...)
+    pretty_print(output.df)
   }
   
   # Summary statistics
