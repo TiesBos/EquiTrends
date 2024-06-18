@@ -2,7 +2,8 @@
 
 S3method(print,maxTestBoot)
 S3method(print,maxTestIU)
-export(maxTest)
+export(maxEquivTest)
+export(meanEquivTest)
 importFrom(Rcpp,sourceCpp)
 importFrom(RcppParallel,RcppParallelLibs)
 importFrom(dplyr,"%>%")

@@ -23,7 +23,6 @@
 #' @return hoi
 #' @export
 #'
-#' @example HOI
 maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
                        pretreatment.period = NULL, base.period = NULL, 
                        vcov = NULL, cluster = NULL, alpha = 0.05, 
@@ -92,7 +91,6 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
 #' @return hoi
 #' @export
 #'
-#' @examples HOI
 meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
                      pretreatment.period = NULL, base.period = NULL, 
                      vcov = NULL, cluster = NULL, alpha=0.05, verbose=TRUE){
