@@ -28,10 +28,10 @@ maxTestIU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base.per
       vcov.mat <- clubSandwich::vcovCR(IU.twfe, cluster=data[,"cluster"], type="CR0")
     }
   } else {
-    vcov.mat <- vcov(IU.twfe)
-    if(!is.matrix(vcov.mat) || nrow(vcov.mat) != ncol(vcov.mat)){
+    if(!is.matrix(vcov(IU.twfe)) || nrow(vcov(IU.twfe)) != ncol(vcov(IU.twfe))){
       stop("The vcov argument is invalid")
     }
+    vcov.mat <- vcov(IU.twfe)
   }
   
   # Extracting the variances of the slope coefficients
