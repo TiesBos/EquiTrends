@@ -7,7 +7,17 @@ Author: Ties Bos
 Maintainer: Ties Bos <ties.bos2002@gmail.com>
 Description: One paragraph description of what the package does as one or more full sentences.
 License: MIT + file LICENSE
-Imports: Rcpp (>= 1.0.12)
+Imports: 
+    clubSandwich,
+    dplyr,
+    nloptr,
+    plm,
+    Rcpp (>= 1.0.12),
+    RcppArmadillo,
+    RcppParallel,
+    sandwich,
+    stats,
+    VGAM
 LinkingTo: Rcpp
 URL: https://github.com/TiesBos/EquiTrends
 BugReports: https://github.com/TiesBos/EquiTrends/issues
