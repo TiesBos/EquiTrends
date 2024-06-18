@@ -42,7 +42,7 @@ print.maxTestIU <- function(x, ...){
   } else {
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.\n")
     cat("Minimum equivalence threshold to reject H0:", x$minimum.delta, "\n")
-    df.print <- data.frame(as.numeric(formatC(x$placebo.coefs, format = "g", digits = 4)), 
+    df.print <- data.frame(as.numeric(formatC(x$absolute.placebo.coefs, format = "g", digits = 4)), 
                            as.numeric(formatC(x$standard.errors, format = "g", digits = 4)), 
                            as.numeric(formatC(x$minimum.deltas, format = "g", digits = 4)))
     colnames(df.print) <- c(" Estimate", "Std. Error ", " Minimum Equivalence Threshold")
@@ -53,7 +53,7 @@ print.maxTestIU <- function(x, ...){
   cat("---\n")
   
   # Summary statistics
-  cat("No. placebo coefficients estimated (T):", length(x$placebo.coefs), "\n")
+  cat("No. placebo coefficients estimated (T):", length(x$absolute.placebo.coefs), "\n")
   cat("No. pre-treatment periods (T+1):", x$no.periods ,"\n")
   cat("Base period:", x$base.period ,"\n")
   cat("No. Individuals (N):", x$N, "\n")
