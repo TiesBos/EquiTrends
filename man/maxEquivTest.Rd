@@ -18,8 +18,7 @@ maxEquivTest(
   cluster = NULL,
   alpha = 0.05,
   type = c("IU", "Boot", "Wild"),
-  B = 1000,
-  verbose = TRUE
+  B = 1000
 )
 }
 \arguments{
@@ -50,8 +49,6 @@ maxEquivTest(
 \item{type}{The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2023) and "Wild" for the Wild bootstrap procedure.}
 
 \item{B}{If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.}
-
-\item{verbose}{A logical object indicating if test results need to be printed. The default is TRUE.}
 }
 \value{
 hoi

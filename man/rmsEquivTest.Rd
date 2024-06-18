@@ -15,8 +15,7 @@ rmsEquivTest(
   pretreatment.period = NULL,
   base.period = NULL,
   alpha = 0.05,
-  no.lambda = 5,
-  verbose = TRUE
+  no.lambda = 5
 )
 }
 \arguments{
@@ -41,8 +40,6 @@ rmsEquivTest(
 \item{alpha}{Significance level of the test. Must be one of the following: 0.01, 0.025, 0.05, 0.1 or 0.2. The default is 0.05.}
 
 \item{no.lambda}{The scaling factor of the uniform distribution}
-
-\item{verbose}{A logical object indicating if test results need to be printed. The default is TRUE.}
 }
 \value{
 hoi

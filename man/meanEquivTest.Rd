@@ -16,8 +16,7 @@ meanEquivTest(
   base.period = NULL,
   vcov = NULL,
   cluster = NULL,
-  alpha = 0.05,
-  verbose = TRUE
+  alpha = 0.05
 )
 }
 \arguments{
@@ -44,8 +43,6 @@ meanEquivTest(
 \item{cluster}{If vcov = "CL", a vector indicating which observations belong to the same cluster of the same length as Y. If 'data' is supplied, 'cluster' must be either the column index or column name of this vector in the data.frame/matrix. The default (cluster=NULL) assumes every unit in ID is its own cluster.}
 
 \item{alpha}{Significance level of the test. The default is 0.05.}
-
-\item{verbose}{A logical object indicating if test results need to be printed. The default is TRUE.}
 }
 \value{
 hoi
