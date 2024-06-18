@@ -2,12 +2,12 @@
 % Please edit documentation in R/s3_methods.R
 \name{print.maxEquivTestBoot}
 \alias{print.maxEquivTestBoot}
-\title{Print maxTestBoot objects}
+\title{Print maxEquivTestBoot objects}
 \usage{
-\method{print}{maxTestBoot}(x, ...)
+\method{print}{maxEquivTestBoot}(x, ...)
 }
 \arguments{
-\item{x}{An object of class 'maxTestBoot' containing the results of the maximum test based on the bootstrap procedure.}
+\item{x}{An object of class 'maxEquivTestBoot' containing the results of the maximum test based on the bootstrap procedure.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
@@ -15,5 +15,5 @@
 The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 }
 \description{
-Print maxTestBoot objects
+Print maxEquivTestBoot objects
 }

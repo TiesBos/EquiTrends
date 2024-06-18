@@ -2,18 +2,18 @@
 % Please edit documentation in R/s3_methods.R
 \name{print.maxEquivTestIU}
 \alias{print.maxEquivTestIU}
-\title{Print maxTestIU objects}
+\title{Print maxEquivTestIU objects}
 \usage{
-\method{print}{maxTestIU}(x, ...)
+\method{print}{maxEquivTestIU}(x, ...)
 }
 \arguments{
-\item{x}{An object of class 'maxTestIU' containing the results of the maximum test based on the intersection-union approach.}
+\item{x}{An object of class 'maxEquivTestIU' containing the results of the maximum test based on the intersection-union approach.}
 
-\item{...}{urther arguments passed to or from other methods.}
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 The function prints a summary of the results of the maximum test based on the intersection-union approach.
 }
 \description{
-Print method for objects of class 'maxTestIU'.
+Print method for objects of class 'maxEquivTestIU'.
 }

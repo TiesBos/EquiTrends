@@ -21,13 +21,13 @@ pretty_print <- function(df) {
 }
 
 # ---- Summary Function for the Intersection-Union Approach --------------------
-#' @title Print maxTestIU objects
+#' @title Print maxEquivTestIU objects
 #'
-#' @description Print method for objects of class 'maxTestIU'.
+#' @description Print method for objects of class 'maxEquivTestIU'.
 #'
-#' @param x An object of class 'maxTestIU' containing the results of the maximum test based on the intersection-union approach.
-#' @param ... urther arguments passed to or from other methods.
-#' @method print maxTestIU
+#' @param x An object of class 'maxEquivTestIU' containing the results of the maximum test based on the intersection-union approach.
+#' @param ... Further arguments passed to or from other methods.
+#' @method print maxEquivTestIU
 #' @return The function prints a summary of the results of the maximum test based on the intersection-union approach.
 #' @export
 #'
@@ -83,11 +83,11 @@ print.maxEquivTestIU <- function(x, ...){
 }
 
 
-#' @title Print maxTestBoot objects
+#' @title Print maxEquivTestBoot objects
 #'
-#' @param x An object of class 'maxTestBoot' containing the results of the maximum test based on the bootstrap procedure.
+#' @param x An object of class 'maxEquivTestBoot' containing the results of the maximum test based on the bootstrap procedure.
 #' @param ... Further arguments passed to or from other methods.
-#' @method print maxTestBoot
+#' @method print maxEquivTestBoot
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
@@ -143,7 +143,7 @@ print.maxEquivTestBoot <- function(x, ...){
 #'
 #' @param x An object of class 'meanEquivTest' containing the results of the maximum test based on the bootstrap procedure.
 #' @param ... Further arguments passed to or from other methods.
-#' @method print maxTestBoot
+#' @method print meanEquivTest
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
@@ -194,11 +194,11 @@ print.meanEquivTest <- function(x){
   cat("\n")
 }  
 
-#' @title Print maxTestBoot objects
+#' @title Print rmsEquivTest objects
 #'
-#' @param x An object of class 'maxTestBoot' containing the results of the maximum test based on the bootstrap procedure.
+#' @param x An object of class 'rmsEquivTest' containing the results of the maximum test based on the bootstrap procedure.
 #' @param ... Further arguments passed to or from other methods.
-#' @method print maxTestBoot
+#' @method print rmsEquivTest
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
