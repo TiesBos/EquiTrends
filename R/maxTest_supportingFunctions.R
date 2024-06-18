@@ -1,23 +1,10 @@
 ############ Supporting Functions of maxTest ###################################
 # ----------- Intersection Union Approach --------------------------------------
-#' @title maxTestIU
-#'
-#' @param data the dataframe containing the data from the dataconstruction function
-#' @param delta the equivalence threshold
-#' @param vcov the type of variance-covariance matrix to be used
-#' @param cluster the cluster variable
-#' @param alpha the significance level
-#' @param n the number of individuals
-#' @param no.periods the number of periods
-#' @param base.period the base period
-#'
-#' @return a list containing the results of the maxTestIU function
-#' @importFrom stats as.formula quantile
 maxTestIU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base.period){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
-  plm.formula <- as.formula(paste("Y~", paste(c(placebo_names, X_names), collapse=" + ")))
+  plm.formula <- stats::as.formula(paste("Y~", paste(c(placebo_names, X_names), collapse=" + ")))
   
   # Run the two-way fixed effects model:
   IU.twfe <- plm::plm(plm.formula, data=data, effect="twoways", 
@@ -164,7 +151,7 @@ maxTestBoot <- function(data, delta, alpha, n, B, no.periods,
   }
   
   # Find the critical value at the alpha level:
-  boot.crit.value <- quantile(bootstrap.maxcoefs, probs = alpha)
+  boot.crit.value <- stats::quantile(bootstrap.maxcoefs, probs = alpha)
   
   # Reject Or Not:
   reject.H0 <- (max(abs(unconstrained.coefs[1:length(placebo_names)])) < boot.crit.value) 
@@ -291,7 +278,9 @@ maxTest.error <- function(type, delta, vcov){
   
   # If type = IU, vcov must be correctly specified:
   if(type == "IU" && !is.null(vcov)){
-    
+    if(!(vcov %in% c("HC", "HAC", "CL")) && !is.function(vcov)){
+      return(list(error=TRUE, message = "vcov is not valid"))
+    }
   }
   
   # if type != IU, delta cannot be NULL

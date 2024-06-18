@@ -18,7 +18,7 @@
 #' @param B If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.
 #' @param verbose A logical object indicating if test results need to be printed. The default is TRUE.
 #' 
-#' 
+#' @details DETAILS ON "vcov" parameter.
 #'
 #' @return hoi
 #' @export
@@ -70,4 +70,12 @@ maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
   if(verbose){print(test_results)}
   return(invisible(test_results))
 }
+
+
+
+
+
+
+
+
 
