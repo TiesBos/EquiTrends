@@ -1,3 +1,4 @@
+# ----------- Data Construction Function ---------------------------------------
 EquiTrends.dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period, 
                               base.period, cluster){
   colnames.X <- NULL
