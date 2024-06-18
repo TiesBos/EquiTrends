@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 maxTestBoot_bootstrap <- function(Xb, X, B, variance, ID, period, no_placebos) {
-    .Call('_EquiTrends_maxTestBoot_bootstrap', PACKAGE = 'EquiTrends', Xb, X, B, variance, ID, period, no_placebos)
+    .Call(`_EquiTrends_maxTestBoot_bootstrap`, Xb, X, B, variance, ID, period, no_placebos)
 }
 
 maxTestBoot_wildbootstrap <- function(Xb, X, B, u_ddot, ID, period, no_placebos) {
-    .Call('_EquiTrends_maxTestBoot_wildbootstrap', PACKAGE = 'EquiTrends', Xb, X, B, u_ddot, ID, period, no_placebos)
+    .Call(`_EquiTrends_maxTestBoot_wildbootstrap`, Xb, X, B, u_ddot, ID, period, no_placebos)
 }
 
