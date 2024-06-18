@@ -1,4 +1,4 @@
-#' @title Equivalence Test for Pre-trends based on the Maximum Absolute Coefficient 
+#' @title Equivalence Test for Pre-trends based on the Maximum Absolute Placebo Coefficient 
 #'
 #' @description This function performs an equivalence test for pre-trends based on the maximum absolute placebo coefficient. The test can be performed using the intersection-union approach (IU), a bootstrap procedure for spherical errors (Boot) and a wild bootstrap procedure (Wild).
 #'
@@ -24,7 +24,7 @@
 #' @export
 #'
 #' 
-maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
+maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
                        pretreatment.period = NULL, base.period = NULL, 
                        vcov = NULL, cluster = NULL, alpha = 0.05, 
                        type = c("IU", "Boot", "Wild"), B = 1000, verbose=TRUE){
@@ -71,7 +71,7 @@ maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
   return(invisible(test_results))
 }
 
-#' Equivalence Test for Pre-trends based on the Maximum Absolute Coefficient 
+#' Equivalence Test for Pre-trends based on the Mean Placebo Coefficient 
 #'
 #' @description This function performs an equivalence test for pre-trends based on the maximum absolute placebo coefficient. The test can be performed using the intersection-union approach (IU), a bootstrap procedure for spherical errors (Boot) and a wild bootstrap procedure (Wild).
 #'
@@ -93,7 +93,7 @@ maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
 #' @export
 #'
 #' @examples
-meanTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
+meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
                      pretreatment.period = NULL, base.period = NULL, 
                      vcov = NULL, cluster = NULL, alpha=0.05, verbose=TRUE){
   
