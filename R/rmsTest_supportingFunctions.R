@@ -108,6 +108,6 @@ W_critical_value <- function(significance_level) {
   ), ncol = 2, byrow = TRUE)
   
   crit_val_row <- which(crit_val_matrix[,1] == significance_level)
-  crit_val <- critical_values[crit_val_row, 2]
-  return(critical_values[as.character(significance_level)])
+  crit_val <- crit_val_matrix[crit_val_row, 2]
+  return(crit_val)
 }
