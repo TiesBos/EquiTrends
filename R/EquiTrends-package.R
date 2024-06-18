@@ -3,7 +3,7 @@
 ## usethis namespace: end
 NULL
 ## usethis namespace: start
-#' @useDynLib PAGFL, .registration = TRUE
+#' @useDynLib EquiTrends
 ## usethis namespace: end
 NULL
 ## usethis namespace: start
