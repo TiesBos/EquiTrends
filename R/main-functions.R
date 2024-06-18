@@ -18,7 +18,7 @@
 #' @param B If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.
 #' @param verbose A logical object indicating if test results need to be printed. The default is TRUE.
 #'
-#' @return
+#' @return hoi
 #' @export
 #'
 #' 
@@ -77,10 +77,9 @@ maxTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
 #'
 #' @param x An object of class 'maxTestIU' containing the results of the maximum test based on the intersection-union approach.
 #'
-#' @return
+#' @return The function prints a summary of the results of the maximum test based on the intersection-union approach.
 #' @export
 #'
-#' @examples
 print.maxTestIU <- function(x){
   cat("\n")
   width <- getOption("width")
@@ -132,6 +131,14 @@ print.maxTestIU <- function(x){
   cat("\n")
 }
 
+
+#' Title
+#'
+#' @param x An object of class 'maxTestBoot' containing the results of the maximum test based on the bootstrap procedure.
+#'
+#' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
+#' @export
+#'
 
 print.maxTestBoot <- function(x){
   cat("\n")

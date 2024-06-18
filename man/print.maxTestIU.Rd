@@ -9,6 +9,9 @@
 \arguments{
 \item{x}{An object of class 'maxTestIU' containing the results of the maximum test based on the intersection-union approach.}
 }
+\value{
+The function prints a summary of the results of the maximum test based on the intersection-union approach.
+}
 \description{
 Print method for objects of class 'maxTestIU'.
 }

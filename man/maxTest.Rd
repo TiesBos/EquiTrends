@@ -53,6 +53,9 @@ maxTest(
 
 \item{verbose}{A logical object indicating if test results need to be printed. The default is TRUE.}
 }
+\value{
+hoi
+}
 \description{
 This function performs an equivalence test for pre-trends based on the maximum absolute placebo coefficient. The test can be performed using the intersection-union approach (IU), a bootstrap procedure for spherical errors (Boot) and a wild bootstrap procedure (Wild).
 }
