@@ -147,7 +147,7 @@ print.maxEquivTestBoot <- function(x, ...){
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
-print.meanEquivTest <- function(x){
+print.meanEquivTest <- function(x, ...){
   cat("\n")
   width <- getOption("width")
   title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
@@ -202,7 +202,7 @@ print.meanEquivTest <- function(x){
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
-print.rmsEquivTest <- function(x){
+print.rmsEquivTest <- function(x, ...){
   cat("\n")
   width <- getOption("width")
   title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"

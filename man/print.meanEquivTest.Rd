@@ -4,7 +4,7 @@
 \alias{print.meanEquivTest}
 \title{Print meanEquivTest objects}
 \usage{
-\method{print}{meanEquivTest}(x)
+\method{print}{meanEquivTest}(x, ...)
 }
 \arguments{
 \item{x}{An object of class 'meanEquivTest' containing the results of the maximum test based on the bootstrap procedure.}

@@ -94,7 +94,7 @@ rmsTest.func <- function(data, delta, alpha, no.lambda, base.period){
 # ---- Critical Value RMS ----
 # Function to get critical value for a given significance level
 W_critical_value <- function(significance_level) {
-  significance_matrix <- matrix(c(
+  crit_val_matrix <- matrix(c(
     0.010, -4.2329959,
     0.025, -2.9047318,
     0.050, -2.1431720,
@@ -107,10 +107,7 @@ W_critical_value <- function(significance_level) {
     0.990,  4.1150156
   ), ncol = 2, byrow = TRUE)
   
-  # Convert the matrix into a named vector
-  critical_values <- setNames(significance_matrix[, 2], significance_matrix[, 1])
-  crit_val <- critical_values[as.character(significance_level)]
-  # Remove the label "0.05" from the crit_val:
-  crit_val <- as.numeric(crit_val)
+  crit_val_row <- which(crit_val_matrix[,1] == significance_level)
+  crit_val <- critical_values[crit_val_row, 2]
   return(critical_values[as.character(significance_level)])
 }

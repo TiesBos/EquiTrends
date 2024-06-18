@@ -4,7 +4,7 @@
 \alias{print.rmsEquivTest}
 \title{Print rmsEquivTest objects}
 \usage{
-\method{print}{rmsEquivTest}(x)
+\method{print}{rmsEquivTest}(x, ...)
 }
 \arguments{
 \item{x}{An object of class 'rmsEquivTest' containing the results of the maximum test based on the bootstrap procedure.}
