@@ -66,8 +66,8 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
     class(test_results) <- "maxEquivTestBoot"
   }
   
-  if(verbose){print(test_results)}
-  return(invisible(test_results))
+  #if(verbose){print(test_results)}
+  return(test_results)
 }
 
 #' @title Equivalence Test for Pre-trends based on the Mean Placebo Coefficient 
