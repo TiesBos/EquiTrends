@@ -16,6 +16,7 @@
 #' @param alpha Significance level of the test. The default is 0.05.
 #' @param type The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2023) and "Wild" for the Wild bootstrap procedure.
 #' @param B If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.
+#' @param verbose A logical object indicating if test results need to be printed. The default is TRUE.
 #' 
 #' @details DETAILS ON "vcov" parameter.
 #'
@@ -25,7 +26,7 @@
 maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
                        pretreatment.period = NULL, base.period = NULL, 
                        vcov = NULL, cluster = NULL, alpha = 0.05, 
-                       type = c("IU", "Boot", "Wild"), B = 1000){
+                       type = c("IU", "Boot", "Wild"), B = 1000, verbose=TRUE){
   # If no type is specified, the type is "IU"
   if(identical(type, c("IU", "Boot", "Wild"))){
     type <- "IU"
@@ -65,6 +66,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
     class(test_results) <- "maxEquivTestBoot"
   }
   
+  if(verbose){print(test_results)}
   return(invisible(test_results))
 }
 
@@ -84,13 +86,14 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
 #' @param vcov The variance-covariance matrix that needs to be used. See details for more details.
 #' @param cluster If vcov = "CL", a vector indicating which observations belong to the same cluster of the same length as Y. If 'data' is supplied, 'cluster' must be either the column index or column name of this vector in the data.frame/matrix. The default (cluster=NULL) assumes every unit in ID is its own cluster.
 #' @param alpha Significance level of the test. The default is 0.05.
+#' @param verbose A logical object indicating if test results need to be printed. The default is TRUE.
 #'
 #' @return hoi
 #' @export
 #'
 meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
                      pretreatment.period = NULL, base.period = NULL, 
-                     vcov = NULL, cluster = NULL, alpha=0.05){
+                     vcov = NULL, cluster = NULL, alpha=0.05, verbose=TRUE){
   
   # Error/Warnings:
   # General error checking:
@@ -118,6 +121,7 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
   # give it the specified class:
   class(results) <- "meanEquivTest"
   
+  if(verbose){print(results)}
   
   return(invisible(results))
 }
@@ -136,6 +140,7 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
 #' @param base.period The pre-treatment period to compare the post-treatment observation to. The default is to take the last specified pre-treatment period.
 #' @param no.lambda The scaling factor of the uniform distribution
 #' @param alpha Significance level of the test. Must be one of the following: 0.01, 0.025, 0.05, 0.1 or 0.2. The default is 0.05.
+#' @param verbose A logical object indicating if test results need to be printed. The default is TRUE.
 #'
 #' @return hoi
 #' @export
@@ -143,7 +148,7 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
 #' 
 rmsEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,  
                     pretreatment.period = NULL, base.period = NULL, 
-                    alpha=0.05, no.lambda = 5){
+                    alpha=0.05, no.lambda = 5, verbose=TRUE){
   
   # rmsTest specific error checking:
   error.rmsTest <- rmsTest.error(alpha, no.lambda)
@@ -164,6 +169,7 @@ rmsEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, delta = NULL,
   # Perform the test:
   test.results <- rmsTest.func(df, delta, alpha, no.lambda, base.period)
   
+  if(verbose){print(test.results)}
   return(invisible(test.results))
 }
 
