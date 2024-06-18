@@ -1,7 +1,7 @@
 # A Function for nice representation of small numbers:
 number_rep <- function(x){
   new.x <- ifelse(abs(x) < 1e-4, format(x, scientific = TRUE), format(x, digits = 4))
-  new.x <- ifelse(abs(new.x) < 2e-16,  "<2e-6", new.x)
+  new.x <- ifelse(as.numeric(abs(new.x)) < 2e-16,  "<2e-6", new.x)
   return(new.x)
 }
 
