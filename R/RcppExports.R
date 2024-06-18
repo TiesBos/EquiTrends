@@ -13,7 +13,3 @@ maxTestBoot_wildbootstrap <- function(Xb, X, B, u_ddot, ID, period, no_placebos)
     .Call(`_EquiTrends_maxTestBoot_wildbootstrap`, Xb, X, B, u_ddot, ID, period, no_placebos)
 }
 
-rcpp_hello_world <- function() {
-    .Call(`_EquiTrends_rcpp_hello_world`)
-}
-

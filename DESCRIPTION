@@ -18,7 +18,9 @@ Imports:
     sandwich,
     stats,
     VGAM
-LinkingTo: Rcpp
+LinkingTo: Rcpp,
+           RcppArmadillo,
+           RcppParallel
 URL: https://github.com/TiesBos/EquiTrends
 BugReports: https://github.com/TiesBos/EquiTrends/issues
 RoxygenNote: 7.3.1
