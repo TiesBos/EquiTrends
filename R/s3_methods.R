@@ -47,9 +47,10 @@ print.maxTestIU <- function(x, ...){
                            as.numeric(formatC(x$minimum.deltas, format = "g", digits = 4)))
     colnames(df.print) <- c(" Estimate", "Std. Error ", " Minimum Equivalence Threshold")
     rownames(df.print) <- x$coef.names
+    tibble.print <- tibble::as_tibble(df.print)
   }
   cat("---\n")
-  print.default(df.print, ...)
+  tibble::print(tibble.print, ...)
   cat("---\n")
   
   # Summary statistics
