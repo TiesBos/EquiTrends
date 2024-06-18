@@ -4,21 +4,25 @@ pretty_print <- function(df) {
   col_names <- colnames(df)
   
   # Determine the maximum width for each column
-  max_widths <- apply(df, 2, function(col) max(nchar(as.character(col))))
+  max_widths <- sapply(df, function(col) max(nchar(as.character(col))))
   max_widths <- pmax(max_widths, nchar(col_names))
   
-  # Format the column names and the data frame
+  # Format the column names
   formatted_col_names <- mapply(function(name, width) format(name, width = width), name = col_names, width = max_widths)
-  formatted_df <- apply(df, 2, function(col, width) format(as.character(col), width = width), width = max_widths)
   
   # Print the column names
   cat(paste(formatted_col_names, collapse = "\t"), "\n")
   
-  
-  # Print each row
-  if(!is.matrix(formatted_df)){
-    cat(paste(formatted_df, collapse = "\t"), "\n")
+  # Check if df has only one row
+  if(nrow(df) == 1){
+    # Format and print the row
+    formatted_row <- mapply(function(col, width) format(as.character(col), width = width), col = df[1, ], width = max_widths)
+    cat(paste(formatted_row, collapse = "\t"), "\n")
   } else {
+    # Format the data frame
+    formatted_df <- apply(df, 2, function(col, width) format(as.character(col), width = width), width = max_widths)
+    
+    # Print each row
     apply(formatted_df, 1, function(row) {
       cat(paste(row, collapse = "\t"), "\n")
     })
