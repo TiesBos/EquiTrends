@@ -3,7 +3,7 @@
 ## usethis namespace: end
 NULL
 ## usethis namespace: start
-#' @useDynLib EquiTrends
+#' @useDynLib EquiTrends, .registration = TRUE
 ## usethis namespace: end
 NULL
 ## usethis namespace: start
