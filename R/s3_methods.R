@@ -15,9 +15,13 @@ pretty_print <- function(df) {
   cat(paste(formatted_col_names, collapse = "\t"), "\n")
   
   # Print each row
-  apply(formatted_df, 1, function(row) {
-    cat(paste(row, collapse = "\t"), "\n")
-  })
+  if(dim(formatted_df)[1] == 1){
+    cat(paste(formatted_df, collapse = "\t"), "\n")
+  } else {
+    apply(formatted_df, 1, function(row) {
+      cat(paste(row, collapse = "\t"), "\n")
+    })
+  }
 }
 
 # ---- Summary Function for the Intersection-Union Approach --------------------
