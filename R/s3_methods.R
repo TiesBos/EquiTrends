@@ -31,7 +31,7 @@ pretty_print <- function(df) {
 #' @return The function prints a summary of the results of the maximum test based on the intersection-union approach.
 #' @export
 #'
-print.maxTestIU <- function(x, ...){
+print.maxEquivTestIU <- function(x, ...){
   cat("\n")
   width <- getOption("width")
   title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
@@ -91,7 +91,7 @@ print.maxTestIU <- function(x, ...){
 #' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
 #' @export
 #'
-print.maxTestBoot <- function(x, ...){
+print.maxEquivTestBoot <- function(x, ...){
   cat("\n")
   width <- getOption("width")
   title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
@@ -138,3 +138,113 @@ print.maxTestBoot <- function(x, ...){
   cat("No. Individuals (N):", x$N, "\n")
   cat("\n")
 }
+
+#' @title Print meanEquivTest objects
+#'
+#' @param x An object of class 'meanEquivTest' containing the results of the maximum test based on the bootstrap procedure.
+#' @param ... Further arguments passed to or from other methods.
+#' @method print maxTestBoot
+#' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
+#' @export
+#'
+print.meanEquivTest <- function(x){
+  cat("\n")
+  width <- getOption("width")
+  title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
+  
+  # Check if console width is less than title length
+  if (width < nchar(title)) {
+    width <- nchar(title) + 2  # Adjust width to be slightly larger than title
+  }
+  
+  separator <- strrep(" ", floor((width - nchar(title)) / 2))
+  
+  # Centered title
+  cat(separator, strrep("=", nchar(title)), "\n", sep = "")
+  cat(separator, title, "\n", sep = "")
+  cat(separator, strrep("=", nchar(title)), "\n", sep = "")
+  
+  cat("Type: Mean Placebo Effect \n")
+  if(x$delta.specified){
+    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
+    
+    df.print <- data.frame(as.numeric(formatC(x$abs.mean.placebo, format = "g", digits = 4)),
+                           as.numeric(formatC(sqrt(x$placebo_var), format = "g", digits = 4)), 
+                           as.numeric(formatC(x$p.value, format = "g", digits = 4)))
+    colnames(df.print) <- c("Abs. Mean Placebo Effect", "   Std. Error", "   p-value")
+    rownames(df.print) <- c("")
+  } else {
+    cat("Significance level:", x$sign.level, "\n")
+    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.\n")
+    df.print <- data.frame(as.numeric(formatC(x$abs.mean.placebo, format = "g", digits = 4)), 
+                           as.numeric(formatC(sqrt(x$placebo_var), format = "g", digits = 4)), 
+                           as.numeric(formatC(x$minimum.delta, format = "g", digits = 4)))
+    colnames(df.print) <- c("Abs. Mean Placebo Effect", "   Std. Error", "   Min. Equiv. Threshold")
+    rownames(df.print) <- c("")  
+  }
+  cat("---\n")
+  pretty_print(df.print)
+  cat("---\n")
+  
+  # Data statistics
+  cat("No. placebo coefficients estimated (T):", length(x$placebo.coefs), "\n")
+  cat("No. pre-treatment periods (T+1):", x$no.periods ,"\n")
+  cat("Base period:", x$base.period ,"\n")
+  cat("No. Individuals (N):", x$N, "\n")
+  cat("\n")
+}  
+
+#' @title Print maxTestBoot objects
+#'
+#' @param x An object of class 'maxTestBoot' containing the results of the maximum test based on the bootstrap procedure.
+#' @param ... Further arguments passed to or from other methods.
+#' @method print maxTestBoot
+#' @return The function prints a summary of the results of the maximum test based on the bootstrap procedures.
+#' @export
+#'
+print.rmsEquivTest <- function(x){
+  cat("\n")
+  width <- getOption("width")
+  title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
+  
+  # Check if console width is less than title length
+  if (width < nchar(title)) {
+    width <- nchar(title) + 2  # Adjust width to be slightly larger than title
+  }
+  
+  separator <- strrep(" ", floor((width - nchar(title)) / 2))
+  
+  # Centered title
+  cat(separator, strrep("=", nchar(title)), "\n", sep = "")
+  cat(separator, title, "\n", sep = "")
+  cat(separator, strrep("=", nchar(title)), "\n", sep = "")
+  
+  cat("Type: Mean Placebo Effect \n")
+  if(x$delta.specified){
+    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
+    
+    df.print <- data.frame(as.numeric(formatC(x$RMS, format = "g", digits = 4)),
+                           as.numeric(formatC(x$critical.value, format = "g", digits = 4)))
+    colnames(df.print) <- c("RMS Placebo Effect", "   Simulated Crit. Val.")
+    rownames(df.print) <- c("")
+  } else {
+    cat("Significance level:", x$sign.level, "\n")
+    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.\n")
+    df.print <- data.frame(as.numeric(formatC(x$RMS, format = "g", digits = 4)), 
+                           as.numeric(formatC(x$minimum.delta, format = "g", digits = 4)))
+    colnames(df.print) <- c("RMS Placebo Effect", "   Min. Equiv. Threshold")
+    rownames(df.print) <- c("")  
+  }
+  cat("---\n")
+  pretty_print(df.print)
+  cat("---\n")
+  
+  # Data statistics
+  cat("No. placebo coefficients estimated (T):", length(x$placebo.coefs), "\n")
+  cat("No. pre-treatment periods (T+1):", x$no.periods ,"\n")
+  cat("Base period:", x$base.period ,"\n")
+  cat("No. Individuals (N):", x$N, "\n")
+  cat("\n")
+}  
+
+
