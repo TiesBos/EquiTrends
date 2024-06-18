@@ -1,4 +1,4 @@
-DStest.dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period, 
+EquiTrends.dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period, 
                               base.period, cluster){
   colnames.X <- NULL
   if(!base::is.null(data)){
@@ -70,7 +70,7 @@ DStest.dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period,
 
 # ----------- Main Error Checking Function -------------------------------------
 #   This function checks the input for the test functions. It takes as input:
-EquiTrend.inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment.period, 
+EquiTrends.inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment.period, 
                                  base.period, cluster, alpha){
   
   if(is.null(data)){
