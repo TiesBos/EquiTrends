@@ -9,7 +9,7 @@ pretty_print <- function(df) {
   
   # Format the column names and the data frame
   formatted_col_names <- mapply(function(name, width) format(name, width = width), name = col_names, width = max_widths)
-  formatted_df <- apply(df, 2, function(col) format(as.character(col), width = max(nchar(as.character(col)))))
+  formatted_df <- apply(df, 2, function(col, width) format(as.character(col), width = width), width = max_widths)
   
   # Print the column names
   cat(paste(formatted_col_names, collapse = "\t"), "\n")
