@@ -1,3 +1,9 @@
+# A Function for nice representation of small numbers:
+number_rep <- function(x){
+  new.x <- ifelse(abs(x) < 1e-4, format(x, scientific = TRUE), format(x, digits = 4))
+  return(new.x)
+}
+
 # A function to print data.frame objects:
 pretty_print <- function(df) {
   # Get the column names
@@ -61,10 +67,15 @@ print.maxEquivTestIU <- function(x, ...){
   cat("Significance level:", x$sign.level, "\n")
   if(x$delta.specified){  
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
-    df.print <- data.frame(as.numeric(formatC(x$absolute.placebo.coefs, format = "g", digits = 4)),
-                           as.numeric(formatC(x$standard.errors, format = "g", digits = 4)),
-                           as.numeric(formatC(x$critical.values, format = "g", digits = 4)),
-                           as.numeric(formatC(x$p.values, format = "g", digits = 4)))
+    df.print <- data.frame(number_rep(x$absolute.placebo.coefs),
+                           number_rep(x$standard.errors),
+                           number_rep(x$critical.values),
+                           number_rep(x$p.values))
+    
+    # df.print <- data.frame(as.numeric(formatC(x$absolute.placebo.coefs, format = "g", digits = 4)),
+    #                        as.numeric(formatC(x$standard.errors, format = "g", digits = 4)),
+    #                        as.numeric(formatC(x$critical.values, format = "g", digits = 4)),
+    #                        as.numeric(formatC(x$p.values, format = "g", digits = 4)))
     
     # Convert the formatted values back to numeric
     #df.print <- apply(df.print, MARGIN = c(1,2), FUN = function(x){as.numeric(x)})
