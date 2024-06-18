@@ -83,7 +83,7 @@ EquiTrends.inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment
     ncols.vec <- c(dim.Y, dim.ID, dim.G, dim.period)
     message.vec <- "Y, ID, period and G must be column vectors."
     if(!is.null(cluster)){
-      dim.cluster <- dim(as.matrix(cluser))[2]
+      dim.cluster <- dim(as.matrix(cluster))[2]
       ncols.vec <- c(ncols.vec, dim.cluster)
       message.vec <- "Y, ID, period, G and cluster must be column vectors."
     }
