@@ -17,10 +17,10 @@
 #' @export
 #' 
 #' @examples
-#' sim.data <- sim.paneldata(N = 500, tt = 5, beta = rep(0, 5), p=1, 
+#' sim_data <- sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p=1, 
 #'                           gamma = rep(0,1), het = 1, phi = 0.5, sd = 1, 
 #'                           burnins = 100)
-sim.paneldata <- function(N = 500, tt = 5, beta = rep(0, tt), p=1, gamma = rep(1, p),
+sim_paneldata <- function(N = 500, tt = 5, beta = rep(0, tt), p=1, gamma = rep(1, p),
                           alpha = rep(0, N), lambda = rep(0, tt), het = 0, 
                           phi = c(0), sd = 1, burnins = 100){
   # Check input:

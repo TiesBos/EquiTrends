@@ -1,7 +1,7 @@
 # ----------- Data Construction Function ---------------------------------------
-EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period, 
-                              base.period, cluster){
-  colnames.X <- NULL
+EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period, 
+                              base_period, cluster){
+  colnames_X <- NULL
   if(!base::is.null(data)){
     names_data <- base::colnames(data)
     Y <- data[, Y]
@@ -14,86 +14,85 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period
   
   # Bind the input together:
   if(!is.null(X)){
-    colnames.X <- paste0("X_", 1:ncol(as.matrix(X)))
-    new.data <- data.frame(Y=Y, ID=ID, period=period, G=G, X=X)
-    colnames(new.data) <- c("Y", "ID", "period", "G", colnames.X)
+    colnames_X <- paste0("X_", 1:ncol(as.matrix(X)))
+    new_data <- data.frame(Y=Y, ID=ID, period=period, G=G, X=X)
+    colnames(new_data) <- c("Y", "ID", "period", "G", colnames_X)
   } else {
-    new.data <- data.frame(Y=Y, ID=ID, period=period, G=G)
-    colnames(new.data) <- c("Y", "ID", "period", "G")
+    new_data <- data.frame(Y=Y, ID=ID, period=period, G=G)
+    colnames(new_data) <- c("Y", "ID", "period", "G")
   }
   
   # Add a variable indicating the cluster if supplied
   if(!is.null(cluster)){new.data[,"cluster"] <- cluster}
   
   # Omit any rows with NAs
-  original.length <- nrow(new.data)
-  new.data <- stats::na.omit(new.data)
-  new.length <- nrow(new.data)
-  omitted.rows <- original.length - new.length
-  if(omitted.rows > 0){warning(paste(omitted.rows, "rows of pre-treatment data omitted due to NAs."))}
+  original_length <- nrow(new_data)
+  new_data <- stats::na.omit(new_data)
+  new_length <- nrow(new_data)
+  omitted_rows <- original_length - new_length
+  if(omitted_rows > 0){warning(paste(omitted_rows, "rows of pre-treatment data omitted due to NAs."))}
   
   
   # Only select the pre-specified pre-selection periods
-  if(!base::is.null(pretreatment.period)){
-    new.data <- new.data[new.data$period %in% pretreatment.period, ]
+  if(!base::is.null(pretreatment_period)){
+    new_data <- new_data[new_data$period %in% pretreatment_period, ]
   }
   
   # Set the base period:
-  if(base::is.null(base.period)){
-    
-    base.period <- base::max(new.data$period)
+  if(base::is.null(base_period)){
+    base_period <- base::max(new_data$period)
   }
   
   # Create the placebo variables:
   # Collect all pre-treatment periods in time
-  unique.time <- unique(new.data$period)
+  unique_time <- unique(new_data$period)
   # Remove the base period:
-  unique.time <- unique.time[unique.time != base.period]
+  unique_time <- unique_time[unique_time != base_period]
   # Number of placebos:
-  tt <- length(unique.time)
+  tt <- length(unique_time)
   
   # Create placebos:
   for(l in 1:tt){
-    new.data[, paste0("placebo_", unique.time[l])] <- ifelse(new.data[, "period"]==unique.time[l], 1, 0)*new.data[, "G"]
+    new.data[, paste0("placebo_", unique_time[l])] <- ifelse(new_data[, "period"]==unique_time[l], 1, 0)*new_data[, "G"]
   }
   
   # Turn the ID to a 1 to N scale:
-  new.data$ID <- as.integer(factor(new.data$ID , levels = unique(new.data$ID)))
+  new_data$ID <- as.integer(factor(new_data$ID , levels = unique(new_data$ID)))
   # Turn the period column to a 1:(T+1) scale:
-  period.numeric <- as.integer(factor(new.data$period, levels = unique(new.data$period)))
-  new.data$period <- period.numeric
+  period_numeric <- as.integer(factor(new_data$period, levels = unique_time))
+  new_data$period <- period_numeric
   
   # Return the final data.frame object used:
-  return(list(dataset = new.data, baseperiod = base.period))
+  return(list(dataset = new_data, baseperiod = base_period))
 }
 
 
 
 # ----------- Main Error Checking Function -------------------------------------
 #   This function checks the input for the test functions. It takes as input:
-EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment.period, 
-                                 base.period, cluster, alpha){
+EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
+                                 base_period, cluster, alpha){
   
   if(is.null(data)){
     # Check if Y, ID, G, period and cluster are vectors:
-    dim.Y <- dim(as.matrix(Y))[2]
-    dim.ID <- dim(as.matrix(ID))[2]
-    dim.G <- dim(as.matrix(G))[2]
-    dim.period <- dim(as.matrix(period))[2]
-    ncols.vec <- c(dim.Y, dim.ID, dim.G, dim.period)
-    message.vec <- "Y, ID, period and G must be column vectors."
+    dim_Y <- dim(as.matrix(Y))[2]
+    dim_ID <- dim(as.matrix(ID))[2]
+    dim_G <- dim(as.matrix(G))[2]
+    dim_period <- dim(as.matrix(period))[2]
+    ncols_vec <- c(dim_Y, dim_ID, dim_G, dim_period)
+    message_vec <- "Y, ID, period and G must be column vectors."
     if(!is.null(cluster)){
-      dim.cluster <- dim(as.matrix(cluster))[2]
-      ncols.vec <- c(ncols.vec, dim.cluster)
-      message.vec <- "Y, ID, period, G and cluster must be column vectors."
+      dim_cluster <- dim(as.matrix(cluster))[2]
+      ncols_vec <- c(ncols_vec, dim_cluster)
+      message_vec <- "Y, ID, period, G and cluster must be column vectors."
     }
     
-    if(any(ncols.vec != 1)){
-      return(list(error=TRUE, message = message.vec))
+    if(any(ncols_vec != 1)){
+      return(list(error=TRUE, message = message_vec))
     }
     
     # Check if X is not an empty matrix:
-    if(!is.null(X) && dim(as.matrix(X))[1]==0){
+    if(!is.null(X) && dim(as.matrix(X))[2]==0){
       return(list(error=TRUE, message = "X must have at least one column."))
     }
     
@@ -110,7 +109,7 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment
     }
     
     if(any(lengths != lengths[1])){
-      return(list(error=TRUE, message="all supplied vectors and matrix must have the same length"))
+      return(list(error=TRUE, message="all supplied vectors and matrix must have equal length"))
     }
     
   } else {
@@ -132,7 +131,7 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment
   }
   
   # Check if delta is strictly positive:
-  if(!is.null(delta) && delta < 0){
+  if(!is.null(equiv_threshold) && equiv_threshold < 0){
     return(list(error=TRUE, message = "equiv_threshold must be non-negative."))
   }
   
@@ -152,21 +151,20 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment
   }
   
   # time prior must be a subset of T:
-  if (!is.null(pretreatment.period) && !all(pretreatment.period %in% period)) {
-    return(list(error=TRUE, message="pretreatment.period must be a subset of period"))
+  if (!is.null(pretreatment_period) && !all(pretreatment_period %in% period)) {
+    return(list(error=TRUE, message="pretreatment_period must be a subset of period"))
   }
   
-  if(!is.null(base.period) && length(base.period) != 1){
-    return(list(error=TRUE, message: "base.period must be a scalar."))
+  if(!is.null(base_period) && length(base_period) != 1){
+    return(list(error=TRUE, message: "base_period must be a scalar."))
   }
   
   # base period must lie in time.prior:
-  if(is.null(pretreatment.period)){pretreatment.period <- period}
-  if(!is.null(base.period) && !(base.period%in%pretreatment.period)){
-    return(list(error=TRUE, message = "base.period can not be found not in the pre-treatment period."))
+  if(is.null(pretreatment_period)){pretreatment_period <- period}
+  if(!is.null(base_period) && !(base_period%in%pretreatment_period)){
+    return(list(error=TRUE, message = "base_period must be an element of pretreatment_period."))
   }
   
-  # Warnings:
   
   return(list(error=FALSE))
 }
