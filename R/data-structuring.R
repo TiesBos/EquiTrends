@@ -59,7 +59,7 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
   # Turn the ID to a 1 to N scale:
   new_data$ID <- as.integer(factor(new_data$ID , levels = unique(new_data$ID)))
   # Turn the period column to a 1:(T+1) scale:
-  period_numeric <- as.integer(factor(new_data$period, levels = unique_time))
+  period_numeric <- as.integer(factor(new_data$period, levels = unique(new_data$period)))
   new_data$period <- period_numeric
   
   # Return the final data.frame object used:

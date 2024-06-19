@@ -172,7 +172,8 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
                                  B = B, 
                                  significance_level = alpha, wild = (type=="Wild"),
                                  num_individuals = n, num_periods = no_periods, 
-                                 base_period = base_period), class = "maxEquivTestBoot")
+                                 base_period = base_period,
+                                 equiv_threshold_specified = !is.null(equiv_threshold)), class = "maxEquivTestBoot")
   
   return(results_list)
 }

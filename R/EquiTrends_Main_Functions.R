@@ -38,6 +38,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   error_maxTest <- maxTest_error(type, equiv_threshold, vcov)
   if(error_maxTest$error){stop(error_maxTest$message)}
   
+  
   # General error checking:
   error_test <- EquiTrends_inputcheck(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
                                      base_period, cluster, alpha)
@@ -47,9 +48,10 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   # Structuring the data:
   data_constr <- EquiTrends_dataconstr(Y, ID, G, period, X, data, pretreatment_period, base_period,
                                    cluster)
+ 
   # The dataframe:
   df <- data_constr$dataset
-  
+
   # The base period:
   base_period <- data_constr$baseperiod
   
