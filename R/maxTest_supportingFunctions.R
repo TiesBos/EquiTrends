@@ -54,12 +54,12 @@ maxTestIU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base.per
     
     reject.H0 <- all(reject.vec==TRUE)
     
-    results.list <- list(absolute.placebo.coefs = betas.placebo, standard.errors = beta.SE, 
-                         critical.values = crit_values, p.values = p_values,
-                         reject.H0 = reject.H0, delta = delta,
-                         sign.level = alpha, no.periods = no.periods, 
-                         base.period = base.period, N=n, coef.names = placebo_names,
-                         delta.specified = TRUE)
+    results.list <- structure(list(absolute.placebo.coefs = betas.placebo, standard.errors = beta.SE, 
+                                   critical.values = crit_values, p.values = p_values,
+                                   reject.H0 = reject.H0, delta = delta,
+                                   sign.level = alpha, no.periods = no.periods, 
+                                   base.period = base.period, N=n, coef.names = placebo_names,
+                                   delta.specified = TRUE), class = "maxEquivTestIU")
     
     return(results.list)
   } else{
@@ -69,13 +69,13 @@ maxTestIU <- function(data, delta, vcov, cluster, alpha, n, no.periods, base.per
     # Then, the minimum delta is the maximum value over all these values:
     min.delta <- max(min.deltas)
     
-    results.list <- list(absolute.placebo.coefs = betas.placebo, standard.errors = beta.SE,
-                         minimum.delta = min.delta,
-                         minimum.deltas = min.deltas,
-                         sign.level = alpha,
-                         no.periods = no.periods, base = base.period, N=n,
-                         coef.names = placebo_names,
-                         delta.specified = FALSE)
+    results.list <- structure(list(absolute.placebo.coefs = betas.placebo, standard.errors = beta.SE,
+                                   minimum.delta = min.delta,
+                                   minimum.deltas = min.deltas,
+                                   sign.level = alpha,
+                                   no.periods = no.periods, base = base.period, N=n,
+                                   coef.names = placebo_names,
+                                   delta.specified = FALSE), class = "maxEquivTestIU")
     
     return(results.list)
   }
@@ -154,15 +154,15 @@ maxTestBoot <- function(data, delta, alpha, n, B, no.periods,
   boot.crit.value <- stats::quantile(bootstrap.maxcoefs, probs = alpha)
   
   # Reject Or Not:
-  reject.H0 <- (max(abs(unconstrained.coefs[1:length(placebo_names)])) < boot.crit.value) 
+  reject.H0 <- (max(abs(unconstrained.coefs[1:length(placebo_names)])) < boot.crit.value)
   
-  results.list <- list(absolute.placebo.coefs = abs(unconstrained.coefs[1:length(placebo_names)]),
-                       max.coefs =max(abs(unconstrained.coefs[1:length(placebo_names)])),
-                       critical.values = boot.crit.value,
-                       reject.H0 = reject.H0, B = B, delta.specified = TRUE, 
-                       delta = delta, sign.level = alpha, wild = FALSE,
-                       no.periods = no.periods, base.period = base.period,
-                       N=n)
+  results.list <- structure(list(absolute.placebo.coefs = abs(unconstrained.coefs[1:length(placebo_names)]),
+                                 max.coefs =max(abs(unconstrained.coefs[1:length(placebo_names)])),
+                                 critical.values = boot.crit.value,
+                                 reject.H0 = reject.H0, B = B, delta.specified = TRUE, 
+                                 delta = delta, sign.level = alpha, wild = FALSE,
+                                 no.periods = no.periods, base.period = base.period,
+                                 N=n), class = "maxEquivTestBoot")
   
   return(results.list)
 }

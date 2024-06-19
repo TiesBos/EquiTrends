@@ -77,6 +77,7 @@ meanTest.func <- function(data, delta, vcov, cluster, alpha, n, no.periods, base
                          no.periods = no.periods, base.period = base.period, N=n)
     
   }
+  class(results.list) <- "meanEquivTest"
   return(results.list)
 }
 

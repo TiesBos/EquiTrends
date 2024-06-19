@@ -59,10 +59,8 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   
   if(type=="IU"){
     test_results <- maxTestIU(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
-    class(test_results) <- "maxEquivTestIU"
   } else if (type == "Boot" || type == "Wild"){
     test_results <- maxTestBoot(df, equiv_threshold, alpha, N, B, no_periods, base_period, type)
-    class(test_results) <- "maxEquivTestBoot"
   }
   
   return(test_results)
@@ -114,9 +112,6 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
   
   # Perform the test:
   results <- meanTest.func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
-  
-  # give it the specified class:
-  class(results) <- "meanEquivTest"
   
   return(results)
 }

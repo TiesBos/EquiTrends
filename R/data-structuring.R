@@ -133,7 +133,7 @@ EquiTrends.inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment
   
   # Check if delta is strictly positive:
   if(!is.null(delta) && delta < 0){
-    return(list(error=TRUE, message = "delta must be non-negative."))
+    return(list(error=TRUE, message = "equiv_threshold must be non-negative."))
   }
   
   # Check if alpha is between 0 and 1:
