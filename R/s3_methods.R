@@ -233,31 +233,31 @@ print.rmsEquivTest <- function(x, ...){
   cat(separator, title, "\n", sep = "")
   cat(separator, strrep("=", nchar(title)), "\n", sep = "")
   
-  cat("Type: Mean Placebo Effect \n")
-  if(x$delta.specified){
-    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
+  cat("Type: Root Mean Squared Placebo Effect \n")
+  cat("Significance level:", x$significance_level, "\n")
+  if(x$equiv_threshold_specified){
+    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
     
-    df.print <- data.frame(number_rep(x$RMS),
-                           number_rep(x$critical.value))
-    colnames(df.print) <- c("RMS Placebo Effect", "Simulated Crit. Val.")
-    rownames(df.print) <- c("")
+    df_print <- data.frame(number_rep(x$rms_placebo_coefficients),
+                           number_rep(x$rms_critical_value))
+    colnames(df_print) <- c("RMS Placebo Effect", "Simulated Crit. Val.")
+    rownames(df_print) <- c("")
   } else {
-    cat("Significance level:", x$sign.level, "\n")
     cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.\n")
-    df.print <- data.frame(number_rep(x$RMS), 
-                           number_rep(x$minimum.delta))
-    colnames(df.print) <- c("RMS Placebo Effect", "Min. Equiv. Threshold")
-    rownames(df.print) <- c("")  
+    df_print <- data.frame(number_rep(x$rms_placebo_coefficients), 
+                           number_rep(x$minimum_equiv_threshold))
+    colnames(df_print) <- c("RMS Placebo Effect", "Min. Equiv. Threshold")
+    rownames(df_print) <- c("")  
   }
   cat("---\n")
-  pretty_print(df.print)
+  pretty_print(df_print)
   cat("---\n")
   
   # Data statistics
-  cat("No. placebo coefficients estimated (T):", length(x$placebo.coefs), "\n")
-  cat("No. pre-treatment periods (T+1):", x$no.periods ,"\n")
-  cat("Base period:", x$base.period ,"\n")
-  cat("No. Individuals (N):", x$N, "\n")
+  cat("No. placebo coefficients estimated (T):", length(x$placebo_coefficients), "\n")
+  cat("No. pre-treatment periods (T+1):", x$num_periods ,"\n")
+  cat("Base period:", x$base_period ,"\n")
+  cat("No. Individuals (N):", x$num_individuals, "\n")
   cat("\n")
 }  
 

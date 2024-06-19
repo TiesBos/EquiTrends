@@ -1,12 +1,12 @@
 # ---- Error Function RMS ----
-rmsTest.error <- function(alpha, no.lambda){
+rmsTest.error <- function(alpha, no_lambda){
   
   if(!alpha %in% c(0.01, 0.025, 0.05, 0.1, 0.2)){
     return(list(error=TRUE, message="alpha must be one of 0.01, 0.025, 0.05, 0.1 or 0.2"))
   }
   
-  if(!is.numeric(no.lambda) || no.lambda <= 0 || no.lambda != round(no.lambda)){
-    return(list(error=TRUE, message="no.lambda must be a positive integer"))
+  if(!is.numeric(no_lambda) || no_lambda <= 0 || no_lambda != round(no_lambda)){
+    return(list(error=TRUE, message="no_lambda must be a positive integer"))
   }
   
   return(list(error = FALSE))
@@ -15,79 +15,80 @@ rmsTest.error <- function(alpha, no.lambda){
 
 
 # ----------- The Testing Procedure --------------------------------------------
-rmsTest.func <- function(data, delta, alpha, no.lambda, base.period){
+rmsTest.func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
   # Formula for plm function:
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
-  plm.formula <- stats::as.formula(paste("Y~", paste(c(placebo_names, X_names), collapse=" + ")))
+  plm_formula <- stats::as.formula(paste("Y~", paste(c(placebo_names, X_names), collapse=" + ")))
   
   # Number of individuals in the sample
   individuals <- unique(data[,"ID"])
   N <- length(individuals)
   
   # Number of periods:
-  no.periods <- length(unique(data[,"period"]))
+  no_periods <- length(unique(data[,"period"]))
   
   # Matrix storing the placebo coefficient RMS on 1/lambda of the data for 
   # lambda = 1,..., no.lambda:
-  MS.placebo.lambda <- rep(NA, no.lambda)
-  for(i in 1:no.lambda){
-    lambda <- i/no.lambda
+  MS_placebo_lambda <- rep(NA, no_lambda)
+  for(i in 1:no_lambda){
+    lambda <- i/no_lambda
     # Drawing the subset of individuals of size lambda*N
-    sub.N <- floor(lambda*N)
-    subset.index <- sample(1:N, sub.N)
-    subset.indiv <- individuals[subset.index]
+    sub_N <- floor(lambda*N)
+    subset_index <- sample(1:N, sub_N)
+    subset_indiv <- individuals[subset_index]
     
-    subset.data <- data[data[,"ID"] %in% subset.indiv,]
+    subset_data <- data[data[,"ID"] %in% subset_indiv,]
     
     # Calculating the TWFE estimators for this subset of data:
-    all.coefs <- plm::plm(plm.formula, data=subset.data, effect="twoways", 
+    all_coefs <- plm::plm(plm_formula, data=subset_data, effect="twoways", 
                           model="within", index=c("ID","period"))$coefficients
     
     # Calculate the mean squared error for the placebo estimates:
-    placebo.beta.lambda <- all.coefs[placebo_names]
-    placebo.mean.sqrd <- base::mean((placebo.beta.lambda)^2)
+    placebo_beta_lambda <- all_coefs[placebo_names]
+    placebo_mean_sqrd <- base::mean((placebo_beta_lambda)^2)
     # Store the mean squared placebo coefficient estimate:
-    MS.placebo.lambda[i] <- placebo.mean.sqrd
+    MS_placebo_lambda[i] <- placebo_mean_sqrd
     
   }
   
-  betas.placebo <- placebo.beta.lambda
+  betas_placebo <- placebo_beta_lambda
   
-  RMS.placebo <- sqrt(MS.placebo.lambda[no.lambda])
-  MS.placebo <- MS.placebo.lambda[no.lambda]
+  RMS_placebo <- sqrt(MS_placebo_lambda[no_lambda])
+  MS_placebo <- MS_placebo_lambda[no_lambda]
   
   # Calculating \hat{V}_n:
-  diff.vec <- MS.placebo.lambda[1:(no.lambda-1)] - MS.placebo.lambda[no.lambda]
-  V_n <- sqrt(mean(diff.vec^2))
+  diff_vec <- MS_placebo_lambda[1:(no_lambda-1)] - MS_placebo_lambda[no_lambda]
+  V_n <- sqrt(mean(diff_vec^2))
   
   # Calculating the (Bootstrap) critical value of the W distribution:
-  Q.W <- W_critical_value(alpha)
+  Q_W <- W_critical_value(alpha)
   
-  if(!is.null(delta)){
+  if(!is.null(equiv_threshold)){
     # Critical value for RMS test
-    MS.critical.value <- as.numeric(delta^2 + Q.W*V_n)
-    RMS.critical.value <- sqrt(MS.critical.value)
+    MS_critical_value <- as.numeric(equiv_threshold^2 + Q_W*V_n)
+    RMS_critical_value <- sqrt(MS_critical_value)
     
     # Reject or not:
-    reject.H0 <- MS.placebo.lambda[no.lambda] < MS.critical.value
+    reject_H0 <- MS_placebo_lambda[no_lambda] < MS_critical_value
     
-    results.list <- structure(list(placebo.coefs = betas.placebo, RMS = RMS.placebo,
-                                   critical.value = RMS.critical.value,
-                                   reject.H0 = reject.H0, delta = delta,
-                                   sign.level = alpha,
-                                   N = N, no.periods = no.periods, base.period = base.period,
-                                   delta.specified = TRUE),
+    results_list <- structure(list(placebo_coefficients = betas_placebo, rms_placebo_coefficients = RMS_placebo,
+                                   rms_critical_value = RMS_critical_value,
+                                   reject_null_hypothesis = reject_H0, equiv_threshold = equiv_threshold,
+                                   significance_level = alpha,
+                                   num_individuals = N, num_periods = no_periods, 
+                                   base_period = base_period,
+                                   equiv_threshold_specified = TRUE),
                               class = "rmsEquivTest")
   } else {
-    min.delta <- as.numeric(sqrt(MS.placebo-Q.W*V_n))
-    results.list <- structure(list(placebo.coefs = betas.placebo, RMS = RMS.placebo,
-                                   minimum.delta = min.delta, sign.level = alpha,
-                                   N = N, no.periods = no.periods, base.period = base.period,
-                                   delta.specified = FALSE),
+    min_equiv_threshold <- as.numeric(sqrt(MS_placebo-Q_W*V_n))
+    results_list <- structure(list(placebo_coefficients = betas_placebo, rms_placebo_coefficients = RMS_placebo,
+                                   minimum_equiv_threshold = min_equiv_threshold, significance_level = alpha,
+                                   num_individuals = N, num_periods = no_periods, base_period = base_period,
+                                   equiv_threshold_specified = FALSE),
                               class = "rmsEquivTest")
   }
-  return(results.list)
+  return(results_list)
 }
 
 
