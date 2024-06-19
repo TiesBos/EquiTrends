@@ -1,8 +1,8 @@
 # A Function for nice representation of small numbers:
 number_rep <- function(x){
-  new.x <- ifelse(abs(x) < 1e-4, format(x, scientific = TRUE), format(x, digits = 4))
-  new.x <- ifelse(abs(as.numeric(new.x)) < 2e-16,  "<2e-16", new.x)
-  return(new.x)
+  new_x <- ifelse(abs(x) < 1e-4, format(x, scientific = TRUE), format(x, digits = 4))
+  new_x < ifelse(abs(as.numeric(new_x)) < 2e-16,  "<2e-16", new_x)
+  return(new_x)
 }
 
 # A function to print data.frame objects:
@@ -65,34 +65,35 @@ print.maxEquivTestIU <- function(x, ...){
   cat(separator, strrep("=", nchar(title)), "\n", sep = "")
   
   cat("Type: Intersection Union \n")
-  cat("Significance level:", x$sign.level, "\n")
-  if(x$delta.specified){  
+  if(x$equiv_threshold_specified){  
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
-    df.print <- data.frame(number_rep(x$absolute.placebo.coefs),
-                           number_rep(x$standard.errors),
-                           number_rep(x$critical.values),
-                           number_rep(x$p.values))
+    cat("( Critical values are printed for the significance level:", x$significance_level, ")\n")
+    df.print <- data.frame(number_rep(x$abs_placebo_coefficients),
+                           number_rep(x$placebo_coefficients_se),
+                           number_rep(x$IU_critical_values),
+                           number_rep(x$p_values))
     
-    rownames(df.print) <- x$coef.names
+    rownames(df.print) <- x$placebo_coef_names
     colnames(df.print) <- c("Abs. Estimate", "Std. Error", "Critical Value", "p-value")
   } else {
+    cat("Significance level:", x$significance_level, "\n")
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.\n")
-    cat("Minimum equivalence threshold to accept the alternative:", formatC(x$minimum.delta, format = "g", digits = 4), "\n")
-    df.print <- data.frame(as.numeric(formatC(x$absolute.placebo.coefs, format = "g", digits = 4)), 
-                           as.numeric(formatC(x$standard.errors, format = "g", digits = 4)), 
-                           as.numeric(formatC(x$minimum.deltas, format = "g", digits = 4)))
+    cat("Minimum equivalence threshold to accept the alternative:", number_rep(x$minimum_equiv_threshold), "\n")
+    df.print <- data.frame(number_rep(x$abs_placebo_coefficients), 
+                           number_rep(x$placebo_coefficients_se), 
+                           number_rep(x$minimum_equiv_thresholds))
     colnames(df.print) <- c(" Estimate", "Std. Error ", " Minimum Equivalence Threshold")
-    rownames(df.print) <- x$coef.names
+    rownames(df.print) <- x$placebo_coef_names
   }
   cat("---\n")
   pretty_print(df.print)
   cat("---\n")
   
   # Summary statistics
-  cat("No. placebo coefficients estimated (T):", length(x$absolute.placebo.coefs), "\n")
-  cat("No. pre-treatment periods (T+1):", x$no.periods ,"\n")
-  cat("Base period:", x$base.period ,"\n")
-  cat("No. Individuals (N):", x$N, "\n")
+  cat("No. placebo coefficients estimated (T):", length(x$abs_placebo_coefficients), "\n")
+  cat("No. pre-treatment periods (T+1):", x$num_periods ,"\n")
+  cat("Base period:", x$base_period ,"\n")
+  cat("No. Individuals (N):", x$num_individuals, "\n")
   cat("\n")
 }
 

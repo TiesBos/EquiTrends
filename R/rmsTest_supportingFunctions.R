@@ -1,5 +1,5 @@
 # ---- Error Function RMS ----
-rmsTest.error <- function(alpha, no_lambda){
+rmsTest_error <- function(alpha, no_lambda){
   
   if(!alpha %in% c(0.01, 0.025, 0.05, 0.1, 0.2)){
     return(list(error=TRUE, message="alpha must be one of 0.01, 0.025, 0.05, 0.1 or 0.2"))
@@ -15,7 +15,7 @@ rmsTest.error <- function(alpha, no_lambda){
 
 
 # ----------- The Testing Procedure --------------------------------------------
-rmsTest.func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
+rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
   # Formula for plm function:
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)

@@ -1,5 +1,5 @@
 # ----------- The Mean Test Function -------------------------------------------
-meanTest.func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period){
+meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)

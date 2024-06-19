@@ -1,5 +1,5 @@
 # ----------- Data Construction Function ---------------------------------------
-EquiTrends.dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period, 
+EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period, 
                               base.period, cluster){
   colnames.X <- NULL
   if(!base::is.null(data)){
@@ -71,7 +71,7 @@ EquiTrends.dataconstr <- function(Y, ID, G, period, X, data, pretreatment.period
 
 # ----------- Main Error Checking Function -------------------------------------
 #   This function checks the input for the test functions. It takes as input:
-EquiTrends.inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment.period, 
+EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, delta, pretreatment.period, 
                                  base.period, cluster, alpha){
   
   if(is.null(data)){

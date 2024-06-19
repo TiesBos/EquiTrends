@@ -34,17 +34,17 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   
   # Error/Warnings:
   # Checking errors specific to this test procedure
-  error_maxTest <- maxTest.error(type, equiv_threshold, vcov)
+  error_maxTest <- maxTest_error(type, equiv_threshold, vcov)
   if(error_maxTest$error){stop(error_maxTest$message)}
   
   # General error checking:
-  error_test <- EquiTrends.inputcheck(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
+  error_test <- EquiTrends_inputcheck(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
                                      base_period, cluster, alpha)
   
   if(error_test$error){stop(error_test$message)}
   
   # Structuring the data:
-  data_constr <- EquiTrends.dataconstr(Y, ID, G, period, X, data, pretreatment_period, base_period,
+  data_constr <- EquiTrends_dataconstr(Y, ID, G, period, X, data, pretreatment_period, base_period,
                                    cluster)
   # The dataframe:
   df <- data_constr$dataset
@@ -58,9 +58,9 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   no_periods <- length(df[unique(df$period), "period"])
   
   if(type=="IU"){
-    test_results <- maxTestIU(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
+    test_results <- maxTestIU_func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
   } else if (type == "Boot" || type == "Wild"){
-    test_results <- maxTestBoot(df, equiv_threshold, alpha, N, B, no_periods, base_period, type)
+    test_results <- maxTestBoot_func(df, equiv_threshold, alpha, N, B, no_periods, base_period, type)
   }
   
   return(test_results)
@@ -92,13 +92,13 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
   
   # Error/Warnings:
   # General error checking:
-  error_test <- EquiTrends.inputcheck(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
+  error_test <- EquiTrends_inputcheck(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
                                      base_period, cluster, alpha)
   
   if(error_test$error){stop(error_test$message)}
   
   # We construct the data.frame:
-  data_constr <- EquiTrends.dataconstr(Y, ID, G, period, X, data, pretreatment_period, base_period,
+  data_constr <- EquiTrends_dataconstr(Y, ID, G, period, X, data, pretreatment_period, base_period,
                                    cluster)
   df <- data_constr$data
   
@@ -111,7 +111,7 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
   no_periods <- length(unique(df$period))
   
   # Perform the test:
-  results <- meanTest.func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
+  results <- meanTest_func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
   
   return(results)
 }
@@ -140,23 +140,23 @@ rmsEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
                     alpha=0.05, no_lambda = 5){
   
   # rmsTest specific error checking:
-  error_rmsTest <- rmsTest.error(alpha, no_lambda)
+  error_rmsTest <- rmsTest_error(alpha, no_lambda)
   if(error_rmsTest$error){stop(error_rmsTest$message) }
   
   # General error checking:
-  error_test <- EquiTrends.inputcheck(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
+  error_test <- EquiTrends_inputcheck(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
                                      base_period, cluster = NULL, alpha)
   
   if(error_test$error){stop(error_test$message)}
   
   # Read the data:
-  data_constr <- EquiTrends.dataconstr(Y, ID, G, period, X, data, pretreatment_period, 
+  data_constr <- EquiTrends_dataconstr(Y, ID, G, period, X, data, pretreatment_period, 
                                        base_period, cluster=NULL)
   df <- data_constr$dataset
   base.period <- data_constr$baseperiod
   
   # Perform the test:
-  test_results <- rmsTest.func(df, equiv_threshold, alpha, no_lambda, base_period)
+  test_results <- rmsTest_func(df, equiv_threshold, alpha, no_lambda, base_period)
   
   return(test_results)
 }
