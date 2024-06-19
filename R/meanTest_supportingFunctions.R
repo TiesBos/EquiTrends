@@ -22,11 +22,11 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
   # Calculate the variance-covariance matrix:
   if(is.null(vcov)){
     vcov_mat <- plm_twfe$vcov
-  } else if(vcov == "HC"){
-    vcov_mat <- sandwich::vcovHC(plm_twfe, type="HC1", method = "white1")
-  } else if(vcov == "HAC"){
-    vcov_mat <- sandwich::vcovHC(plm_twfe, type="HC3", method = "arellano")
-  } else if(vcov == "CL"){
+  } else if(!is.function(vcov) && vcov == "HC"){
+    vcov_mat <- plm::vcovHC(plm_twfe, type="HC1", method = "white1")
+  } else if(!is.function(vcov) && vcov == "HAC"){
+    vcov_mat <- plm::vcovHC(plm_twfe, type="HC3", method = "arellano")
+  } else if(!is.function(vcov) && vcov == "CL"){
     if(is.null(cluster)){
       vcov_mat <- clubSandwich::vcovCR(plm_twfe, cluster="ID", type="CR0")
     } else {

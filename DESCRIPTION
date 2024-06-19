@@ -15,7 +15,6 @@ Imports:
     plm,
     Rcpp (>= 1.0.12),
     RcppParallel,
-    sandwich,
     stats,
     VGAM
 LinkingTo: Rcpp,

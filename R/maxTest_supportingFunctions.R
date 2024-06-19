@@ -18,11 +18,11 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
   # Extract the Variance-Covariance Matrix based on the user input:
   if(is.null(vcov)){
     vcov_mat <- IU_twfe$vcov
-  } else if(vcov == "HC"){
-    vcov_mat <- sandwich::vcovHC(IU_twfe, type="HC1", method = "white1")
-  } else if(vcov == "HAC"){
-    vcov_mat <- sandwich::vcovHC(IU_twfe, type="HC3", method = "arellano")
-  } else if(vcov == "CL"){
+  } else if(!is.function(vcov) && vcov == "HC"){
+    vcov_mat <- plm::vcovHC(IU_twfe, type="HC1", method = "white1")
+  } else if(!is.function(vcov) && vcov == "HAC"){
+    vcov_mat <- plm::vcovHC(IU_twfe, type="HC3", method = "arellano")
+  } else if(!is.function(vcov) && vcov == "CL"){
     if(is.null(cluster)){
       vcov_mat <- clubSandwich::vcovCR(IU_twfe, cluster="ID", type="CR0")
     } else {
@@ -289,7 +289,7 @@ maxTest_error <- function(type, equiv_threshold, vcov){
   
   # If type = IU, vcov must be correctly specified:
   if(type == "IU" && !is.null(vcov)){
-    if(!(vcov %in% c("HC", "HAC", "CL")) && !is.function(vcov)){
+    if(!is.function(vcov) && !(vcov %in% c("HC", "HAC", "CL"))){
       return(list(error=TRUE, message = "vcov is not valid"))
     }
   }

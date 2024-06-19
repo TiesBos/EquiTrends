@@ -20,33 +20,109 @@ meanEquivTest(
 )
 }
 \arguments{
-\item{Y}{If 'data' is supplied, a scalar identifying the column number or column-name character string that corresponds to the numeric dependent (outcome) variable in ’data’. If 'data' is not supplied, a numeric vector with the variable of interest.}
+\item{Y}{A numeric vector with the variable of interest. If \code{data} is supplied, \code{Y} should be a scalar indicating the column number or column-name character string that corresponds to the numeric dependent (outcome) variable in ’data’.}
 
-\item{ID}{If 'data' is supplied, a scalar identifying the column number or column-name character string that corresponds to the unit numbers in ’data’. If 'data' is not supplied, a numeric vector (of the same dimension as Y) containing the unit numbers of the observations.}
+\item{ID}{A numeric vector identifying the different cross-sectional units in the dataset. If \code{data} is supplied, \code{ID} should be a scalar indicating the column number or column-name character string that corresponds to the cross-sectional units identifier in \code{data}.}
 
-\item{G}{If 'data' is supplied, a scalar identifying the column number or column-name character string associated to the binary or logic variable indicating if the individual receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). If 'data' is not supplied, a vector (of the same dimension as Y) binary or logic indicating if the individual (e.g. the ID vector).}
+\item{G}{A binary or logic vector (of the same dimension as \code{Y} and \code{ID}) indicating if the individual (e.g. as indicated by \code{ID}) receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). f 'data' is supplied, \code{G} should be a scalar identifying the column number or column-name character string associated to \code{G} in \code{data}.}
 
-\item{period}{If 'data' is supplied, a scalar identifying the column number or column-name character string associated with period (time) data. The time variable has to be numeric. If 'data' is not supplied, a numeric vector (of the same dimension as Y) indicating time.}
+\item{period}{A numeric vector (of the same dimension as Y) indicating time. If \code{data} is supplied, \code{period} should be a scalar indicating the column number or column-name character string that corresponds to the time identifier in \code{data}.}
 
-\item{X}{If 'data' is supplied, a vector of column numbers or column-name character strings that identifies the control variables’ columns. If data is not supplied, a vector, matrix or data.frame containing the control variables.}
+\item{X}{A vector, matrix, or data.frame containing the control variables. If \code{data} is supplied, \code{X} must be a vector of column numbers or column-name character strings that identifies the control variables’ columns.}
 
-\item{data}{An optional data.frame object containing the variables in Y, ID, G, T and, if supplied, X and cluster as its columns.}
+\item{data}{An optional \code{data.frame} object containing the variables in Y, ID, G, T and, if supplied, X and cluster as its columns.}
 
-\item{equiv_threshold}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null of ”non-negligible differences” can still be rejected.}
+\item{equiv_threshold}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null hypothesis of ”non-negligible differences” can still be rejected.}
 
-\item{pretreatment_period}{A numeric vector identifying the pre-treatment periods that should be used for testing. The default is to use all periods that are included in T.}
+\item{pretreatment_period}{A numeric vector identifying the pre-treatment periods that should be used for testing. \code{pretreatment_period} must be a subset of the periods included through \code{period}. The default is to use all periods that are included in \code{period}.}
 
-\item{base_period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last specified pre-treatment period.}
+\item{base_period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last period of the pre-treatment period.}
 
-\item{vcov}{The variance-covariance matrix that needs to be used. See details for more details.}
+\item{vcov}{The variance-covariance matrix that needs to be used. See \emph{Details} for more details.}
 
-\item{cluster}{If vcov = "CL", a vector indicating which observations belong to the same cluster of the same length as Y. If 'data' is supplied, 'cluster' must be either the column index or column name of this vector in the data.frame/matrix. The default (cluster=NULL) assumes every unit in ID is its own cluster.}
+\item{cluster}{If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as Y. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster.}
 
-\item{alpha}{Significance level of the test. The default is 0.05.}
+\item{alpha}{Significance level of the test. The default is 0.05. Only required if \code{equiv_threshold} is not specified.}
 }
 \value{
-hoi
+An object of class "meanEquivTest" containing:
+\item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
+\item{\code{abs_mean_placebo_coefs}}{the absolute value of the mean of the placebo coefficients,}
+\item{\code{var_mean_placebo_coef}}{the estimated variance of the mean placebo coefficient,}
+\item{\code{significance_level}}{the significance level of the test,}
+\item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
+\item{\code{num_periods}}{the number of periods in the data,}
+\item{\code{base_period}}{the base period in the data,}
+\item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+
+If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+
+if \code{!(is.null(equiv_threshold))}, then additionally
+\itemize{
+\item \code{mean_critical_value}: the critical value at the alpha level,
+\item \code{p_value}: the p-value of the test,
+\item \code{reject_null_hypothesis}: A logical value indicating whether to reject the null hypothesis,
+\item \code{equiv_threshold}: the equivalence threshold specified.
+}
 }
 \description{
-This function performs an equivalence test for pre-trends based on the maximum absolute placebo coefficient. The test can be performed using the intersection-union approach (IU), a bootstrap procedure for spherical errors (Boot) and a wild bootstrap procedure (Wild).
+This function performs an equivalence test for pre-trends based on the mean placebo coefficient from Dette & Schumann (2024).
+}
+\details{
+The \code{vcov} parameter specifies the variance-covariance matrix to be used in the function. 
+This parameter can take two types of inputs:
+\enumerate{
+\item A character string specifying the type of variance-covariance matrix estimation. The options are:\itemize{
+   \item \code{NULL}: The default variance-covariance matrix estimated by the \link[plm]{plm} function is used.
+   \item \code{"HC"}: A heteroscedasticity-robust (HC) covariance matrix is estimated using the \code{vcovHC} function from the \code{plm} package, \link[plm]{vcovHC}, with type \code{"HC1"} and method \code{"white1"} (see White, 1980).
+   \item \code{"HAC"}: A heteroscedasticity and autocorrelation robust (HAC) covariance matrix is estimated using the \code{vcovHC} function from the \code{plm} package, \link[plm]{vcovHC}, with type \code{"HC3"} and method \code{"arellano"} (see Arellano, 1987).
+   \item \code{"CL"}: A cluster-robust covariance matrix is estimated using the \code{vcovCR} function from the \code{clubSandwich} package with type \code{"CR0"} (see Lian & Zegers (1986)). The cluster variable is either \code{"ID"} or a custom cluster variable provided in the \code{data} dataframe.
+}
+\item A function that takes an \link[plm]{plm} object as input and returns a variance-covariance matrix. 
+   This allows for custom variance-covariance matrix estimation methods. For example, you could 
+   use the \code{vcovHC} function from the \code{sandwich} package with a specific method and type:
+   \preformatted{function(x) {vcovHC(x, method = "white1", type = "HC2")}}
+}
+If no \code{vcov} parameter is provided, the function defaults to using the variance-covariance matrix 
+estimated by the \link[plm:plm]{plm::plm()} function.
+}
+\examples{
+# Simulate data
+sim_data <- sim_paneldata()
+
+# Perform the test with equivalent threshold specified as 1 based on 
+# pre-treatment periods 1:4 and homoscedastic error-terms:
+equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                           base_period = 4)
+print(equivalence_test)
+
+# Perform the test without specifying the equivalence threshold with heteroscedastic 
+# and autocorrelation robust variance-covariance matrix estimator:
+equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                           base_period = 4, vcov = "HAC")
+print(equivalence_test)
+
+# Perform the test without specifying the equivalence threshold with a custom
+# variance-covariance matrix estimator:
+vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
+
+equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                           base_period = 4, vcov = vcov_func)
+print(equivalence_test)
+
+}
+\references{
+Arellano M (1987). “Computing Robust Standard Errors for Within-groups Estimators.” \emph{Oxford bulletin of Economics and Statistics}, 49(4), 431–434.
+
+Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+
+Liang, K.-Y., & Zeger, S. L. (1986). "Longitudinal data analysis using generalized linear models." \emph{Biometrika}, 73(1), 13-22. \href{doi:10.1093/biomet/73.1.13}{doi:10.1093/biomet/73.1.13}
+
+White H (1980). “A heteroskedasticity-consistent covariance matrix estimator and a direct test for heteroskedasticity.” \emph{Econometrica}, 48(4), 817–838.
+}
+\seealso{
+\code{\link[=print.meanEquivTest]{print.meanEquivTest}}
 }

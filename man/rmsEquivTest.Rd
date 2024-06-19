@@ -19,31 +19,75 @@ rmsEquivTest(
 )
 }
 \arguments{
-\item{Y}{If 'data' is supplied, a scalar identifying the column number or column-name character string that corresponds to the numeric dependent (outcome) variable in ’data’. If 'data' is not supplied, a numeric vector with the variable of interest.}
+\item{Y}{A numeric vector with the variable of interest. If \code{data} is supplied, \code{Y} should be a scalar indicating the column number or column-name character string that corresponds to the numeric dependent (outcome) variable in ’data’.}
 
-\item{ID}{If 'data' is supplied, a scalar identifying the column number or column-name character string that corresponds to the unit numbers in ’data’. If 'data' is not supplied, a numeric vector (of the same dimension as Y) containing the unit numbers of the observations.}
+\item{ID}{A numeric vector identifying the different cross-sectional units in the dataset. If \code{data} is supplied, \code{ID} should be a scalar indicating the column number or column-name character string that corresponds to the cross-sectional units identifier in \code{data}.}
 
-\item{G}{If 'data' is supplied, a scalar identifying the column number or column-name character string associated to the binary or logic variable indicating if the individual receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). If 'data' is not supplied, a vector (of the same dimension as Y) binary or logic indicating if the individual (e.g. the ID vector).}
+\item{G}{A binary or logic vector (of the same dimension as \code{Y} and \code{ID}) indicating if the individual (e.g. as indicated by \code{ID}) receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). f 'data' is supplied, \code{G} should be a scalar identifying the column number or column-name character string associated to \code{G} in \code{data}.}
 
-\item{period}{If 'data' is supplied, a scalar identifying the column number or column-name character string associated with period (time) data. The time variable has to be numeric. If 'data' is not supplied, a numeric vector (of the same dimension as Y) indicating time.}
+\item{period}{A numeric vector (of the same dimension as Y) indicating time. If \code{data} is supplied, \code{period} should be a scalar indicating the column number or column-name character string that corresponds to the time identifier in \code{data}.}
 
-\item{X}{If 'data' is supplied, a vector of column numbers or column-name character strings that identifies the control variables’ columns. If data is not supplied, a vector, matrix or data.frame containing the control variables.}
+\item{X}{A vector, matrix, or data.frame containing the control variables. If \code{data} is supplied, \code{X} must be a vector of column numbers or column-name character strings that identifies the control variables’ columns.}
 
-\item{data}{An optional data.frame object containing the variables in Y, ID, G, T and, if supplied, X and cluster as its columns.}
+\item{data}{An optional \code{data.frame} object containing the variables in Y, ID, G, T and, if supplied, X and cluster as its columns.}
 
-\item{equiv_threshold}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null of ”non-negligible differences” can still be rejected.}
+\item{equiv_threshold}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null hypothesis of ”non-negligible differences” can still be rejected.}
 
-\item{pretreatment_period}{A numeric vector identifying the pre-treatment periods that should be used for testing. The default is to use all periods that are included in T.}
+\item{pretreatment_period}{A numeric vector identifying the pre-treatment periods that should be used for testing. \code{pretreatment_period} must be a subset of the periods included through \code{period}. The default is to use all periods that are included in \code{period}.}
 
-\item{base_period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last specified pre-treatment period.}
+\item{base_period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last period of the pre-treatment period.}
 
-\item{alpha}{Significance level of the test. Must be one of the following: 0.01, 0.025, 0.05, 0.1 or 0.2. The default is 0.05.}
+\item{alpha}{Significance level of the test. The default is 0.05.}
 
-\item{no_lambda}{The scaling factor of the uniform distribution}
+\item{no_lambda}{Parameter specifying the number of incremental segments of the dataset over which a statistic is calculated. See \emph{Details}. The default is 5.}
 }
 \value{
-hoi
+An object of class "rmsEquivTest" containing:
+\item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
+\item{\code{rms_placebo_coefs}}{the root mean squared value of the placebo coefficients,}
+\item{\code{significance_level}}{the significance level of the test,}
+\item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
+\item{\code{num_periods}}{the number of periods in the data,}
+\item{\code{base_period}}{the base period in the data,}
+\item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+
+If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+
+if \code{!(is.null(equiv_threshold))}, then additionally
+\itemize{
+\item \code{rms_critical_value}: the critical value at the alpha level,
+\item \code{reject_null_hypothesis}: A logical value indicating whether to reject the null hypothesis,
+\item \code{equiv_threshold}: the equivalence threshold specified.
+}
 }
 \description{
-Equivalence Test for Pre-trends based on the RMS Placebo Coefficient
+This function performs an equivalence test for pre-trends based on the root mean squared placebo coefficient from Dette & Schumann (2024).
+}
+\details{
+\code{no_lambda} determines the proportions lambda/\code{no.lambda} for lambda = 1,...,\code{no_lambda} of the cross-sectional units at which the placebo coefficients are estimated. The placebo coefficients are estimated for each of these proportions and the root mean squared (RMS) of the placebo coefficients is calculated, which are then used to construct the critical value at a significance level of \code{alpha}. See Dette & Schumann (2024, s. 4.2.3.) for more details.
+}
+\examples{
+# Simulate data
+sim_data <- sim_paneldata()
+
+# Perform the test with equivalent threshold specified as 1 based on 
+# pre-treatment periods 1:4 and homoscedastic error-terms:
+equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                                 data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                                 base_period = 4)
+print(equivalence_test)
+
+# Perform the test without specifying the equivalence threshold:
+equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                           base_period = 4)
+print(equivalence_test)
+
+
+}
+\references{
+Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+}
+\seealso{
+\code{\link[=print.rmsEquivTest]{print.rmsEquivTest}}
 }
