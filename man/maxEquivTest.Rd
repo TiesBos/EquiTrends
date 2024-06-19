@@ -11,9 +11,9 @@ maxEquivTest(
   period,
   X = NULL,
   data = NULL,
-  delta = NULL,
-  pretreatment.period = NULL,
-  base.period = NULL,
+  equiv_threshold = NULL,
+  pretreatment_period = NULL,
+  base_period = NULL,
   vcov = NULL,
   cluster = NULL,
   alpha = 0.05,
@@ -34,11 +34,11 @@ maxEquivTest(
 
 \item{data}{An optional data.frame object containing the variables in Y, ID, G, T and, if supplied, X and cluster as its columns.}
 
-\item{delta}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null of ”non-negligible differences” can still be rejected.}
+\item{equiv_threshold}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null of ”non-negligible differences” can be rejected.}
 
-\item{pretreatment.period}{A numeric vector identifying the pre-treatment periods that should be used for testing. The default is to use all periods that are included in T.}
+\item{pretreatment_period}{A numeric vector identifying the pre-treatment periods that should be used for testing. The default is to use all periods that are included in T.}
 
-\item{base.period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last specified pre-treatment period.}
+\item{base_period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last specified pre-treatment period.}
 
 \item{vcov}{The variance-covariance matrix that needs to be used. See details for more details.}
 

@@ -11,11 +11,11 @@ rmsEquivTest(
   period,
   X = NULL,
   data = NULL,
-  delta = NULL,
-  pretreatment.period = NULL,
-  base.period = NULL,
+  equiv_threshold = NULL,
+  pretreatment_period = NULL,
+  base_period = NULL,
   alpha = 0.05,
-  no.lambda = 5
+  no_lambda = 5
 )
 }
 \arguments{
@@ -31,15 +31,15 @@ rmsEquivTest(
 
 \item{data}{An optional data.frame object containing the variables in Y, ID, G, T and, if supplied, X and cluster as its columns.}
 
-\item{delta}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null of ”non-negligible differences” can still be rejected.}
+\item{equiv_threshold}{The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null of ”non-negligible differences” can still be rejected.}
 
-\item{pretreatment.period}{A numeric vector identifying the pre-treatment periods that should be used for testing. The default is to use all periods that are included in T.}
+\item{pretreatment_period}{A numeric vector identifying the pre-treatment periods that should be used for testing. The default is to use all periods that are included in T.}
 
-\item{base.period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last specified pre-treatment period.}
+\item{base_period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last specified pre-treatment period.}
 
 \item{alpha}{Significance level of the test. Must be one of the following: 0.01, 0.025, 0.05, 0.1 or 0.2. The default is 0.05.}
 
-\item{no.lambda}{The scaling factor of the uniform distribution}
+\item{no_lambda}{The scaling factor of the uniform distribution}
 }
 \value{
 hoi
