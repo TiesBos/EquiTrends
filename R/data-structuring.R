@@ -53,7 +53,7 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
   
   # Create placebos:
   for(l in 1:tt){
-    new.data[, paste0("placebo_", unique_time[l])] <- ifelse(new_data[, "period"]==unique_time[l], 1, 0)*new_data[, "G"]
+    new_data[, paste0("placebo_", unique_time[l])] <- ifelse(new_data[, "period"]==unique_time[l], 1, 0)*new_data[, "G"]
   }
   
   # Turn the ID to a 1 to N scale:
