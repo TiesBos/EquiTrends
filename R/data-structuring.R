@@ -1,4 +1,19 @@
 # ----------- Data Construction Function ---------------------------------------
+#' @title Data Construction Function for EquiTrends
+#'
+#' @param Y see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param ID see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param G see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param period see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param X see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param data see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param pretreatment_period see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param base_period see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param cluster see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#'
+#' @return
+#' A list containing the structured data.frame object used in the equivalence testing procedures and the base period for the test.
+
 EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period, 
                               base_period, cluster){
   colnames_X <- NULL
@@ -70,6 +85,22 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
 
 # ----------- Main Error Checking Function -------------------------------------
 #   This function checks the input for the test functions. It takes as input:
+#' @title Input Checks Function for EquiTrends
+#'
+#' @param Y see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param ID see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param G see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param period see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param X see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param data see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param equiv_threshold see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param pretreatment_period see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param base_period see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param cluster see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#' @param alpha see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
+#'
+#' @return
+#' A list containing an error indicator and a message. If \code{error} is TRUE, \code{message} contains an error message. If \code{error} is FALSE, \code{message} is empty.
 EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pretreatment_period, 
                                  base_period, cluster, alpha){
   

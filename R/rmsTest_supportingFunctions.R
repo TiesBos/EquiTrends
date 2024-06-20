@@ -2,7 +2,7 @@
 #' Additional input checks for the rmsEquivTest function
 #'
 #' @param alpha The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1 or 0.2.
-#' @param no_lambda see \link[EqiuTrends]{rmsEquivTest}
+#' @param no_lambda see \link[EquiTrends]{rmsEquivTest}
 #'
 #' @return
 #' A list with two elements: a logical object error indicating if an error is encountered and a message (a character string) corresponding to the error. If error is TRUE, message contains an error message. If error is FALSE, message is an empty string.
@@ -30,7 +30,7 @@ rmsTest_error <- function(alpha, no_lambda){
 #' @param data The data.frame object containing the data for the test. Should be of the form what is returned by the \link[EquiTrends]{EquiTrends_dataconstr} function.
 #' @param equiv_threshold The equivalence threshold for the test. If NULL, the minimum equivalence threshold for which the null hypothesis can be rejected is calculated.
 #' @param alpha The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1 or 0.2.
-#' @param no_lambda See \link[EqiuTrends]{rmsEquivTest}.
+#' @param no_lambda See \link[EquiTrends]{rmsEquivTest}.
 #' @param base_period The base period for the test. Must be one of the unique periods in the data.
 #'
 #' @references 

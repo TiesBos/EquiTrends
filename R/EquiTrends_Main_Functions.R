@@ -292,7 +292,7 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
   df <- data_constr$data
   
   # Store the base.period:
-  base.period <- data_constr$baseperiod
+  base_period <- data_constr$baseperiod
   
   # number of individuals in the sample:
   N <- length(df[unique(df$ID), "ID"])
@@ -391,7 +391,7 @@ rmsEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   data_constr <- EquiTrends_dataconstr(Y, ID, G, period, X, data, pretreatment_period, 
                                        base_period, cluster=NULL)
   df <- data_constr$dataset
-  base.period <- data_constr$baseperiod
+  base_period <- data_constr$baseperiod
   
   # Perform the test:
   test_results <- rmsTest_func(df, equiv_threshold, alpha, no_lambda, base_period)

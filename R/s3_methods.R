@@ -12,7 +12,9 @@ pretty_print <- function(df) {
   
   # Determine the maximum width for each column
   max_widths <- sapply(df, function(col) max(nchar(as.character(col))))
-  max_widths <- pmax(max_widths, nchar(col_names))
+  
+  # Determine the maximum width across all columns
+  max_width <- max(max_widths, nchar(col_names))
   
   # Format the column names
   formatted_col_names <- mapply(function(name, width) format(name, width = width), name = col_names, width = max_widths)

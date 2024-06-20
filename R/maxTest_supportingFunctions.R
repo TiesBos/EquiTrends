@@ -127,6 +127,16 @@ maxTestIU_obj_func <- function(coef, mean, sd, alpha){
   return(1e20*(VGAM::pfoldnorm(coef, mean, sd) - alpha)^2)
 }
 
+#' @title Finding the minimum equivalence threshold for the equivalence test based on the IU procedure for the maximum placebo coefficient.
+#' @description \code{maxTestIU_optim_func} solves the optimization problem to find the minimum equivalence threshold for which one can reject the null hypothesis of non-negligible pre-trend differences at a given significance level for the equivalence test based on the maximum placebo coefficient, especially for the Intersection Union type. 
+#'
+#' @param coef The estimated absolute value of the mean placebo coefficients
+#' @param sd The estimated standard deviation of the mean of the placebo coefficients
+#' @param alpha The significance level
+#'
+#' @return
+#' The minimum equivalence threshold for which the null hypothesis of non-negligible differences can be rejected for the equivalence test based on the mean placebo coefficient.
+
 maxTestIU_optim_func <- function(coef, sd, alpha){
   obj_wrapper <- function(x) maxTestIU_obj_func(coef=coef, mean=x, sd=sd, alpha=alpha)
   
@@ -200,7 +210,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   } else {
     constrained_coefs <- boot_optimization_function(x=X, y=Y, no_placebos = length(placebo_names), 
                                                     equiv_threshold = equiv_threshold,
-                                                    start_val = unconstrained_coefs)$solution
+                                                    start_val = unconstrained_coefs)
   }
   
   if(type == "Boot"){
@@ -312,7 +322,20 @@ boot_constraint_function <- function(parameter, x, y, no_placebos, equiv_thresho
 }
 
 
-# Optimization function:
+#' @title Finding the restricted placebo coefficients for the maximum equivalence test based on the bootstrap approaches
+#' @description \code{boot_optimization_function} solves the optimization problem to find the restricted placebo coefficients, according to Dette & Schumann (2024). 
+#'
+#' @param x The double demeaned independent variables.
+#' @param y The double demeaned dependent variable.
+#' @param no_placebos The number of placebo coefficients.
+#' @param equiv_threshold The equivalence threshold for the test.
+#' @param start_val The starting values for the optimization.
+#'
+#' @references 
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#'
+#' @return
+#' A numeric vector containing the restricted placebo coefficients
 boot_optimization_function <- function(x, y, no_placebos, equiv_threshold, start_val){
   constrained_optimum <- nloptr::nloptr(x0 = start_val,
                                         eval_f = boot_objective_function,
@@ -325,7 +348,7 @@ boot_optimization_function <- function(x, y, no_placebos, equiv_threshold, start
                                         eval_jac_g_eq = NULL,
                                         opts = list("algorithm" = "NLOPT_LN_COBYLA", 
                                                     maxeval=2000000, xtol_rel = 1e-06),
-                                        x = x, y=y, no_placebos = no_placebos, equiv_threshold=equiv_threshold)
+                                        x = x, y=y, no_placebos = no_placebos, equiv_threshold=equiv_threshold)$solution
   return(constrained_optimum)
 }
 

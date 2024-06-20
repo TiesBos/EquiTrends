@@ -9,7 +9,7 @@ rmsTest_error(alpha, no_lambda)
 \arguments{
 \item{alpha}{The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1 or 0.2.}
 
-\item{no_lambda}{see \link[EqiuTrends]{rmsEquivTest}}
+\item{no_lambda}{see \link[EquiTrends]{rmsEquivTest}}
 }
 \value{
 A list with two elements: a logical object error indicating if an error is encountered and a message (a character string) corresponding to the error. If error is TRUE, message contains an error message. If error is FALSE, message is an empty string.

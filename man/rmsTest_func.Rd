@@ -13,7 +13,7 @@ rmsTest_func(data, equiv_threshold, alpha, no_lambda, base_period)
 
 \item{alpha}{The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1 or 0.2.}
 
-\item{no_lambda}{See \link[EqiuTrends]{rmsEquivTest}.}
+\item{no_lambda}{See \link[EquiTrends]{rmsEquivTest}.}
 
 \item{base_period}{The base period for the test. Must be one of the unique periods in the data.}
 }
