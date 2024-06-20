@@ -1,4 +1,12 @@
 # ---- Error Function RMS ----
+#' Additional input checks for the rmsEquivTest function
+#'
+#' @param alpha The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1 or 0.2.
+#' @param no_lambda see \link[EqiuTrends]{rmsEquivTest}
+#'
+#' @return
+#' A list with two elements: a logical object error indicating if an error is encountered and a message (a character string) corresponding to the error. If error is TRUE, message contains an error message. If error is FALSE, message is an empty string.
+#'
 rmsTest_error <- function(alpha, no_lambda){
   
   if(!alpha %in% c(0.01, 0.025, 0.05, 0.1, 0.2)){
@@ -15,6 +23,38 @@ rmsTest_error <- function(alpha, no_lambda){
 
 
 # ----------- The Testing Procedure --------------------------------------------
+#' An internal function of the RMS Equivalence Testing procedure
+#'
+#' @description This is a supporting function of the \code{rmsEquivTest} function. It calculates the placebo coefficients and the RMS of the placebo coefficients. It then calculates the critical value for the test and checks whether the null hypothesis can be rejected, according to Dette & Schumann (2024).
+#'
+#' @param data The data.frame object containing the data for the test. Should be of the form what is returned by the \link[EquiTrends]{EquiTrends_dataconstr} function.
+#' @param equiv_threshold The equivalence threshold for the test. If NULL, the minimum equivalence threshold for which the null hypothesis can be rejected is calculated.
+#' @param alpha The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1 or 0.2.
+#' @param no_lambda See \link[EqiuTrends]{rmsEquivTest}.
+#' @param base_period The base period for the test. Must be one of the unique periods in the data.
+#'
+#' @references 
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#'
+#' @return
+#' An object of class "rmsEquivTest" containing:
+#' \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
+#' \item{\code{rms_placebo_coefs}}{the root mean squared value of the placebo coefficients,}
+#' \item{\code{significance_level}}{the significance level of the test,}
+#' \item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
+#' \item{\code{num_periods}}{the number of periods in the data,}
+#' \item{\code{base_period}}{the base period in the data,}
+#' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#'
+#' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+#' 
+#' if \code{!(is.null(equiv_threshold))}, then additionally
+#' \itemize{
+#' \item \code{rms_critical_value}: the critical value at the alpha level,
+#' \item \code{reject_null_hypothesis}: A logical value indicating whether to reject the null hypothesis,
+#' \item \code{equiv_threshold}: the equivalence threshold specified.
+#' }
+
 rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
   # Formula for plm function:
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
@@ -94,6 +134,15 @@ rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
 
 # ---- Critical Value RMS ----
 # Function to get critical value for a given significance level
+#' Calculating the critical value for the W distribution as construced in Dette & Schumann (2024).
+#'
+#' @param significance_level The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1, 0.2, 0.8, 0.9, 0.95, 0.975, 0.99.
+#' 
+#' @references 
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#'
+#' @return
+#' A numeric scalar with the critical value for the W distribution at the given significance level.
 W_critical_value <- function(significance_level) {
   crit_val_matrix <- matrix(c(
     0.010, -4.2329959,

@@ -61,7 +61,7 @@
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 #' \item if \code{!(is.null(equiv_threshold))}\itemize{
 #'  \item{\code{IU_critical_values}}{a numeric vector with the individual critical values for each of the placebo coefficients,}
-#'  \item{\code{p_values}}{a numeric vector with individual p_values for each of the placebo coefficients,}
+#'  \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
 #'  \item{\code{equiv_threshold}}{the equivalence threshold employed.}
 #' }
 #' \item Additionally, if \code{is.null(equiv_threshold)}\itemize{

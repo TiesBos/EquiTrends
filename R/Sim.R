@@ -16,7 +16,7 @@
 #' 
 #' @export
 #' 
-#' @return A data.frame with the following columns:
+#' @return A \code{data.frame} with the following columns:
 #' \itemize{
 #'  \item{ID}{The cross-sectional unit identifier}
 #'  \item{period}{The time period identifier}
@@ -96,6 +96,24 @@ sim_paneldata <- function(N = 500, tt = 5, beta = rep(0, tt), p=1, gamma = rep(1
   return(sim.data)
 }
 
+
+#' Checking input for the sim_paneldata function
+#'
+#' @param N The number of cross-sectional units in the panel-data
+#' @param tt The number of time periods in the panel-data
+#' @param beta The vector of coefficients for the placebo variables. Must be of size tt.
+#' @param p The number of additional regressors
+#' @param gamma The vector of coefficients for the additional regressors
+#' @param alpha The vector of fixed effects. Must be of size N.
+#' @param lambda The vector of time effects. Must be of size tt.
+#' @param het The heteroskedasticity parameter. Must be 0 or 1: \code{het = 1} indicates that the error terms are generated under heteroskedasticity, \code{het = 0} indicates the error terms are generated under homoscedasticity. 
+#' @param phi The AR(1) parameter for the error terms. Must be in the interval [0,1). 
+#' @param sd The standard deviation of the error terms. Must be a positive number.
+#' @param burnins The number of burn-ins for the AR(1) process. Must be a positive integer.
+#'
+#' @return
+#' A list with two elements: a logical object error indicating if an error is encountered and a message (a character string) corresponding to the error. If error is TRUE, message contains an error message. If error is FALSE, message is an empty string.
+#' 
 sim_check <- function(N, tt, beta, p, gamma, alpha, lambda, het, phi, sd, burnins){
   if(!is.numeric(N) || N <= 0 || N != round(N)){
     return(list(error=TRUE, message="N must be a positive integer"))

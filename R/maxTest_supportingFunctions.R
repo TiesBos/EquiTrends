@@ -1,5 +1,43 @@
 ############ Supporting Functions of maxTest ###################################
 # ----------- Intersection Union Approach --------------------------------------
+#' An internal function of the EquiTrends Maximum Equivalence Testing procedure using the Intersection Union approach. 
+#'
+#' @description This is a supporting function of the \code{maxEquivTest} function. It calculates the placebo coefficients and the absolute value of the placebo coefficients. It then calculates the critical value and p-values if an equivalence threshold is supplied for the test, according to Dette & Schumann (2024). If no equivalence threshold is supplied, it calculates the minimum equivalence threshold for which the null of non-negligible pre-trend differences can be rejected.
+#' 
+#'
+#' @param data The data.frame object containing the data for the test. Should be of the form what is returned by the \link[EquiTrends]{EquiTrends_dataconstr} function.
+#' @param equiv_threshold The equivalence threshold for the test. If NULL, the minimum equivalence threshold for which the null hypothesis of non-negligible can be rejected is calculated.
+#' @param vcov The variance-covariance matrix estimator. See \link[EquiTrends]{maxEquivTest} for more information.
+#' @param cluster The cluster variable for the cluster-robust variance-covariance matrix estimator. See \link[EquiTrends]{maxEquivTest} for more information.
+#' @param alpha The significance level for the test. 
+#' @param n The number of cross-sectional individuals in the data.
+#' @param no_periods The number of periods in the data.
+#' @param base_period The base period for the test. Must be one of the unique periods in the data.
+#'
+#' @references 
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#'
+#' @return
+#' An object of class "maxEquivTestIU" containing:
+#' \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
+#' \item{\code{abs_placebo_coefficients}}{a numeric vector with the absolute values of estimated placebo coefficients,}
+#' \item{\code{placebo_coefficient_se}}{a numeric vector with the standard errors of the placebo coefficients,}
+#' \item{\code{significance_level}}{the chosen significance level of the test,}
+#' \item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
+#' \item{\code{num_periods}}{the number of periods in \code{data},}
+#' \item{\code{base_period}}{the base period in the data,}
+#' \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
+#' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#'  Additionally, if \code{!(is.null(equiv_threshold))}\itemize{
+#'  \item{\code{IU_critical_values}}{a numeric vector with the individual critical values for each of the placebo coefficients,}
+#'  \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
+#'  \item{\code{equiv_threshold}}{the equivalence threshold employed,}
+#' }
+#' if \code{is.null(equiv_threshold)}\itemize{
+#' \item{\code{minimum_equiv_thresholds}}{a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
+#' \item{\code{minimum_equiv_threshold}}{a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
+#' }
+#'
 maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
@@ -48,17 +86,13 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
     crit_values <- c(base::sapply(beta_se, 
                                   FUN = function(x){return(VGAM::qfoldnorm(alpha, mean=equiv_threshold, sd=x))}))
     reject_vec <- abs(abs_betas_placebo) < crit_values
-    
-    # P-values calculated
-    p_values <- c(base::mapply(FUN = function(x, y){return(VGAM::pfoldnorm(x, mean=equiv_threshold, sd=y))},
-                               abs_betas_placebo, beta_se))
-    
+
     reject_H0 <- all(reject_vec==TRUE)
     
     results_list <- structure(list(placebo_coefficients = betas_placebo, 
                                    abs_placebo_coefficients = abs_betas_placebo, 
                                    placebo_coefficients_se = beta_se, 
-                                   IU_critical_values = crit_values, p_values = p_values,
+                                   IU_critical_values = crit_values,
                                    reject_null_hypothesis = reject_H0, equiv_threshold = equiv_threshold,
                                    significance_level = alpha, num_individuals = n,
                                    num_periods = no_periods, 
@@ -113,6 +147,37 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 }
 
 # ----------- The Bootstrap Approaches -----------------------------------------
+#' An internal function of the EquiTrends Maximum Equivalence Testing procedure using the Bootstrap approaches.
+#'
+#' @description This is a supporting function of the \code{maxEquivTest} function. It calculates the placebo coefficients and the absolute value of the placebo coefficients. It then calculates the critical value by bootstrap if an equivalence threshold is supplied for the test, according to Dette & Schumann (2024). 
+#'
+#' @param data The data.frame object containing the data for the test. Should be of the form what is returned by the \link[EquiTrends]{EquiTrends_dataconstr} function.
+#' @param equiv_threshold The equivalence threshold for the test. 
+#' @param alpha The significance level for the test.
+#' @param n The number of cross-sectional individuals in the data.
+#' @param B The number of bootstrap replications.
+#' @param no_periods The number of periods in the data.
+#' @param base_period The base period for the test. Must be one of the unique periods in the data.
+#' @param type The type of bootstrap to be used. Must be one of "Boot" or "Wild".
+#'
+#' @references
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#'
+#' @return
+#' an object of class "maxEquivTestBoot"  with
+#'  \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
+#'  \item{\code{abs_placebo_coefficients}}{a numeric vector with the absolute values of estimated placebo coefficients,}
+#'  \item{\code{max_abs_coefficient}}{the maximum absolute estimated placebo coefficient,}
+#'  \item{\code{bootstrap_critica_value}}{the by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,}
+#'  \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
+#'  \item{\code{B}}{the number of bootstrap samples used to find the critical value,}
+#'  \item{\code{significance_level}}{the chosen significance level of the test \code{alpha},}
+#'  \item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
+#'  \item{\code{num_periods}}{the number of periods in \code{data},}
+#'  \item{\code{base_period}}{the base period in the data,}
+#'  \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
+#'  \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#'
 maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods, 
                                  base_period, type){
   # Obtain the double demeaned data:
@@ -265,6 +330,19 @@ boot_optimization_function <- function(x, y, no_placebos, equiv_threshold, start
 }
 
 # Constrained Variance:
+#' Calculating the constrained variance of the residuals for the Boostrap approaches in the EquiTrends Maximum Equivalence Testing procedure, according to Dette & Schumann (2024).
+#'
+#' @param parameter The constrained coefficients.
+#' @param x The double demeaned independent variables.
+#' @param y The double demeaned dependent variable.
+#' @param N The number of cross-sectional individuals.
+#' @param no_periods The number of time periods
+#'
+#' @references
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#'
+#' @return
+#' The estimated constrained variance of the residuals.
 sigma_hathat_c <- function(parameter, x, y, N, no_periods){
   Xb <- as.numeric(x%*%parameter)
   
@@ -277,6 +355,16 @@ sigma_hathat_c <- function(parameter, x, y, N, no_periods){
 
 
 # --- maxTest Error Function ---
+#' @title Additional input checks for the maxEquivTest function
+#' 
+#' @description This function checks additonal inputs specific to the maxEquivTest function. 
+#'
+#' @param type the type of test for the maximum absolute placebo coefficient to be conducted. Must be one of "IU", "Boot" or "Wild".
+#' @param equiv_threshold the equivalence threshold for the test. Must be a numeric scalar or NULL.
+#' @param vcov the variance-covariance matrix estimator. See \code{\link[EquiTrends]{maxEquivTest}} for more information.
+#'
+#' @return
+#' A list with two elements: \code{error} a logical value indicating whether an error was found, and \code{message} a character string with the error message. If no error was found, \code{error} is \code{FALSE} and \code{message} is empty.
 maxTest_error <- function(type, equiv_threshold, vcov){
   
   if(length(type)!=1 && !identical(type, c("IU", "Boot", "Wild"))){

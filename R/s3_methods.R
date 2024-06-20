@@ -1,7 +1,7 @@
 # A Function for nice representation of small numbers:
 number_rep <- function(x){
   new_x <- ifelse(abs(x) < 1e-4, format(x, scientific = TRUE), format(x, digits = 4))
-  new_x < ifelse(abs(as.numeric(new_x)) < 2e-16,  "<2e-16", new_x)
+  new_x <- ifelse(abs(as.numeric(new_x)) < 2e-16,  "<2e-16", new_x)
   return(new_x)
 }
 
@@ -50,7 +50,7 @@ pretty_print <- function(df) {
 print.maxEquivTestIU <- function(x, ...){
   cat("\n")
   width <- getOption("width")
-  title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
+  title <- "Equivalence Tests for Pre-trends in DiD Estimation"
   
   # Check if console width is less than title length
   if (width < nchar(title)) {
@@ -66,15 +66,15 @@ print.maxEquivTestIU <- function(x, ...){
   
   cat("Type: Intersection Union \n")
   if(x$equiv_threshold_specified){  
-    cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
+    cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
+    cat("Reject null hypothesis:" , x$reject_null_hypothesis, "\n")
     cat("( Critical values are printed for the significance level:", x$significance_level, ")\n")
     df_print <- data.frame(number_rep(x$abs_placebo_coefficients),
                            number_rep(x$placebo_coefficients_se),
-                           number_rep(x$IU_critical_values),
-                           number_rep(x$p_values))
+                           number_rep(x$IU_critical_values))
     
     rownames(df_print) <- x$placebo_coef_names
-    colnames(df_print) <- c("Abs. Estimate", "Std. Error", "Critical Value", "p-value")
+    colnames(df_print) <- c("Abs. Estimate", "Std. Error", "Critical Value")
   } else {
     cat("Significance level:", x$significance_level, "\n")
     cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.\n")
@@ -109,7 +109,7 @@ print.maxEquivTestIU <- function(x, ...){
 print.maxEquivTestBoot <- function(x, ...){
   cat("\n")
   width <- getOption("width")
-  title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
+  title <- "Equivalence Tests for Pre-trends in DiD Estimation"
   
   # Check if console width is less than title length
   if (width < nchar(title)) {
@@ -163,7 +163,7 @@ print.maxEquivTestBoot <- function(x, ...){
 print.meanEquivTest <- function(x, ...){
   cat("\n")
   width <- getOption("width")
-  title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
+  title <- "Equivalence Tests for Pre-trends in DiD Estimation"
   
   # Check if console width is less than title length
   if (width < nchar(title)) {
@@ -179,12 +179,13 @@ print.meanEquivTest <- function(x, ...){
   
   cat("Type: Mean Placebo Effect \n")
   if(x$equiv_threshold_specified){
-    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$delta, ".\n")
+    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
     
     df_print <- data.frame(number_rep(x$abs_mean_placebo_coefs),
                            number_rep(sqrt(x$var_mean_placebo_coef)), 
-                           number_rep(x$p_value))
-    colnames(df_print) <- c("Abs. Mean Placebo Effect", "Std. Error", "p-value")
+                           number_rep(x$p_value),
+                           x$reject_null_hypothesis)
+    colnames(df_print) <- c("Abs. Mean Placebo Effect", "Std. Error", "p-value", "Reject H0")
     rownames(df_print) <- c("")
   } else {
     cat("Significance level:", x$significance_level, "\n")
@@ -218,7 +219,7 @@ print.meanEquivTest <- function(x, ...){
 print.rmsEquivTest <- function(x, ...){
   cat("\n")
   width <- getOption("width")
-  title <- "Dette & Schumann (2023) Equivalence Tests for Pre-trends in DiD Estimation"
+  title <- "Equivalence Tests for Pre-trends in DiD Estimation"
   
   # Check if console width is less than title length
   if (width < nchar(title)) {
@@ -238,8 +239,9 @@ print.rmsEquivTest <- function(x, ...){
     cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
     
     df_print <- data.frame(number_rep(x$rms_placebo_coefficients),
-                           number_rep(x$rms_critical_value))
-    colnames(df_print) <- c("RMS Placebo Effect", "Simulated Crit. Val.")
+                           number_rep(x$rms_critical_value),
+                           x$reject_null_hypothesis)
+    colnames(df_print) <- c("RMS Placebo Effect", "Simulated Crit. Val.", "Reject H0")
     rownames(df_print) <- c("")
   } else {
     cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.\n")

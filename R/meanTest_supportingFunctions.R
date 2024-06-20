@@ -1,4 +1,41 @@
 # ----------- The Mean Test Function -------------------------------------------
+#' An internal function of the EquiTrends Mean Equivalence Testing procedure
+#' 
+#' @description This is a supporting function of the \code{meanEquivTest} function. It calculates the placebo coefficients and the absolute value of the mean of the placebo coefficients. It then calculates the critical value and p-values if an equivalence threshold is supplied for the test, according to Dette & Schumann (2024). If equivalence threshold is not supplied, it calculates the minimum equivalence threshold for which the null of non-negligible pre-trend differences can be rejected.
+#'
+#' @param data The data.frame object containing the data for the test. Should be of the form what is returned by the \link[EquiTrends]{EquiTrends_dataconstr} function.
+#' @param equiv_threshold The equivalence threshold for the test. If NULL, the minimum equivalence threshold for which the null hypothesis can be rejected is calculated.
+#' @param vcov The variance-covariance matrix estimator. See \link[EquiTrends]{meanEquivTest} for more information.
+#' @param cluster The cluster variable for the cluster-robust variance-covariance matrix estimator. See \link[EquiTrends]{meanEquivTest} for more information.
+#' @param alpha The significance level for the test. Only required if no equivalence threshold is supplied.
+#' @param n The number of cross-sectional individuals in the data.
+#' @param no_periods The number of periods in the data.
+#' @param base_period The base period for the test. Must be one of the unique periods in the data.
+#'
+#' @references 
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#'
+#' @return
+#' #' An object of class "meanEquivTest" containing:
+#' \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
+#' \item{\code{abs_mean_placebo_coefs}}{the absolute value of the mean of the placebo coefficients,}
+#' \item{\code{var_mean_placebo_coef}}{the estimated variance of the mean placebo coefficient,}
+#' \item{\code{significance_level}}{the significance level of the test,}
+#' \item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
+#' \item{\code{num_periods}}{the number of periods in the data,}
+#' \item{\code{base_period}}{the base period in the data,}
+#' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#'
+#' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+#' 
+#' if \code{!(is.null(equiv_threshold))}, then additionally
+#' \itemize{
+#' \item \code{mean_critical_value}: the critical value at the alpha level,
+#' \item \code{p_value}: the p-value of the test,
+#' \item \code{reject_null_hypothesis}: A logical value indicating whether to reject the null hypothesis,
+#' \item \code{equiv_threshold}: the equivalence threshold specified.
+#' }
+#' 
 meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
@@ -90,6 +127,15 @@ meanTest_obj_func <- function(coef, mean, sd, alpha){
 }
 
 
+#' @title Finding the minimum equivalence threshold for the mean equivalence test
+#' @description \code{meanTest_optim_func} solves the optimization problem to find the minimum equivalence threshold for which one can reject the null hypothesis of non-negligible pre-trend differences at a given significance level for the equivalence test based on the mean placebo coefficient. 
+#'
+#' @param coef The estimated absolute value of the mean placebo coefficients
+#' @param sd The estimated standard deviation of the mean of the placebo coefficients
+#' @param alpha The significance level
+#'
+#' @return
+#' The minimum equivalence threshold for which the null hypothesis of non-negligible differences can be rejected for the equivalence test based on the mean placebo coefficient.
 meanTest_optim_func <- function(coef, sd, alpha){
   obj_wrapper <- function(x) meanTest_obj_func(coef=coef, mean=x, sd=sd, alpha=alpha)
   
