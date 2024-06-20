@@ -6,7 +6,7 @@ Authors@R: c(
     person("Ties", "Bos", email = "tc.bos@student.maastrichtuniversity.nl", role = c("aut","cre")),
     person("Martin", "Schumann", email = "m.schumann@maastrichtuniversity.nl", role = "ctb"))
 Maintainer: Ties Bos <tc.bos@student.maastrichtuniversity.nl>
-Description: One paragraph description of what the package does as one or more full sentences.
+Description: Testing for parallel trends is crucial for Difference-in-Difference. This package implements the testing procedures for equivalence of pre-trends in the context of Difference-in-Differences designs proposed by Dette & Schumann (2024) <doi: 10.1080/07350015.2024.2308121>. 
 License: MIT + file LICENSE
 Imports: 
     clubSandwich,
@@ -24,3 +24,6 @@ URL: https://github.com/TiesBos/EquiTrends
 BugReports: https://github.com/TiesBos/EquiTrends/issues
 RoxygenNote: 7.3.1
 Encoding: UTF-8
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
