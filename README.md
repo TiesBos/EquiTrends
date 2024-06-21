@@ -87,13 +87,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G        X_1        X_2
-#> 1  1      1 -1.0427794 0  0.3507547 -1.2809085
-#> 2  1      2 -2.8729321 0 -0.6924221 -0.8693055
-#> 3  1      3 -3.3074041 0 -1.2332193 -1.6310422
-#> 4  1      4  0.9337252 0  0.7480387  0.6460518
-#> 5  1      5  1.1063933 0  1.0665608 -0.7199774
-#> 6  2      1  1.2659749 1  1.1705765  0.3811330
+#>   ID period         Y G        X_1        X_2
+#> 1  1      1 0.6466018 0 -0.7730465  0.9143307
+#> 2  1      2 0.9035382 0 -0.1954183  0.8874440
+#> 3  1      3 1.5904437 0  0.2612330  0.5111809
+#> 4  1      4 2.8086347 0  1.7802523  0.1791213
+#> 5  1      5 0.1013257 0 -0.1265283 -0.6889051
+#> 6  2      1 3.3172503 1  1.2778815  0.5055755
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -115,6 +115,7 @@ user-specified equivalence threshold, $\delta$, indicating the what
 negligible is to the user. That is, if
 $||\beta||_\infty = \max_{l=1,...T} |\beta_l|$, the testing procedure
 can be represented as
+
 $$H_0: ||\beta||_\infty \geq \delta \quad \text{vs.} \quad H_1: ||\beta||_\infty < \delta.$$
 The null and alternative hypothesis can therefore be seen as
 non-negligible and negligible differences in pre-trends, respectively.
@@ -212,9 +213,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.36045          0.009834        0.9838        
-#> 0.01308          0.009834        0.9838        
-#> 0.11077          0.009834        0.9838        
+#> 0.26688          0.009892        0.9837        
+#> 0.24911          0.009892        0.9837        
+#> 0.04083          0.009892        0.9837        
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -235,9 +236,9 @@ print(IU_equivalence_test3)
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.36045          0.008653        0.9858        
-#> 0.01308          0.008602        0.9859        
-#> 0.11077          0.008432        0.9861        
+#> 0.26688          0.008663        0.9858        
+#> 0.24911          0.008613        0.9858        
+#> 0.04083          0.008585        0.9859        
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -297,7 +298,7 @@ boot_equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "per
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.3604                   0.6761                      TRUE      
+#> 0.2669                   0.6792                      TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -322,7 +323,7 @@ The Wild boostrap with 100 bootstrap iterations:
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.3604                   0.6364                      TRUE      
+#> 0.2669                   0.6381                      TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -339,8 +340,11 @@ of Dette & Schumann
 tests the null hypothesis that the absolute mean placebo coefficient is
 larger to a user-specified equivalence threshold, $\delta$, indicating
 the what negligible is to the user. That is, if
-$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l$, the testing procedure
-can be represented as
+
+$$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l,$$
+
+the testing procedure can be represented as
+
 $$H_0: |\bar{\beta}| \geq \delta \quad \text{vs.} \quad H_1: |\bar{\beta}| < \delta.$$
 The null and alternative hypothesis can therefore be seen as
 non-negligible and negligible differences in pre-trends, respectively.
@@ -411,7 +415,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.1527                   0.02409     <2e-16  TRUE      
+#> 0.1856                   0.02423     <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -430,7 +434,7 @@ print(mean_equivalence_test3)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.1527                   0.02111     <2e-16  TRUE      
+#> 0.1856                   0.02127     <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -447,8 +451,11 @@ section 4.2.3 of Dette & Schumann
 tests the null hypothesis that the root mean squared placebo coefficient
 is larger to a user-specified equivalence threshold, $\delta$,
 indicating the what negligible is to the user. That is, if
-$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2}$, the testing
-procedure can be represented as
+
+$$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
+
+the testing procedure can be represented as
+
 $$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
 The null and alternative hypothesis can therefore be seen as
 non-negligible and negligible differences in pre-trends, respectively.
@@ -501,7 +508,7 @@ print(rms_equivalence_test)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.2178               0.5281                  TRUE      
+#> 0.2121               0.885                   TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -520,7 +527,7 @@ print(rms_equivalence_test2)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.2178               0.9654                  TRUE      
+#> 0.2121               0.9144                  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 

@@ -58,6 +58,7 @@ The `EquiTrends` package contains functions to test for equivalence of pre-trend
 
 ### The `maxEquivTest` function
 The maxEquivTest implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if $||\beta||_\infty = \max_{l=1,...T} |\beta_l|$, the testing procedure can be represented as
+
 $$H_0: ||\beta||_\infty \geq \delta \quad \text{vs.} \quad H_1: ||\beta||_\infty < \delta.$$
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. 
 
@@ -156,7 +157,12 @@ The Wild boostrap with 100 bootstrap iterations:
 
 
 ### The `meanEquivTest` function
-The meanEquivTest implements the equivalence testing procedure surrounding the mean placebo coefficientas described in Section 4.2.2. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the absolute mean placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if $\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l$, the testing procedure can be represented as
+The meanEquivTest implements the equivalence testing procedure surrounding the mean placebo coefficientas described in Section 4.2.2. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the absolute mean placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if 
+
+$$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l,$$ 
+
+the testing procedure can be represented as
+
 $$H_0: |\bar{\beta}| \geq \delta \quad \text{vs.} \quad H_1: |\bar{\beta}| < \delta.$$
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. Implementation of the test is similar to the `maxEquivTest` function, in terms of the possible variance-covariance matrices (for more information on the possible variance-covariance matrices, see the documentation of the `meanEquivTest` function). The function returns an object of class `meanEquivTest` containing
 
@@ -213,7 +219,12 @@ print(mean_equivalence_test3)
 
 
 ### The `rmsEquivTest` function
-The rmsEquivTest implements the equivalence testing procedure surrounding the root mean squared placebo coefficient as described in section 4.2.3 of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the root mean squared placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if $\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2}$, the testing procedure can be represented as
+The rmsEquivTest implements the equivalence testing procedure surrounding the root mean squared placebo coefficient as described in section 4.2.3 of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the root mean squared placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if 
+
+$$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
+
+the testing procedure can be represented as
+
 $$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. The function returns an object of class `rmsEquivTest` containing
 
