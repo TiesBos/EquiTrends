@@ -38,7 +38,7 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
   }
   
   # Add a variable indicating the cluster if supplied
-  if(!is.null(cluster)){new.data[,"cluster"] <- cluster}
+  if(!is.null(cluster)){new_data[,"cluster"] <- cluster}
   
   # Omit any rows with NAs
   original_length <- nrow(new_data)
@@ -143,12 +143,15 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pr
       return(list(error=TRUE, message="all supplied vectors and matrix must have equal length"))
     }
     
+    if(any(lengths == 1)){
+      warning("data possibly missing: check if `data` should be specified")
+    }
+    
   } else {
     # Check if the data is of the require data.frame form:
     if(!is.data.frame(data)){
       return(list(error=TRUE, message = "data must be an object of class data.frame"))
     }
-    
     
     # For the remaining tests, we construct the variables quickly:
     Y <- data[, Y]
@@ -157,6 +160,23 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pr
     G <- data[, G]
     if(!is.null(X)){X <- data[,X]}
     if(!is.null(cluster)){cluster <- data[,cluster]}
+    
+    # Check if Y, ID, G, period and cluster are vectors:
+    dim_Y <- dim(as.matrix(Y))[2]
+    dim_ID <- dim(as.matrix(ID))[2]
+    dim_G <- dim(as.matrix(G))[2]
+    dim_period <- dim(as.matrix(period))[2]
+    ncols_vec <- c(dim_Y, dim_ID, dim_G, dim_period)
+    message_vec <- "Y, ID, period and G must be column vectors."
+    if(!is.null(cluster)){
+      dim_cluster <- dim(as.matrix(cluster))[2]
+      ncols_vec <- c(ncols_vec, dim_cluster)
+      message_vec <- "Y, ID, period, G and cluster must be column vectors."
+    }
+    if(any(ncols_vec != 1)){
+      return(list(error=TRUE, message = message_vec))
+    }
+    
     
     
   }
@@ -187,7 +207,7 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pr
   }
   
   if(!is.null(base_period) && length(base_period) != 1){
-    return(list(error=TRUE, message: "base_period must be a scalar."))
+    return(list(error=TRUE, message = "base_period must be a scalar."))
   }
   
   # base period must lie in time.prior:

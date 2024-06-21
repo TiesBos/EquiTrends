@@ -107,6 +107,9 @@ rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
   if(!is.null(equiv_threshold)){
     # Critical value for RMS test
     MS_critical_value <- as.numeric(equiv_threshold^2 + Q_W*V_n)
+    if(MS_critical_value< 0){
+      stop("The critical value is negative. Please choose a higher equivalence threshold.")
+    }
     RMS_critical_value <- sqrt(MS_critical_value)
     
     # Reject or not:

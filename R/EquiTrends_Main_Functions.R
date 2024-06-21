@@ -50,39 +50,39 @@
 #' @return 
 #' 
 #' if \code{type = "IU"}, an object of class "maxEquivTestIU"  with \itemize{
-#' \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
-#' \item{\code{abs_placebo_coefficients}}{a numeric vector with the absolute values of estimated placebo coefficients,}
-#' \item{\code{placebo_coefficient_se}}{a numeric vector with the standard errors of the placebo coefficients,}
-#' \item{\code{significance_level}}{the chosen significance level of the test,}
-#' \item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
-#' \item{\code{num_periods}}{the number of periods in \code{data},}
-#' \item{\code{base_period}}{the base period in the data,}
-#' \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
-#' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#' \item{\code{placebo_coefficients}:}{ A numeric vector of the estimated placebo coefficients,}
+#' \item{\code{abs_placebo_coefficients}:}{ a numeric vector with the absolute values of estimated placebo coefficients,}
+#' \item{\code{placebo_coefficient_se}:}{ a numeric vector with the standard errors of the placebo coefficients,}
+#' \item{\code{significance_level}:}{ the chosen significance level of the test,}
+#' \item{\code{num_individuals}:}{ the number of cross-sectional individuals in \code{data},}
+#' \item{\code{num_periods}:}{ the number of periods in \code{data},}
+#' \item{\code{base_period}:}{ the base period in the data,}
+#' \item{\code{placebo_names}:}{ the names corresponding to the placebo coefficients,}
+#' \item{\code{equiv_threshold_specified}:}{ a logical value indicating whether an equivalence threshold was specified.}
 #' \item if \code{!(is.null(equiv_threshold))}\itemize{
-#'  \item{\code{IU_critical_values}}{a numeric vector with the individual critical values for each of the placebo coefficients,}
-#'  \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
-#'  \item{\code{equiv_threshold}}{the equivalence threshold employed.}
+#'  \item{\code{IU_critical_values}:}{ a numeric vector with the individual critical values for each of the placebo coefficients,}
+#'  \item{\code{reject_null_hypothesis}:}{ a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
+#'  \item{\code{equiv_threshold}:}{ the equivalence threshold employed.}
 #' }
 #' \item Additionally, if \code{is.null(equiv_threshold)}\itemize{
-#' \item{\code{minimum_equiv_thresholds}}{a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
-#' \item{\code{minimum_equiv_threshold}}{a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
+#' \item{\code{minimum_equiv_thresholds}:}{ a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
+#' \item{\code{minimum_equiv_threshold}:}{ a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
 #' }
 #' }
 #' 
 #' if \code{type = "Boot"} or \code{type = "Wild"}, an object of class "maxEquivTestBoot"  with \itemize{
-#'  \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
-#'  \item{\code{abs_placebo_coefficients}}{a numeric vector with the absolute values of estimated placebo coefficients,}
-#'  \item{\code{max_abs_coefficient}}{the maximum absolute estimated placebo coefficient,}
-#'  \item{\code{bootstrap_critica_value}}{the by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,}
-#'  \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
-#'  \item{\code{B}}{the number of bootstrap samples used to find the critical value,}
-#'  \item{\code{significance_level}}{the chosen significance level of the test \code{alpha},}
-#'  \item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
-#'  \item{\code{num_periods}}{the number of periods in \code{data},}
-#'  \item{\code{base_period}}{the base period in the data,}
-#'  \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
-#'  \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#'  \item{\code{placebo_coefficients}:}{ A numeric vector of the estimated placebo coefficients,}
+#'  \item{\code{abs_placebo_coefficients}:}{ a numeric vector with the absolute values of estimated placebo coefficients,}
+#'  \item{\code{max_abs_coefficient}:}{ the maximum absolute estimated placebo coefficient,}
+#'  \item{\code{bootstrap_critical_value}:}{ the by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,}
+#'  \item{\code{reject_null_hypothesis}:}{ a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
+#'  \item{\code{B}:}{ the number of bootstrap samples used to find the critical value,}
+#'  \item{\code{significance_level}:}{ the chosen significance level of the test \code{alpha},}
+#'  \item{\code{num_individuals}:}{ the number of cross-sectional individuals in \code{data},}
+#'  \item{\code{num_periods}:}{ the number of periods in \code{data},}
+#'  \item{\code{base_period}:}{ the base period in the data,}
+#'  \item{\code{placebo_names}:}{ the names corresponding to the placebo coefficients,}
+#'  \item{\code{equiv_threshold_specified}:}{ a logical value indicating whether an equivalence threshold was specified.}
 #' }
 #' 
 #' @examples
@@ -143,7 +143,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   
   # Error/Warnings:
   # Checking errors specific to this test procedure
-  error_maxTest <- maxTest_error(type, equiv_threshold, vcov)
+  error_maxTest <- maxTest_error(type, equiv_threshold, vcov, B)
   if(error_maxTest$error){stop(error_maxTest$message)}
   
   

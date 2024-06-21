@@ -69,12 +69,14 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
     } else {
       vcov_mat <- clubSandwich::vcovCR(plm_twfe, cluster=data[,"cluster"], type="CR0")
     }
-  } else {
+  } else if(is.function(vcov)) {
     vcov_mat <- vcov(plm_twfe)
     # Verifying it gives a square matrix:
     if(!is.matrix(vcov_mat) || nrow(vcov_mat) != ncol(vcov_mat)){
       stop("The vcov argument is invalid.")
     }
+  } else {
+    stop("The vcov argument is invalid.")
   }
   
   # The estimated variance of the mean placebo coefficient estimator:
@@ -106,7 +108,7 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
     
   } else {
     
-    minimum_equiv_threshold <- meanTest_optim_func(mean_placebo, sqrt(mean_placebo_var), 0.05)
+    minimum_equiv_threshold <- meanTest_optim_func(mean_placebo, sqrt(mean_placebo_var), alpha)
     
     results_list <- list(placebo_coefficients = betas_placebo, abs_mean_placebo_coefs = mean_placebo,
                          var_mean_placebo_coef = mean_placebo_var,

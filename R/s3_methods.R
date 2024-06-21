@@ -12,9 +12,7 @@ pretty_print <- function(df) {
   
   # Determine the maximum width for each column
   max_widths <- sapply(df, function(col) max(nchar(as.character(col))))
-  
-  # Determine the maximum width across all columns
-  max_width <- max(max_widths, nchar(col_names))
+  max_widths <- pmax(max_widths, nchar(col_names))
   
   # Format the column names
   formatted_col_names <- mapply(function(name, width) format(name, width = width), name = col_names, width = max_widths)
@@ -139,7 +137,7 @@ print.maxEquivTestBoot <- function(x, ...){
   
   # Display results
   df_print <- data.frame(number_rep(x$max_abs_coefficient), 
-                          number_rep(x$bootstrap_citical_value),
+                          number_rep(x$bootstrap_critical_value),
                           x$reject_null_hypothesis)
   colnames(df_print) <- c("Max. Abs. Coefficient", "Bootstrap Critical Value", "Reject H0")
   rownames(df_print) <- c("")

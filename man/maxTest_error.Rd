@@ -4,7 +4,7 @@
 \alias{maxTest_error}
 \title{Additional input checks for the maxEquivTest function}
 \usage{
-maxTest_error(type, equiv_threshold, vcov)
+maxTest_error(type, equiv_threshold, vcov, B)
 }
 \arguments{
 \item{type}{the type of test for the maximum absolute placebo coefficient to be conducted. Must be one of "IU", "Boot" or "Wild".}
@@ -12,6 +12,8 @@ maxTest_error(type, equiv_threshold, vcov)
 \item{equiv_threshold}{the equivalence threshold for the test. Must be a numeric scalar or NULL.}
 
 \item{vcov}{the variance-covariance matrix estimator. See \code{\link[EquiTrends]{maxEquivTest}} for more information.}
+
+\item{B}{the number of bootstrap iterations. Must be a numeric integer scalar.}
 }
 \value{
 A list with two elements: \code{error} a logical value indicating whether an error was found, and \code{message} a character string with the error message. If no error was found, \code{error} is \code{FALSE} and \code{message} is empty.

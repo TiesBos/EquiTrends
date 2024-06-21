@@ -121,8 +121,8 @@ sim_check <- function(N, tt, beta, p, gamma, alpha, lambda, het, phi, sd, burnin
   if(!is.numeric(tt) || tt <= 0 || tt != round(tt)){
     return(list(error=TRUE, message="tt must be a positive integer"))
   }
-  if(!is.numeric(p) || p <= 0 || p != round(p)){
-    return(list(error=TRUE, message="p must be a positive integer"))
+  if(!is.numeric(p) || p < 0 || p != round(p)){
+    return(list(error=TRUE, message="p must be a non-negative integer"))
   }
   if(!(het %in% c(0,1))){
     return(list(error=TRUE, message="het must take on a value of 0 or 1"))

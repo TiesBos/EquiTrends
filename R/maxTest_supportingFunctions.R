@@ -241,7 +241,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   results_list <- structure(list(placebo_coefficients = unconstrained_coefs[1:length(placebo_names)],
                                  abs_placebo_coefficients = abs(unconstrained_coefs[1:length(placebo_names)]),
                                  max_abs_coefficient =max(abs(unconstrained_coefs[1:length(placebo_names)])),
-                                 bootstrap_citical_value = boot_crit_value,
+                                 bootstrap_critical_value = boot_crit_value,
                                  reject_null_hypothesis = reject_H0, 
                                  equiv_threshold = equiv_threshold,
                                  B = B, 
@@ -385,10 +385,11 @@ sigma_hathat_c <- function(parameter, x, y, N, no_periods){
 #' @param type the type of test for the maximum absolute placebo coefficient to be conducted. Must be one of "IU", "Boot" or "Wild".
 #' @param equiv_threshold the equivalence threshold for the test. Must be a numeric scalar or NULL.
 #' @param vcov the variance-covariance matrix estimator. See \code{\link[EquiTrends]{maxEquivTest}} for more information.
+#' @param B the number of bootstrap iterations. Must be a numeric integer scalar.
 #'
 #' @return
 #' A list with two elements: \code{error} a logical value indicating whether an error was found, and \code{message} a character string with the error message. If no error was found, \code{error} is \code{FALSE} and \code{message} is empty.
-maxTest_error <- function(type, equiv_threshold, vcov){
+maxTest_error <- function(type, equiv_threshold, vcov, B){
   
   if(length(type)!=1 && !identical(type, c("IU", "Boot", "Wild"))){
     return(list(error=TRUE, message = "type is not valid"))
@@ -396,6 +397,12 @@ maxTest_error <- function(type, equiv_threshold, vcov){
   
   if(length(type)==1 && !(type %in% c("IU", "Boot", "Wild"))){
     return(list(error=TRUE, message = "type is not valid"))
+  }
+  
+  if(type != "IU"){
+    if(!is.numeric(B) || B<= 0 || B != round(B) || length(B) != 1){
+      return(list(error=TRUE, message = "B must be a strictly positive integer scalar"))
+    }
   }
   
   # If type = IU, vcov must be correctly specified:
