@@ -54,7 +54,7 @@ maxEquivTest(
 if \code{type = "IU"}, an object of class "maxEquivTestIU"  with \itemize{
 \item{\code{placebo_coefficients}:}{ A numeric vector of the estimated placebo coefficients,}
 \item{\code{abs_placebo_coefficients}:}{ a numeric vector with the absolute values of estimated placebo coefficients,}
-\item{\code{placebo_coefficient_se}:}{ a numeric vector with the standard errors of the placebo coefficients,}
+\item{\code{placebo_coefficients_se}:}{ a numeric vector with the standard errors of the placebo coefficients,}
 \item{\code{significance_level}:}{ the chosen significance level of the test,}
 \item{\code{num_individuals}:}{ the number of cross-sectional individuals in \code{data},}
 \item{\code{num_periods}:}{ the number of periods in \code{data},}

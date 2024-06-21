@@ -87,13 +87,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G        X_1        X_2
-#> 1  1      1  1.6131530 0 -0.1884178  2.1789557
-#> 2  1      2  1.1702785 0  0.1295325  0.9984144
-#> 3  1      3 -0.5012778 0  1.4668020 -1.2192558
-#> 4  1      4 -0.2340352 0 -0.2973332  0.5657437
-#> 5  1      5 -2.7463282 0 -1.7743809  0.4730188
-#> 6  2      1  0.1685887 1  1.0627858 -0.3164789
+#>   ID period          Y G        X_1         X_2
+#> 1  1      1  1.5012824 0 -1.2283384  1.59987982
+#> 2  1      2  0.6255583 0 -0.2213105  1.53802017
+#> 3  1      3  1.2892945 0  0.3958382  0.08486931
+#> 4  1      4 -3.1157378 0 -0.1417105 -1.82224468
+#> 5  1      5  3.2514179 0  1.5667104  1.31316566
+#> 6  2      1  1.7879177 1  0.7598755  0.39169288
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -147,8 +147,8 @@ following information:
   coefficients.
 - `abs_placebo_coefficients`: A numeric vector with the absolute values
   of estimated placebo coefficients.
-- `placebo_coefficient_se`: A numeric vector with the standard errors of
-  the placebo coefficients.
+- `placebo_coefficients_se`: A numeric vector with the standard errors
+  of the placebo coefficients.
 - `significance_level`: The chosen significance level of the test.
 - `num_individuals`: The number of cross-sectional individuals in
   `data`.
@@ -213,9 +213,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.03739          0.01004         0.9835        
-#> 0.37365          0.01004         0.9835        
-#> 0.01508          0.01004         0.9835        
+#> 0.1090           0.009624        0.9842        
+#> 0.1458           0.009624        0.9842        
+#> 0.2140           0.009624        0.9842        
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -236,9 +236,9 @@ print(IU_equivalence_test3)
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.03739          0.008723        0.9857        
-#> 0.37365          0.008600        0.9859        
-#> 0.01508          0.008788        0.9855        
+#> 0.1090           0.008471        0.9861        
+#> 0.1458           0.008002        0.9868        
+#> 0.2140           0.008053        0.9868        
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -298,7 +298,7 @@ boot_equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "per
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.3737                   0.6789                      TRUE      
+#> 0.214                    0.6885                      TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -323,7 +323,7 @@ The Wild boostrap with 100 bootstrap iterations:
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.3737                   0.6213                      TRUE      
+#> 0.214                    0.6607                      TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -415,7 +415,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.1171                   0.02459     <2e-16  TRUE      
+#> 0.01359                  0.02358     <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -434,7 +434,7 @@ print(mean_equivalence_test3)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.1171                   0.02137     <2e-16  TRUE      
+#> 0.01359                  0.01967     <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -508,7 +508,7 @@ print(rms_equivalence_test)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.217                0.5857                  TRUE      
+#> 0.1622               0.8555                  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -527,7 +527,7 @@ print(rms_equivalence_test2)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.217                0.9146                  TRUE      
+#> 0.1622               0.8645                  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 

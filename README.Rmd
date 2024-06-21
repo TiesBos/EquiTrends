@@ -69,7 +69,7 @@ An example of implementing the Intersection unit test with different possible va
 
   - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
   - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
-  - `placebo_coefficient_se`: A numeric vector with the standard errors of the placebo coefficients.
+  - `placebo_coefficients_se`: A numeric vector with the standard errors of the placebo coefficients.
   - `significance_level`: The chosen significance level of the test.
   - `num_individuals`: The number of cross-sectional individuals in `data`.
   - `num_periods`: The number of periods in `data`.
