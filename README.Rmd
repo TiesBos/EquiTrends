@@ -119,7 +119,7 @@ print(IU_equivalence_test3)
 ```
 
 ##### Implementation of the bootstrap approaches
-An example of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below. For both `type = "Boot"` and `type = "Wild", an equivalence threshold is required to perform the test. Furthermore, both testing procedures return an object of class "maxEquivTestBoot" containing 
+An example of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below. For both `type = "Boot"` and `type = "Wild"`, an equivalence threshold is required to perform the test. Furthermore, both testing procedures return an object of class "maxEquivTestBoot" containing 
 
 - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
 - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
