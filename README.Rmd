@@ -32,18 +32,226 @@ You can install the development version of EquiTrends from [GitHub](https://gith
 devtools::install_github("TiesBos/EquiTrends")
 ```
 
-## Example
+## Data Simulation
 
-This is a basic example which shows you how to solve a common problem:
+The `EquiTrends` package contains a function to simulate panel data, tailored to the Difference-in-Difference framework. The function `sim_paneldata` simulates a panel dataset with a given number of individuals $N$ (`N`), periods $T+1$ (in the setting of this package, indicating the number of pre-treatment periods. In code $T+1$ is referred to as `tt`), covariates $p$ (`p`), and treatment effects. Period $T+1$ is referred to as the \emph{base period}. The function returns a data frame with the following columns: `ID` (the cross-sectional individual identifier), `period` (the time identifier), `Y` (the dependent variable), `G` (a binary vector indicating if an individual receives treatment, indicated by 1, or not, indicated by 0), `X_1`, `X_2`, ..., `X_p` (additional control variables). The function also allows for the simulation of heterogeneity in treatment effects (specified through `alpha`), time fixed effects (through `lambda`), heteroscedasticty (specified through the binary variable `het`), serial correlation (through the AR(1) coefficient `phi`), and clustering of the standard errors. The construction of the dependent variable follows the two-way fixed effect model, similar to the model in equation (2.5) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
+$$Y_{i,t} =  \alpha_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \forall i=1,...,N, t=1,...,T+1$$
+where $D_l(t)$ is a dummy variable that equals 1 if $t=l$ and 0 otherwise. The error-terms $u_{i,t}$ are generated through a normal distribution with mean 0 and a variance-covariance structure depending on the user-specified parameters. In the following, the $\beta_l$ coefficients are referred to as placebo coefficients, since they represent the difference in pre-trends between the treatment and control group before treatment has been assigned.
 
-```{r example}
-#library(EquiTrends)
-## basic example code
+An example of the `sim_paneldata` function is provided below:
+```{r}
+library(EquiTrends)
+
+# Simulate a panel dataset with 500 individuals, 5 periods, 2 additional 
+# regressors, and a binary treatment variable without heteroscedasticity, 
+# serial correlation, and clustering. Furthermore, there are no fixed effects or 
+# pre-trends in the model (since all values in beta are 0).
+sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5), 
+                          gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
+                          burnins = 50)
+head(sim_data)
+```
+
+## Testing for Equivalence of Pre-Trends
+
+The `EquiTrends` package contains functions to test for equivalence of pre-trends in difference-in-differences estimation. The functions `maxEquivTest`, `meanEquivTest`, and `rmsEquivTest` are used to test for equivalence of pre-trends in difference-in-differences estimation using the placebo coefficientm $\beta_{l} \; (l=1,...,T)$ estimates. The functions are based on the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)).
+
+### The `maxEquivTest` function
+The maxEquivTest implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if $||\beta||_\infty = \max_{l=1,...T} |\beta_l|$, the testing procedure can be represented as
+$$H_0: ||\beta||_\infty \geq \delta \quad \text{vs.} \quad H_1: ||\beta||_\infty < \delta.$$
+The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. 
+
+The function `maxEquivTest` has contains three testing procedures for this test, as described in Section 4.2.1. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function allows for the testing of the equivalence of pre-trends using a bootstrap for spherical errors (`type = "Boot"`)  and a wild bootstrap for clustered standard errors (`type = "Wild"`), and an Intersection Union (`type = "IU"`) approach that rejects the null if all $\beta_1,...,\beta_{T}$ are smaller than their individual critical values. The function returns an object of class `maxEquivTestBoot` or `maxEquivTestWild` depending on the type of test performed. 
+
+#### Implemention of the `maxEquivTest` function with `type = "IU"`
+An example of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below (for more information on the possible variance-covariance matrices, see the documentation of the `maxEquivTest` function). If an equivalence threshold is supplied, the function will test the previous hypothesis. If no equivalence threshold is supplied, the function finds the critical value for the test at the specified significance level. The function returns an object of class `maxEquivTestIU` containing the following information:
+
+  - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
+  - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
+  - `placebo_coefficient_se`: A numeric vector with the standard errors of the placebo coefficients.
+  - `significance_level`: The chosen significance level of the test.
+  - `num_individuals`: The number of cross-sectional individuals in `data`.
+  - `num_periods`: The number of periods in `data`.
+  - `base_period`: The base period in the data.
+  - `placebo_names`: The names corresponding to the placebo coefficients.
+  - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
+  - Additionally, if `!(is.null(equiv_threshold))`:
+    - `IU_critical_values`: A numeric vector with the individual critical values for each of the placebo coefficients.
+    - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`.
+    - `equiv_threshold`: The equivalence threshold employed.
+  - Additionally, if `is.null(equiv_threshold)`:
+    - `minimum_equiv_thresholds`: A numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually.
+    - `minimum_equiv_threshold`: A numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.
+
+```{r}
+# Perform the test with equivalent threshold specified as 1 based on 
+# pre-treatment periods 1:4 and homoscedastic error-terms:
+IU_equivalence_test1 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                                 data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                                 base_period = 4, type = "IU")
+
+# Perform the test without specifying the equivalence threshold with heteroscedastic 
+# and autocorrelation robust variance-covariance matrix estimator:
+IU_equivalence_test2 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                           base_period = 4, vcov = "HAC", type = "IU")
+
+# Perform the test without specifying the equivalence threshold with a custom
+# variance-covariance matrix estimator:
+vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
+
+IU_equivalence_test3 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                           base_period = 4, vcov = vcov_func, type = "IU")
+```
+The package also contains print functions to create a summary output:
+```{r}
+# An output with an equivalence threshold specified
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4, type = "IU")
+```
+
+```{r}
+# An output withoout an equivalence threshold specified
+print(IU_equivalence_test3)
+```
+
+##### Implementation of the bootstrap approaches
+An example of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below. For both `type = "Boot"` and `type = "Wild", an equivalence threshold is required to perform the test. Furthermore, both testing procedures return an object of class "maxEquivTestBoot" containing 
+
+- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
+- `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
+- `max_abs_coefficient`: The maximum absolute estimated placebo coefficient.
+- `bootstrap_critical_value`: The by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient.
+- `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`.
+- `B`: The number of bootstrap samples used to find the critical value.
+- `significance_level`: The chosen significance level of the test `alpha`.
+- `num_individuals`: The number of cross-sectional individuals in `data`.
+- `num_periods`: The number of periods in `data`.
+- `base_period`: The base period in the data.
+- `placebo_names`: The names corresponding to the placebo coefficients.
+- `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
+
+A `print` function is available to create a summary output.
+
+The bootstrap for spherical errors with 1000 bootstrap iterations:
+```{r}
+# Perform the test with equivalent threshold specified as 1 based on 
+# pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
+boot_equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                            base_period = 4, type = "Boot", B = 1000)
+ print(boot_equivalence_test)
+```
+
+The Wild boostrap with 100 bootstrap iterations:
+```{r}
+# Perform the test with equivalent threshold specified as 1 based on 
+# pre-treatment periods 1:4 (with base period 4) with the wild bootstrap procedure:
+ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+              base_period = 4, type = "Wild", B = 1000)
 ```
 
 
+### The `meanEquivTest` function
+The meanEquivTest implements the equivalence testing procedure surrounding the mean placebo coefficientas described in Section 4.2.2. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the absolute mean placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if $\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l$, the testing procedure can be represented as
+$$H_0: |\bar{\beta}| \geq \delta \quad \text{vs.} \quad H_1: |\bar{\beta}| < \delta.$$
+The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. Implementation of the test is similar to the `maxEquivTest` function, in terms of the possible variance-covariance matrices (for more information on the possible variance-covariance matrices, see the documentation of the `meanEquivTest` function). The function returns an object of class `meanEquivTest` containing
 
 
+- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
+- `abs_mean_placebo_coefs`: The absolute value of the mean of the placebo coefficients.
+- `var_mean_placebo_coef`: The estimated variance of the mean placebo coefficient.
+- `significance_level`: The significance level of the test.
+- `num_individuals`: The number of cross-sectional individuals in the data.
+- `num_periods`: The number of periods in the data.
+- `base_period`: The base period in the data.
+- `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
+- If `is.null(equiv_threshold)`, then additionally:
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
+- If `!(is.null(equiv_threshold))`, then additionally:
+  - `mean_critical_value`: The critical value at the alpha level.
+  - `p_value`: The p-value of the test.
+  - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis.
+  - `equiv_threshold`: The equivalence threshold specified.
+
+```{r}
+ # Perform the test with equivalent threshold specified as 1 based on 
+ # pre-treatment periods 1:4 and homoscedastic error-terms:
+ mean_equivalence_test1 <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                            base_period = 4)
+ 
+ # Perform the test without equivalence threshold specified as 1 with heteroscedastic  
+ # and autocorrelation robust variance-covariance matrix estimator:
+ mean_equivalence_test2 <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                            base_period = 4, vcov = "HAC")
+
+ # Perform the test without specifying the equivalence threshold with a custom
+ # variance-covariance matrix estimator:
+ vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
+
+ mean_equivalence_test3 <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                            base_period = 4, vcov = vcov_func)
+```
+The package also contains print functions to create a summary output:
+```{r}
+# With equivalence threshold specified
+meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+              base_period = 4)
+```
+
+```{r}
+# Without equivalence threshold specified:
+print(mean_equivalence_test3)
+```
+
+
+### The `rmsEquivTest` function
+The rmsEquivTest implements the equivalence testing procedure surrounding the root mean squared placebo coefficient as described in section 4.2.3 of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the root mean squared placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if $\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2}$, the testing procedure can be represented as
+$$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
+The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. The function returns an object of class `rmsEquivTest` containing
+
+- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
+- `rms_placebo_coefs`: The root mean squared value of the placebo coefficients.
+- `significance_level`: The significance level of the test.
+- `num_individuals`: The number of cross-sectional individuals in the data.
+- `num_periods`: The number of periods in the data.
+- `base_period`: The base period in the data.
+- `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
+- If `is.null(equiv_threshold)`, then additionally:
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
+- If `!(is.null(equiv_threshold))`, then additionally:
+  - `rms_critical_value`: The critical value at the alpha level.
+  - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis.
+  - `equiv_threshold`: The equivalence threshold specified.
+
+```{r}
+#' # Perform the test with equivalent threshold specified as 1 based on 
+#' # pre-treatment periods 1:4 and homoscedastic error-terms:
+rms_equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                                 data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                                 base_period = 4)
+
+ # Perform the test without specifying the equivalence threshold:
+rms_equivalence_test2 <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                            base_period = 4)
+
+```
+The package also contains print functions to create a summary output:
+```{r}
+print(rms_equivalence_test)
+```
+
+```{r}
+print(rms_equivalence_test2)
+```
 
 
 ## References
