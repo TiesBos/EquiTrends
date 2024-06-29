@@ -87,13 +87,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G        X_1         X_2
-#> 1  1      1  1.5012824 0 -1.2283384  1.59987982
-#> 2  1      2  0.6255583 0 -0.2213105  1.53802017
-#> 3  1      3  1.2892945 0  0.3958382  0.08486931
-#> 4  1      4 -3.1157378 0 -0.1417105 -1.82224468
-#> 5  1      5  3.2514179 0  1.5667104  1.31316566
-#> 6  2      1  1.7879177 1  0.7598755  0.39169288
+#>   ID period          Y G        X_1        X_2
+#> 1  1      1  3.5339699 0  1.1450064  1.4016870
+#> 2  1      2 -1.3101156 0  1.5250547 -1.7822728
+#> 3  1      3 -2.5215817 0 -1.8525786 -0.1679562
+#> 4  1      4 -3.0922237 0 -0.8760159 -1.2051780
+#> 5  1      5  1.4149344 0  0.8324306  0.9792956
+#> 6  2      1  0.8091497 1 -0.7104327 -0.2756529
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -192,7 +192,7 @@ IU_equivalence_test2 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "peri
 vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
 
 IU_equivalence_test3 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                           data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
                            base_period = 4, vcov = vcov_func, type = "IU")
 ```
 
@@ -213,9 +213,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.1090           0.009624        0.9842        
-#> 0.1458           0.009624        0.9842        
-#> 0.2140           0.009624        0.9842        
+#> 0.15367          0.0097          0.984         
+#> 0.09671          0.0097          0.984         
+#> 0.15144          0.0097          0.984         
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -231,14 +231,14 @@ print(IU_equivalence_test3)
 #>                Equivalence Tests for Pre-trends in DiD Estimation
 #>                ==================================================
 #> Type: Intersection Union 
-#> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
-#> Reject null hypothesis: TRUE 
-#> ( Critical values are printed for the significance level: 0.05 )
+#> Significance level: 0.05 
+#> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
+#> Minimum equivalence threshold to accept the alternative: 0.1673 
 #> ---
-#> Abs. Estimate    Std. Error  Critical Value 
-#> 0.1090           0.008471        0.9861        
-#> 0.1458           0.008002        0.9868        
-#> 0.2140           0.008053        0.9868        
+#>  Estimate    Std. Error   Minimum Equivalence Threshold 
+#> 0.15367      0.008288    0.1673    
+#> 0.09671      0.008312    0.1104    
+#> 0.15144      0.008250    0.1650    
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -298,7 +298,7 @@ boot_equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "per
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.214                    0.6885                      TRUE      
+#> 0.1537                   0.6993                      TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -323,7 +323,7 @@ The Wild boostrap with 100 bootstrap iterations:
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.214                    0.6607                      TRUE      
+#> 0.1537                   0.6312                      TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -396,7 +396,7 @@ the `meanEquivTest` function). The function returns an object of class
  vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
 
  mean_equivalence_test3 <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                            data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
                             base_period = 4, vcov = vcov_func)
 ```
 
@@ -415,7 +415,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.01359                  0.02358     <2e-16  TRUE      
+#> 0.03149                  0.02376     <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -431,10 +431,11 @@ print(mean_equivalence_test3)
 #>                Equivalence Tests for Pre-trends in DiD Estimation
 #>                ==================================================
 #> Type: Mean Placebo Effect 
-#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
+#> Significance level: 0.05 
+#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
-#> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.01359                  0.01967     <2e-16  TRUE      
+#> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
+#> 0.03149                  0.02003     0.06443               
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -491,7 +492,7 @@ rms_equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "peri
 
  # Perform the test without specifying the equivalence threshold:
 rms_equivalence_test2 <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                            data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
                             base_period = 4)
 ```
 
@@ -508,7 +509,7 @@ print(rms_equivalence_test)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.1622               0.8555                  TRUE      
+#> 0.1365               0.781                   TRUE      
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
@@ -524,10 +525,10 @@ print(rms_equivalence_test2)
 #>                ==================================================
 #> Type: Root Mean Squared Placebo Effect 
 #> Significance level: 0.05 
-#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
+#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
-#> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.1622               0.8645                  TRUE      
+#> RMS Placebo Effect   Min. Equiv. Threshold 
+#> 0.1365               0.3346                
 #> ---
 #> No. placebo coefficients estimated (T): 3 
 #> No. pre-treatment periods (T+1): 4 
