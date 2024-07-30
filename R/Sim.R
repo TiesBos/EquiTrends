@@ -17,13 +17,12 @@
 #' @export
 #' 
 #' @return A \code{data.frame} with the following columns:
-#' \itemize{
 #'  \item{ID}{The cross-sectional unit identifier}
 #'  \item{period}{The time period identifier}
 #'  \item{Y}{The dependent variable}
 #'  \item{G}{The binary treatment variable}
 #'  \item{X_1, ..., X_p}{The additional regressors}
-#' }
+#'
 #' 
 #' @examples
 #' sim_data <- sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p=1, 

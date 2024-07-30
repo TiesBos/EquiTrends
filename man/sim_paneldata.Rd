@@ -43,13 +43,11 @@ sim_paneldata(
 }
 \value{
 A \code{data.frame} with the following columns:
-\itemize{
  \item{ID}{The cross-sectional unit identifier}
  \item{period}{The time period identifier}
  \item{Y}{The dependent variable}
  \item{G}{The binary treatment variable}
  \item{X_1, ..., X_p}{The additional regressors}
-}
 }
 \description{
 sim.paneldata generates a panel data set with N cross-sectional units and tt time periods. The data set includes a binary treatment variable, a set of placebo variables, and a set of additional regressors. The data set can be generated under homoskedasticity or heteroskedasticity, and/or AR(1) errors.

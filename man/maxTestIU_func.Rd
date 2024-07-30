@@ -44,13 +44,13 @@ An object of class "maxEquivTestIU" containing:
 \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
  Additionally, if \code{!(is.null(equiv_threshold))}\itemize{
- \item{\code{IU_critical_values}}{a numeric vector with the individual critical values for each of the placebo coefficients,}
- \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
- \item{\code{equiv_threshold}}{the equivalence threshold employed,}
+ \item{\code{IU_critical_values}: a numeric vector with the individual critical values for each of the placebo coefficients,}
+ \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
+ \item{\code{equiv_threshold}: the equivalence threshold employed,}
 }
 if \code{is.null(equiv_threshold)}\itemize{
-\item{\code{minimum_equiv_thresholds}}{a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
-\item{\code{minimum_equiv_threshold}}{a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
+\item{\code{minimum_equiv_thresholds}: a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
+\item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
 }
 }
 \description{
