@@ -16,7 +16,7 @@
 
 EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period, 
                               base_period, cluster){
-  orig_names_X <- NULL
+  orig_names <- NULL
   colnames_X <- NULL
   if(!base::is.null(data)){
     names_data <- base::colnames(data)
@@ -85,7 +85,7 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
   balanced_panel <- is_panel_balanced(new_data, "ID")
   
   # Return the final data.frame object used:
-  return(list(dataset = new_data, baseperiod = base_period, orig_names_X = orig_names_X, balanced_panel = balanced_panel))
+  return(list(dataset = new_data, baseperiod = base_period, orig_names = orig_names, balanced_panel = balanced_panel))
 }
 
 

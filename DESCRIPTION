@@ -10,7 +10,6 @@ Description: Testing for parallel trends is crucial for Difference-in-Difference
 License: MIT + file LICENSE
 Imports: 
     clubSandwich,
-    dplyr,
     nloptr,
     plm,
     Rcpp (>= 1.0.12),
@@ -22,7 +21,7 @@ LinkingTo: Rcpp,
            RcppParallel
 URL: https://github.com/TiesBos/EquiTrends
 BugReports: https://github.com/TiesBos/EquiTrends/issues
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 Suggests: 
     testthat (>= 3.0.0)

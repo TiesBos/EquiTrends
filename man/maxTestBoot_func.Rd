@@ -12,7 +12,8 @@ maxTestBoot_func(
   B,
   no_periods,
   base_period,
-  type
+  type,
+  original_names
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ maxTestBoot_func(
 \item{base_period}{The base period for the test. Must be one of the unique periods in the data.}
 
 \item{type}{The type of bootstrap to be used. Must be one of "Boot" or "Wild".}
+
+\item{original_names}{The original names of the control variables in the data.}
 }
 \value{
 an object of class "maxEquivTestBoot"  with

@@ -169,6 +169,7 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 #' @param no_periods The number of periods in the data.
 #' @param base_period The base period for the test. Must be one of the unique periods in the data.
 #' @param type The type of bootstrap to be used. Must be one of "Boot" or "Wild".
+#' @param original_names The original names of the control variables in the data.
 #'
 #' @references
 #' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
@@ -190,9 +191,9 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 #'
 maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods, 
                                  base_period, type, original_names){
-  D <- as.matrix(model.matrix(~0+factor(period), data=data))
+  D <- as.matrix(stats::model.matrix(~0+factor(period), data=data))
   # Between transformation on D to obtain WD:
-  WD <- matrix_between_transformation(WD, matrix(data$ID))
+  WD <- matrix_between_transformation(D, matrix(data$ID))
   
   # Check for possible multicolinearity:
   if(qr(WD)$rank < ncol(WD)){
@@ -205,7 +206,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   colnames(X_df) <- c(placebo_names, original_names)
   
   # Create a model.matrix:
-  model_data <- model.matrix(~.+0, data = X_df)
+  model_data <- stats::model.matrix(~.+0, data = X_df)
   model_matrix <- as.matrix(model_data)
   
   # Double demean the data:
@@ -220,7 +221,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
     warning(paste("The following columns were removed due to multicolinearity: ", removed_names))
   }
   
-  Y <- as.matrix(dd_data$Y)
+  Y <- as.matrix(double_demean(matrix(data$Y),individual = matrix(data$ID), time = matrix(data$period), WD = WD))
   
   # The unconstrained coefficient is:
   unconstrained_coefs <- solve(t(X)%*%X, t(X)%*%Y)
@@ -243,8 +244,8 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
                                      no_periods = no_periods)
     # Run the Bootstrap:
     bootstrap_maxcoefs <- maxTestBoot_bootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
-                                                variance = resid_variance, ID = dd_data$ID,
-                                                period = dd_data$period, WD=WD, 
+                                                variance = resid_variance, ID = data$ID,
+                                                period = data$period, WD=WD, 
                                                 no_placebos = length(placebo_names))
   } else {
     u_ddot <- Y - X%*%constrained_coefs
@@ -252,7 +253,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
     # Run the Wild Bootstrap:
     bootstrap_maxcoefs <- maxTestBoot_wildbootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
                                                      u_ddot = u_ddot,
-                                                     ID = dd_data$ID, period = dd_data$period,
+                                                     ID = data$ID, period = data$period,
                                                      no_placebos = length(placebo_names),
                                                      WD = WD)
   }
