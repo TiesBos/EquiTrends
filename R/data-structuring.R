@@ -16,6 +16,7 @@
 
 EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period, 
                               base_period, cluster){
+  orig_names_X <- NULL
   colnames_X <- NULL
   if(!base::is.null(data)){
     names_data <- base::colnames(data)
@@ -27,8 +28,10 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
     if(!is.null(cluster)){cluster <- data[,cluster]}
   }
   
+  
   # Bind the input together:
   if(!is.null(X)){
+    orig_names <- colnames(X)
     colnames_X <- paste0("X_", 1:ncol(as.matrix(X)))
     new_data <- data.frame(Y=Y, ID=ID, period=period, G=G, X=X)
     colnames(new_data) <- c("Y", "ID", "period", "G", colnames_X)
@@ -36,6 +39,7 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
     new_data <- data.frame(Y=Y, ID=ID, period=period, G=G)
     colnames(new_data) <- c("Y", "ID", "period", "G")
   }
+  if(is.null(orig_names)){orig_names <- colnames_X}
   
   # Add a variable indicating the cluster if supplied
   if(!is.null(cluster)){new_data[,"cluster"] <- cluster}
@@ -74,11 +78,14 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
   # Turn the ID to a 1 to N scale:
   new_data$ID <- as.integer(factor(new_data$ID , levels = unique(new_data$ID)))
   # Turn the period column to a 1:(T+1) scale:
-  period_numeric <- as.integer(factor(new_data$period, levels = unique(new_data$period)))
-  new_data$period <- period_numeric
+  # period_numeric <- as.integer(factor(new_data$period, levels = unique(new_data$period)))
+  # new_data$period <- period_numeric
+  
+  # Check if the data is balanced:
+  balanced_panel <- is_panel_balanced(new_data, "ID")
   
   # Return the final data.frame object used:
-  return(list(dataset = new_data, baseperiod = base_period))
+  return(list(dataset = new_data, baseperiod = base_period, orig_names_X = orig_names_X, balanced_panel = balanced_panel))
 }
 
 
@@ -218,4 +225,15 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pr
   
   
   return(list(error=FALSE))
+}
+
+# ----------- Checking if the panel is balanced ---------------------------------
+is_panel_balanced <- function(df, individual_var) {
+  # Count the number of observations for each individual
+  obs_count <- table(df[[individual_var]])
+  
+  # Check if all individuals have the same number of observations
+  balanced <- length(unique(obs_count)) == 1
+  
+  return(balanced)
 }

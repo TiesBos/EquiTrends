@@ -163,6 +163,12 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   # The base period:
   base_period <- data_constr$baseperiod
   
+  # Original names of control variables:
+  orig_names <- data_constr$orig_names
+  
+  # Panel balanced or not:
+  panel_balanced <- data_constr$panel_balanced
+  
   # Number of individuals
   N <- length(df[unique(df$ID), "ID"])
   # Number of Time Periods:
@@ -171,7 +177,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   if(type=="IU"){
     test_results <- maxTestIU_func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
   } else if (type == "Boot" || type == "Wild"){
-    test_results <- maxTestBoot_func(df, equiv_threshold, alpha, N, B, no_periods, base_period, type)
+    test_results <- maxTestBoot_func(df, equiv_threshold, alpha, N, B, no_periods, base_period, type, orig_names)
   }
   
   return(test_results)

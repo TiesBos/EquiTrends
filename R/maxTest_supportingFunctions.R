@@ -189,18 +189,41 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 #'  \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 #'
 maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods, 
-                                 base_period, type){
-  # Obtain the double demeaned data:
-  dd_data <- double_demean(data)
+                                 base_period, type, original_names){
+  D <- as.matrix(model.matrix(~0+factor(period), data=data))
+  # Between transformation on D to obtain WD:
+  WD <- matrix_between_transformation(WD, matrix(data$ID))
   
-  # find the double-demeaned independent and dependent variable:
+  # Check for possible multicolinearity:
+  if(qr(WD)$rank < ncol(WD)){
+    WD <- remove_multicollinearity(WD)$df
+  }
+  
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
-  X <- as.matrix(dd_data[, c(placebo_names, X_names)])
+  X_df <- data[, c(placebo_names, X_names)]
+  colnames(X_df) <- c(placebo_names, original_names)
+  
+  # Create a model.matrix:
+  model_data <- model.matrix(~.+0, data = X_df)
+  model_matrix <- as.matrix(model_data)
+  
+  # Double demean the data:
+  X <- double_demean(x = model_matrix, individual = matrix(data$ID), time = matrix(data$period), WD = WD)
+  
+  # Check multicolinearity:
+  if(qr(X)$rank < ncol(X)){
+    new_X <- remove_multicollinearity(X, keep_cols = placebo_names)
+    X <- new_X$df
+    removed_ind <- new_X$problematic_vars
+    removed_names <- colnames(model_matrix)[removed_ind]
+    warning(paste("The following columns were removed due to multicolinearity: ", removed_names))
+  }
+  
   Y <- as.matrix(dd_data$Y)
   
   # The unconstrained coefficient is:
-  unconstrained_coefs <- solve(t(X)%*%X)%*%t(X)%*%Y
+  unconstrained_coefs <- solve(t(X)%*%X, t(X)%*%Y)
   
   # its maximum absolute entry is:
   max_unconstr_coef <- max(abs(unconstrained_coefs[1:length(placebo_names)]))
@@ -221,7 +244,8 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
     # Run the Bootstrap:
     bootstrap_maxcoefs <- maxTestBoot_bootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
                                                 variance = resid_variance, ID = dd_data$ID,
-                                                period = dd_data$period, no_placebos = length(placebo_names))
+                                                period = dd_data$period, WD=WD, 
+                                                no_placebos = length(placebo_names))
   } else {
     u_ddot <- Y - X%*%constrained_coefs
     
@@ -229,7 +253,8 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
     bootstrap_maxcoefs <- maxTestBoot_wildbootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
                                                      u_ddot = u_ddot,
                                                      ID = dd_data$ID, period = dd_data$period,
-                                                     no_placebos = length(placebo_names))
+                                                     no_placebos = length(placebo_names),
+                                                     WD = WD)
   }
   
   # Find the critical value at the alpha level:
@@ -255,56 +280,26 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
 
 
 #   ---- Supporting functions for the Bootstrap Approach ----
-# Calculating Double Demeaned Data:
-#' @title Double Demeaning a data.frame object
-#'
-#' @param df The data.frame object to double-demean. It should contain a column with names "ID" and "period" representing the unit and time period, respectively, over which the data is double-demeaned.
-#'
-#' @return a data.frame object with the double demeaned data.
-#'
-#' @importFrom dplyr %>% group_by_at summarise across all_of left_join
-double_demean <- function(df){
-  # Finding all variables that need to be double demeaned
-  placebo_names <- grep("placebo_", names(df), value=TRUE)
-  X_names <- grep("X_", names(df), value=TRUE)
-  names <- c(placebo_names, X_names)
+
+# Removing multicolinear columns:
+remove_multicollinearity <- function(df, keep_cols = character(0)) {
+  # Create the design matrix
+  mat <- as.matrix(df)
   
-  # Matrix:
-  original_data <- df[, c("Y", names)]
+  # Perform QR decomposition
+  qr_mat <- qr(mat)
   
-  # Calculate the mean for each unit (ID) for each value column
-  unit_means <- as.data.frame(df %>%
-                                group_by_at("ID") %>%
-                                summarise(across(all_of(c("Y", names)), mean, .names = "unit_means_{col}")))
+  # Identify the problematic variables
+  problematic_vars <- qr_mat$pivot[seq(from = qr_mat$rank + 1, to = ncol(mat))]
   
-  # Calculate the mean for each time period for each value column
-  time_means <-  as.data.frame(df %>%
-                                 group_by_at("period") %>%
-                                 summarise(across(all_of(c("Y", names)), mean, .names = "time_means_{col}")))
+  # Make sure specific variables are NOT dropped.
+  problematic_vars <- setdiff(problematic_vars, match(keep_cols, colnames(df)))
   
-  # Merge the calculated means back to the original dataframe 
-  new_df <- df
-  new_df <- new_df %>%
-    left_join(unit_means, by = "ID") %>%
-    left_join(time_means, by = "period")
-  
-  # Get the correct dimensions for W of the time means, unit means and overall means
-  unit_mean_names <- grep("unit_means_", names(new_df), value=TRUE)
-  time_means_names <- grep("time_means_", names(new_df), value=TRUE)
-  unit_means_mat <- new_df[,unit_mean_names]
-  time_means_mat <- new_df[,time_means_names]
-  
-  over_all_means <- colMeans(as.matrix(original_data))
-  n_row <- nrow(as.matrix(original_data))
-  overall_means <- as.data.frame(matrix(rep(over_all_means, times = n_row), nrow = n_row, byrow = TRUE))
-  
-  demeaned_data <- original_data - unit_means_mat - time_means_mat + overall_means
-  ID <- df$ID
-  period <- df$period
-  demeaned_data <- cbind(ID, period, demeaned_data)
-  colnames(demeaned_data) <- c("ID", "period", "Y", names)
-  return(demeaned_data)
+  df <- df[,-problematic_vars]
+  return(list(df = df, problematic_vars = problematic_vars))
 }
+
+
 
 # The objective function of the constrained estimator:
 boot_objective_function <- function(parameter, x, y, no_placebos, equiv_threshold){
