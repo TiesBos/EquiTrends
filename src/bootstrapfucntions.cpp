@@ -64,8 +64,8 @@ struct BootstrapWorker : public RcppParallel::Worker {
   const double variance;
   const int no_placebos;
   const int B;
-  const arma::mat& WD;
   const arma::mat& error_terms;
+  const arma::mat& WD;
   
   // output data
   arma::vec& max_abs_bootstrap_coef;
@@ -136,8 +136,8 @@ struct WildBootstrapWorker : public RcppParallel::Worker {
   
   
   // initialize with source and destination
-  WildBootstrapWorker(const arma::vec& Xb, const arma::mat& X, const arma::vec& u_ddot, const arma::vec& ID, const arma::vec& period, const int no_placebos, const arma::vec& unique_ID, const int N, arma::vec& max_abs_bootstrap_coef, const arma::mat& WD) 
-    : Xb(Xb), X(X), u_ddot(u_ddot), ID(ID), period(period), no_placebos(no_placebos), unique_ID(unique_ID), N(N), max_abs_bootstrap_coef(max_abs_bootstrap_coef), WD(WD) {}
+  WildBootstrapWorker(const arma::vec& Xb, const arma::mat& X, const arma::vec& u_ddot, const arma::vec& ID, const arma::vec& period, const int no_placebos, const arma::vec& unique_ID, const int N, const arma::mat& WD, arma::vec& max_abs_bootstrap_coef) 
+    : Xb(Xb), X(X), u_ddot(u_ddot), ID(ID), period(period), no_placebos(no_placebos), unique_ID(unique_ID), N(N), WD(WD), max_abs_bootstrap_coef(max_abs_bootstrap_coef) {}
   
   // take the square root of the range of elements requested
   void operator()(std::size_t begin, std::size_t end) {
@@ -186,7 +186,7 @@ arma::vec maxTestBoot_wildbootstrap(const arma::vec& Xb, const arma::mat& X,
   arma::vec max_abs_bootstrap_coef(B);
   
   // create the worker
-  WildBootstrapWorker worker(Xb, X, u_ddot, ID, period, no_placebos, unique_ID, N, max_abs_bootstrap_coef, WD);
+  WildBootstrapWorker worker(Xb, X, u_ddot, ID, period, no_placebos, unique_ID, N, WD, max_abs_bootstrap_coef);
   
   // call it with parallelFor
   parallelFor(0, B, worker);
