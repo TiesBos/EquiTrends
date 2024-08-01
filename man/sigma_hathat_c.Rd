@@ -4,7 +4,7 @@
 \alias{sigma_hathat_c}
 \title{Calculating the constrained variance of the residuals for the Boostrap approaches in the EquiTrends Maximum Equivalence Testing procedure, according to Dette & Schumann (2024).}
 \usage{
-sigma_hathat_c(parameter, x, y, N, no_periods)
+sigma_hathat_c(parameter, x, y, ID, time)
 }
 \arguments{
 \item{parameter}{The constrained coefficients.}
@@ -13,9 +13,9 @@ sigma_hathat_c(parameter, x, y, N, no_periods)
 
 \item{y}{The double demeaned dependent variable.}
 
-\item{N}{The number of cross-sectional individuals.}
+\item{ID}{The ID variable.}
 
-\item{no_periods}{The number of time periods}
+\item{time}{The time variable.}
 }
 \value{
 The estimated constrained variance of the residuals.

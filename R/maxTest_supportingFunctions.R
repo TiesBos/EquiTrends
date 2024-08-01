@@ -239,9 +239,10 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   if(type == "Boot"){
     # Calculate the variance based on the constrained coefficient:
-    resid_variance <- sigma_hathat_c(parameter = constrained_coefs, N = n, 
+    resid_variance <- sigma_hathat_c(parameter = constrained_coefs,  
                                      x=X, y=Y,
-                                     no_periods = no_periods)
+                                     time = data$period,
+                                     ID = data$ID)
     # Run the Bootstrap:
     bootstrap_maxcoefs <- maxTestBoot_bootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
                                                 variance = resid_variance, ID = data$ID,
@@ -354,20 +355,28 @@ boot_optimization_function <- function(x, y, no_placebos, equiv_threshold, start
 #' @param parameter The constrained coefficients.
 #' @param x The double demeaned independent variables.
 #' @param y The double demeaned dependent variable.
-#' @param N The number of cross-sectional individuals.
-#' @param no_periods The number of time periods
+#' @param ID The ID variable.
+#' @param time The time variable.
 #'
 #' @references
 #' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
 #'
 #' @return
 #' The estimated constrained variance of the residuals.
-sigma_hathat_c <- function(parameter, x, y, N, no_periods){
+sigma_hathat_c <- function(parameter, x, y, ID, time){
   Xb <- as.numeric(x%*%parameter)
   
   residuals_demeaned <- y - Xb
   
-  c_sigma_hathat <- sum((residuals_demeaned^2))/((N-1)*no_periods)
+  N <- length(ID)
+  n <- length(unique(ID))
+  no_periods <- length(unique(time))
+  p <- ncol(x)
+  
+  df <- N - p - n - no_periods + 1
+  
+  c_sigma_hathat <- as.numeric(t(residuals_demeaned)%*%residuals_demeaned)/df
+  
   return(c_sigma_hathat)
 }
 
@@ -378,7 +387,7 @@ sigma_hathat_c <- function(parameter, x, y, N, no_periods){
 #' 
 #' @description This function checks additonal inputs specific to the maxEquivTest function. 
 #'
-#' @param type the type of test for the maximum absolute placebo coefficient to be conducted. Must be one of "IU", "Boot" or "Wild".
+#' @param type the type of test for the maximum absolute placebo coefficient to be conducted; must be one of "IU", "Boot" or "Wild".
 #' @param equiv_threshold the equivalence threshold for the test. Must be a numeric scalar or NULL.
 #' @param vcov the variance-covariance matrix estimator. See \code{\link[EquiTrends]{maxEquivTest}} for more information.
 #' @param B the number of bootstrap iterations. Must be a numeric integer scalar.
@@ -408,9 +417,9 @@ maxTest_error <- function(type, equiv_threshold, vcov, B){
     }
   }
   
-  # if type != IU, delta cannot be NULL
+  # if type != IU, equiv_threshold cannot be NULL
   if(type != "IU" && is.null(equiv_threshold)){
-    return(list(error=TRUE, message = "delta must be specified for types Boot and Wild."))
+    return(list(error=TRUE, message = "equiv_threshold must be specified for types Boot and Wild."))
   }
   
   return(list(error=FALSE))

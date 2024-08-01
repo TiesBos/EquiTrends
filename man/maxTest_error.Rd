@@ -7,7 +7,7 @@
 maxTest_error(type, equiv_threshold, vcov, B)
 }
 \arguments{
-\item{type}{the type of test for the maximum absolute placebo coefficient to be conducted. Must be one of "IU", "Boot" or "Wild".}
+\item{type}{the type of test for the maximum absolute placebo coefficient to be conducted; must be one of "IU", "Boot" or "Wild".}
 
 \item{equiv_threshold}{the equivalence threshold for the test. Must be a numeric scalar or NULL.}
 
