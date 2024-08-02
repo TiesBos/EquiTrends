@@ -222,7 +222,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # Check multicolinearity:
   if(qr(X)$rank < ncol(X)){
-    new_X <- remove_multicollinearity(X, keep_cols = placebo_names)
+    new_X <- remove_multicollinearity(X, keep_cols = 1:length(placebo_names))
     X <- new_X$df
     removed_ind <- new_X$problematic_vars
     removed_names <- colnames(model_matrix)[removed_ind]
@@ -233,6 +233,10 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # The unconstrained coefficient is:
   unconstrained_coefs <- solve(t(X)%*%X, t(X)%*%Y)
+  
+  placebo_coefs <- unconstrained_coefs[1:length(placebo_names)]
+  names(placebo_coefs) <- placebo_names
+  
   
   # its maximum absolute entry is:
   max_unconstr_coef <- max(abs(unconstrained_coefs[1:length(placebo_names)]))
@@ -268,13 +272,13 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   }
   
   # Find the critical value at the alpha level:
-  boot_crit_value <- stats::quantile(bootstrap_maxcoefs, probs = alpha)
+  boot_crit_value <- unname(stats::quantile(bootstrap_maxcoefs, probs = alpha))
   
   # Reject Or Not:
   reject_H0 <- (max(abs(unconstrained_coefs[1:length(placebo_names)])) < boot_crit_value)
   
-  results_list <- structure(list(placebo_coefficients = unconstrained_coefs[1:length(placebo_names)],
-                                 abs_placebo_coefficients = abs(unconstrained_coefs[1:length(placebo_names)]),
+  results_list <- structure(list(placebo_coefficients = placebo_coefs,
+                                 abs_placebo_coefficients = abs(placebo_coefs),
                                  max_abs_coefficient =max(abs(unconstrained_coefs[1:length(placebo_names)])),
                                  bootstrap_critical_value = boot_crit_value,
                                  reject_null_hypothesis = reject_H0, 
@@ -304,7 +308,7 @@ remove_multicollinearity <- function(df, keep_cols = character(0)) {
   problematic_vars <- qr_mat$pivot[seq(from = qr_mat$rank + 1, to = ncol(mat))]
   
   # Make sure specific variables are NOT dropped.
-  problematic_vars <- setdiff(problematic_vars, match(keep_cols, colnames(df)))
+  problematic_vars <- setdiff(problematic_vars, keep_cols)
   
   df <- df[,-problematic_vars]
   return(list(df = df, problematic_vars = problematic_vars))

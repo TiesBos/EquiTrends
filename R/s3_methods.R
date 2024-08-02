@@ -92,16 +92,17 @@ print.maxEquivTestIU <- function(x, ...){
   # Summary statistics
   cat("No. placebo coefficients estimated:", length(x$abs_placebo_coefficients), "\n")
   cat("Base period:", x$base_period ,"\n")
+  cat(" \n")
   if(x$is_panel_balanced){
-    cat("Panel: balanced\n")
-    cat("No. available pre-treatment periods per individual:", x$num_periods ,"\n")
+    cat("Balanced Panel: \n")
+    cat(" + No. available pre-treatment periods per individual:", x$num_periods ,"\n")
   } else {
-    cat("Panel: unbalanced\n")
+    cat("Unbalanced Panel: \n")
     range_periods <- paste((x$num_periods)[1], "-", (x$num_periods)[2])
-    cat("No. pre-treatment periods (range):", range_periods ,"\n")
+    cat(" + No. pre-treatment periods (range):", range_periods ,"\n")
   }
-  cat("No. Individuals:", x$num_individuals, "\n")
-  cat("Total no. observations:", x$num_observations,"\n")
+  cat(" + No. individuals:", x$num_individuals, "\n")
+  cat(" + Total no. observations:", x$num_observations,"\n")
   cat("\n")
 }
 
@@ -155,16 +156,17 @@ print.maxEquivTestBoot <- function(x, ...){
   cat("---\n")
   cat("No. placebo coefficients estimated:", length(x$abs_placebo_coefficients), "\n")
   cat("Base period:", x$base_period ,"\n")
+  cat(" \n")
   if(x$is_panel_balanced){
-    cat("Panel: balanced\n")
-    cat("No. pre-treatment periods:", x$num_periods ,"\n")
+    cat("Balanced Panel:\n")
+    cat(" + No. pre-treatment periods:", x$num_periods ,"\n")
   } else {
-    cat("Panel: unbalanced\n")
+    cat("Unbalanced Panel:\n")
     range_periods <- paste((x$num_periods)[1], "-", (x$num_periods)[2])
-    cat("No. pre-treatment periods (range):", range_periods ,"\n")
+    cat(" + No. pre-treatment periods (range):", range_periods ,"\n")
   }
-  cat("No. Individuals:", x$num_individuals, "\n")
-  cat("Total no. observations:", x$num_observations,"\n")
+  cat(" + No. individuals:", x$num_individuals, "\n")
+  cat(" + Total no. observations:", x$num_observations,"\n")
   cat("\n")
 }
 
@@ -219,16 +221,17 @@ print.meanEquivTest <- function(x, ...){
   # Data statistics
   cat("No. placebo coefficients estimated:", length(x$placebo_coefficients), "\n")
   cat("Base period:", x$base_period ,"\n")
+  cat(" \n")
   if(x$is_panel_balanced){
-    cat("Panel: balanced\n")
-    cat("No. pre-treatment periods:", x$num_periods ,"\n")
+    cat("Balanced Panel: \n")
+    cat(" + No. pre-treatment periods:", x$num_periods ,"\n")
   } else {
-    cat("Panel: unbalanced\n")
+    cat("Unbalanced Panel: \n")
     range_periods <- paste((x$num_periods)[1], "-", (x$num_periods)[2])
-    cat("No. pre-treatment periods (range):", range_periods ,"\n")
+    cat(" + No. pre-treatment periods (range):", range_periods ,"\n")
   }
-  cat("No. Individuals:", x$num_individuals, "\n")
-  cat("Total no. observations:", x$num_observations,"\n")
+  cat(" + No. individuals:", x$num_individuals, "\n")
+  cat(" + Total no. observations:", x$num_observations,"\n")
   cat("\n")
 }  
 
@@ -281,16 +284,17 @@ print.rmsEquivTest <- function(x, ...){
   # Data statistics
   cat("No. placebo coefficients estimated:", length(x$placebo_coefficients), "\n")
   cat("Base period:", x$base_period ,"\n")
+  cat(" \n")
   if(x$is_panel_balanced){
-    cat("Panel: balanced\n")
-    cat("No. pre-treatment periods:", x$num_periods ,"\n")
+    cat("Balanced Panel: \n")
+    cat(" + No. pre-treatment periods:", x$num_periods ,"\n")
   } else {
     cat("Panel: unbalanced\n")
     range_periods <- paste((x$num_periods)[1], "-", (x$num_periods)[2])
-    cat("No. pre-treatment periods (range):", range_periods ,"\n")
+    cat(" + No. pre-treatment periods (range):", range_periods ,"\n")
   }
-  cat("No. Individuals:", x$num_individuals, "\n")
-  cat("Total no. observations:", x$num_observations,"\n")
+  cat(" + No. individuals:", x$num_individuals, "\n")
+  cat(" + Total no. observations:", x$num_observations,"\n")
   cat("\n")
 }  
 

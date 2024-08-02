@@ -30,7 +30,6 @@ test_that("Output of maxEquivTest with type = Wild",{
   test_formula <- as.formula(Y ~ X_1 + X_2 + placebo_1 + placebo_2 + placebo_3 + placebo_4)
   plm_test <- plm::plm(test_formula, data=subdata, effect="twoways", model="within", index=c("ID","period"))
   placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
-  names(placebo_coefs) <- NULL
   
   expect_equal(class(maxEquivTest_results), "maxEquivTestBoot")
   expect_equal(maxEquivTest_results$equiv_threshold_specified, TRUE)
