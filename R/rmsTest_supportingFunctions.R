@@ -43,8 +43,9 @@ rmsTest_error <- function(alpha, no_lambda){
 #' \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
 #' \item{\code{rms_placebo_coefs}}{the root mean squared value of the placebo coefficients,}
 #' \item{\code{significance_level}}{the significance level of the test,}
-#' \item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
-#' \item{\code{num_periods}}{the number of periods in the data,}
+#' \item{\code{num_individuals}}{the number of cross-sectional individuals in the data (n),}
+#' \item{\code{num_periods}}{the number of pre-treatment periods in the data (T),}
+#' \item{\code{num_observations}}{the number of observations in the data (N),}
 #' \item{\code{base_period}}{the base period in the data,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 #' \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
@@ -119,7 +120,8 @@ rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period, n
                                    rms_critical_value = RMS_critical_value,
                                    reject_null_hypothesis = reject_H0, equiv_threshold = equiv_threshold,
                                    significance_level = alpha,
-                                   num_individuals = N, num_periods = no_periods, 
+                                   num_individuals = N, num_periods = no_periods,
+                                   num_observations = nrow(data),
                                    base_period = base_period,
                                    equiv_threshold_specified = TRUE, is_panel_balanced = is_panel_balanced),
                               class = "rmsEquivTest")
@@ -127,7 +129,8 @@ rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period, n
     min_equiv_threshold <- as.numeric(sqrt(MS_placebo-Q_W*V_n))
     results_list <- structure(list(placebo_coefficients = betas_placebo, rms_placebo_coefficients = RMS_placebo,
                                    minimum_equiv_threshold = min_equiv_threshold, significance_level = alpha,
-                                   num_individuals = N, num_periods = no_periods, base_period = base_period,
+                                   num_individuals = N, num_periods = no_periods,
+                                   num_observations = nrow(data), base_period = base_period,
                                    equiv_threshold_specified = FALSE, is_panel_balanced = is_panel_balanced),
                               class = "rmsEquivTest")
   }

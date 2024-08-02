@@ -52,6 +52,7 @@ An object of class "meanEquivTest" containing:\itemize{
 \item{\code{significance_level} the significance level of the test,}
 \item{\code{num_individuals} the number of cross-sectional individuals in the data,}
 \item{\code{num_periods} the number of periods in the data,}
+\item{\code{num_observations}: the total number of observations in the data,}
 \item{\code{base_period} the base period in the data,}
 \item{\code{equiv_threshold_specified} a logical value indicating whether an equivalence threshold was specified.}
 }

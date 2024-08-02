@@ -25,6 +25,7 @@
 #' \item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
 #' \item{\code{num_periods}}{the number of periods in the data,}
 #' \item{\code{base_period}}{the base period in the data,}
+#' \item{\code{num_observations}}{the total number of observations in the data,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 #' \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 #'
@@ -104,8 +105,8 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
                          reject_null_hypothesis = reject_H0,
                          equiv_threshold = equiv_threshold,
                          significance_level = alpha,
-                         num_individuals = n,
-                         num_periods = no_periods, base_period = base_period, 
+                         num_individuals = n, num_periods = no_periods, 
+                         num_observations = nrow(data), base_period = base_period, 
                          equiv_threshold_specified = TRUE, is_panel_balanced = is_panel_balanced)
     
   } else {
@@ -115,8 +116,8 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
     results_list <- list(placebo_coefficients = betas_placebo, abs_mean_placebo_coefs = mean_placebo,
                          var_mean_placebo_coef = mean_placebo_var,
                          minimum_equiv_threshold = minimum_equiv_threshold, significance_level = alpha,
-                         num_individuals = n,
-                         num_periods = no_periods, base_period = base_period, 
+                         num_individuals = n, num_periods = no_periods,
+                         num_observations = nrow(data), base_period = base_period, 
                          equiv_threshold_specified = FALSE, is_panel_balanced = is_panel_balanced)
     
   }

@@ -55,6 +55,7 @@
 #' \item{\code{significance_level}: the chosen significance level of the test,}
 #' \item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
 #' \item{\code{num_periods}: the number of periods in \code{data},}
+#' \item{\code{num_observations}: the total number of observations in the data,}
 #' \item{\code{base_period}: the base period in the data,}
 #' \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
 #' \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
@@ -78,6 +79,7 @@
 #'  \item{\code{significance_level}: the chosen significance level of the test \code{alpha},}
 #'  \item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
 #'  \item{\code{num_periods}: the number of periods in \code{data},}
+#'  \item{\code{num_observations}: the total number of observations in the data,}
 #'  \item{\code{base_period}: the base period in the data,}
 #'  \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
 #'  \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
@@ -165,7 +167,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   orig_names <- data_constr$orig_names
   
   # Panel balanced or not:
-  panel_balanced <- data_constr$panel_balanced
+  panel_balanced <- data_constr$balanced_panel
   
   # The number of periods:
   no_periods <- data_constr$no_periods
@@ -227,6 +229,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
 #' \item{\code{significance_level} the significance level of the test,}
 #' \item{\code{num_individuals} the number of cross-sectional individuals in the data,}
 #' \item{\code{num_periods} the number of periods in the data,}
+#' \item{\code{num_observations}: the total number of observations in the data,}
 #' \item{\code{base_period} the base period in the data,}
 #' \item{\code{equiv_threshold_specified} a logical value indicating whether an equivalence threshold was specified.}
 #'}
@@ -299,7 +302,7 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
   base_period <- data_constr$baseperiod
   
   # Checking if the panel is balanced:
-  panel_balanced <- data_constr$panel_balanced
+  panel_balanced <- data_constr$balanced_panel
   
   # The number of periods:
   no_periods <- data_constr$no_periods
@@ -343,7 +346,8 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
 #' \item{\code{rms_placebo_coefs}}{the root mean squared value of the placebo coefficients,}
 #' \item{\code{significance_level}}{the significance level of the test,}
 #' \item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
-#' \item{\code{num_periods}}{the number of periods in the data,}
+#' \item{\code{num_periods}}{the number of pre-treatment periods in the data,}
+#' \item{\code{num_observations}}{the total number of observations in the data,}
 #' \item{\code{base_period}}{the base period in the data,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 #'
@@ -400,7 +404,7 @@ rmsEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
                                        base_period, cluster=NULL)
   df <- data_constr$dataset
   base_period <- data_constr$baseperiod
-  panel_balanced <- data_constr$panel_balanced
+  panel_balanced <- data_constr$balanced_panel
   no_periods <- data_constr$no_periods
   
   # Perform the test:

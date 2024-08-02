@@ -24,8 +24,9 @@
 #' \item{\code{abs_placebo_coefficients}}{a numeric vector with the absolute values of estimated placebo coefficients,}
 #' \item{\code{placebo_coefficient_se}}{a numeric vector with the standard errors of the placebo coefficients,}
 #' \item{\code{significance_level}}{the chosen significance level of the test,}
-#' \item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
-#' \item{\code{num_periods}}{the number of periods in \code{data},}
+#' \item{\code{num_individuals}}{the number of cross-sectional individuals (n),}
+#' \item{\code{num_periods}}{the number of periods (T),}
+#' \item{\code{num_observations}}{the total number of observations (N),}
 #' \item{\code{base_period}}{the base period in the data,}
 #' \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
@@ -97,7 +98,7 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
                                    IU_critical_values = crit_values,
                                    reject_null_hypothesis = reject_H0, equiv_threshold = equiv_threshold,
                                    significance_level = alpha, num_individuals = n,
-                                   num_periods = no_periods, 
+                                   num_periods = no_periods, num_observations = nrow(data),
                                    base_period = base_period, placebo_coef_names = placebo_names,
                                    equiv_threshold_specified = TRUE,
                                    is_panel_balanced = is_panel_balanced), class = "maxEquivTestIU")
@@ -116,8 +117,8 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
                                    minimum_equiv_threshold = minimum_equiv_threshold,
                                    minimum_equiv_thresholds = minimum_equiv_thresholds,
                                    significance_level = alpha,
-                                   num_individuals = n,
-                                   num_periods = no_periods, base_period = base_period,
+                                   num_individuals = n, num_periods = no_periods,
+                                   num_observations = nrow(data), base_period = base_period,
                                    placebo_coef_names = placebo_names,
                                    equiv_threshold_specified = FALSE,
                                    is_panel_balanced = is_panel_balanced), class = "maxEquivTestIU")
@@ -188,8 +189,9 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 #'  \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
 #'  \item{\code{B}}{the number of bootstrap samples used to find the critical value,}
 #'  \item{\code{significance_level}}{the chosen significance level of the test \code{alpha},}
-#'  \item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
-#'  \item{\code{num_periods}}{the number of periods in \code{data},}
+#'  \item{\code{num_individuals}}{the number of cross-sectional individuals (n),}
+#'  \item{\code{num_periods}}{the number of periods (T),}
+#'  \item{\code{num_observations}}{the total number of observations (N),}
 #'  \item{\code{base_period}}{the base period in the data,}
 #'  \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
 #'  \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
@@ -279,7 +281,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
                                  equiv_threshold = equiv_threshold,
                                  B = B, 
                                  significance_level = alpha, wild = (type=="Wild"),
-                                 num_individuals = n, num_periods = no_periods, 
+                                 num_individuals = n, num_periods = no_periods, num_observations = nrow(data),
                                  base_period = base_period,
                                  equiv_threshold_specified = !is.null(equiv_threshold),
                                  is_panel_balanced = is_panel_balanced), class = "maxEquivTestBoot")

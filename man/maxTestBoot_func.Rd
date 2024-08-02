@@ -47,8 +47,9 @@ an object of class "maxEquivTestBoot"  with
  \item{\code{reject_null_hypothesis}}{a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
  \item{\code{B}}{the number of bootstrap samples used to find the critical value,}
  \item{\code{significance_level}}{the chosen significance level of the test \code{alpha},}
- \item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
- \item{\code{num_periods}}{the number of periods in \code{data},}
+ \item{\code{num_individuals}}{the number of cross-sectional individuals (n),}
+ \item{\code{num_periods}}{the number of periods (T),}
+ \item{\code{num_observations}}{the total number of observations (N),}
  \item{\code{base_period}}{the base period in the data,}
  \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
  \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}

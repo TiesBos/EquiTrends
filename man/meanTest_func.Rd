@@ -44,6 +44,7 @@ meanTest_func(
 \item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
 \item{\code{num_periods}}{the number of periods in the data,}
 \item{\code{base_period}}{the base period in the data,}
+\item{\code{num_observations}}{the total number of observations in the data,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 

@@ -58,6 +58,7 @@ If \code{type = "IU"}, an object of class \code{maxEquivTestIU}  with \itemize{
 \item{\code{significance_level}: the chosen significance level of the test,}
 \item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
 \item{\code{num_periods}: the number of periods in \code{data},}
+\item{\code{num_observations}: the total number of observations in the data,}
 \item{\code{base_period}: the base period in the data,}
 \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
 \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
@@ -81,6 +82,7 @@ if \code{type = "Boot"} or \code{type = "Wild"}, an object of class "maxEquivTes
  \item{\code{significance_level}: the chosen significance level of the test \code{alpha},}
  \item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
  \item{\code{num_periods}: the number of periods in \code{data},}
+ \item{\code{num_observations}: the total number of observations in the data,}
  \item{\code{base_period}: the base period in the data,}
  \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
  \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}

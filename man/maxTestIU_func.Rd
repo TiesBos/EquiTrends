@@ -41,8 +41,9 @@ An object of class "maxEquivTestIU" containing:
 \item{\code{abs_placebo_coefficients}}{a numeric vector with the absolute values of estimated placebo coefficients,}
 \item{\code{placebo_coefficient_se}}{a numeric vector with the standard errors of the placebo coefficients,}
 \item{\code{significance_level}}{the chosen significance level of the test,}
-\item{\code{num_individuals}}{the number of cross-sectional individuals in \code{data},}
-\item{\code{num_periods}}{the number of periods in \code{data},}
+\item{\code{num_individuals}}{the number of cross-sectional individuals (n),}
+\item{\code{num_periods}}{the number of periods (T),}
+\item{\code{num_observations}}{the total number of observations (N),}
 \item{\code{base_period}}{the base period in the data,}
 \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
