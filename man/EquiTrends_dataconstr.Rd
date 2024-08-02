@@ -36,7 +36,7 @@ EquiTrends_dataconstr(
 \item{cluster}{see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}}
 }
 \value{
-A list containing the structured data.frame object used in the equivalence testing procedures and the base period for the test.
+A list containing the structured data.frame object used in the equivalence testing procedures, the base period for the test, a logical value indicating whether the panel is balanced and the number of periods.
 }
 \description{
 Data Construction Function for EquiTrends

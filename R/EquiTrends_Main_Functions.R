@@ -167,15 +167,16 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   # Panel balanced or not:
   panel_balanced <- data_constr$panel_balanced
   
+  # The number of periods:
+  no_periods <- data_constr$no_periods
+  
   # Number of individuals
   N <- length(df[unique(df$ID), "ID"])
-  # Number of Time Periods:
-  no_periods <- length(df[unique(df$period), "period"])
   
   if(type=="IU"){
-    test_results <- maxTestIU_func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
+    test_results <- maxTestIU_func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period, panel_balanced)
   } else if (type == "Boot" || type == "Wild"){
-    test_results <- maxTestBoot_func(df, equiv_threshold, alpha, N, B, no_periods, base_period, type, orig_names)
+    test_results <- maxTestBoot_func(df, equiv_threshold, alpha, N, B, no_periods, base_period, type, orig_names, panel_balanced)
   }
   
   return(test_results)
@@ -297,13 +298,17 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
   # Store the base.period:
   base_period <- data_constr$baseperiod
   
+  # Checking if the panel is balanced:
+  panel_balanced <- data_constr$panel_balanced
+  
+  # The number of periods:
+  no_periods <- data_constr$no_periods
+  
   # number of individuals in the sample:
   N <- length(df[unique(df$ID), "ID"])
-  # The number of periods:
-  no_periods <- length(unique(df$period))
   
   # Perform the test:
-  results <- meanTest_func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period)
+  results <- meanTest_func(df, equiv_threshold, vcov, cluster, alpha, N, no_periods, base_period, panel_balanced)
   
   return(results)
 }
@@ -395,9 +400,11 @@ rmsEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
                                        base_period, cluster=NULL)
   df <- data_constr$dataset
   base_period <- data_constr$baseperiod
+  panel_balanced <- data_constr$panel_balanced
+  no_periods <- data_constr$no_periods
   
   # Perform the test:
-  test_results <- rmsTest_func(df, equiv_threshold, alpha, no_lambda, base_period)
+  test_results <- rmsTest_func(df, equiv_threshold, alpha, no_lambda, base_period, no_periods, panel_balanced)
   
   return(test_results)
 }

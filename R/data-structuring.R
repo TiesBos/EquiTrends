@@ -12,7 +12,7 @@
 #' @param cluster see \link[EquiTrends]{maxEquivTest}, \link[EquiTrends]{meanEquivTest} or \link[EquiTrends]{rmsEquivTest}
 #'
 #' @return
-#' A list containing the structured data.frame object used in the equivalence testing procedures and the base period for the test.
+#' A list containing the structured data.frame object used in the equivalence testing procedures, the base period for the test, a logical value indicating whether the panel is balanced and the number of periods.
 
 EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period, 
                               base_period, cluster){
@@ -82,10 +82,13 @@ EquiTrends_dataconstr <- function(Y, ID, G, period, X, data, pretreatment_period
   # new_data$period <- period_numeric
   
   # Check if the data is balanced:
-  balanced_panel <- is_panel_balanced(new_data, "ID")
+  balanced_panel_test <- is_panel_balanced(new_data)
+  balanced_panel <- balanced_panel_test$balanced
+  no_periods <- balanced_panel_test$no_periods
   
   # Return the final data.frame object used:
-  return(list(dataset = new_data, baseperiod = base_period, orig_names = orig_names, balanced_panel = balanced_panel))
+  return(list(dataset = new_data, baseperiod = base_period, orig_names = orig_names, 
+              balanced_panel = balanced_panel, no_periods = no_periods))
 }
 
 
@@ -228,12 +231,25 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pr
 }
 
 # ----------- Checking if the panel is balanced ---------------------------------
-is_panel_balanced <- function(df, individual_var) {
-  # Count the number of observations for each individual
-  obs_count <- table(df[[individual_var]])
+
+#' @importFrom dplyr %>%
+#' @importFrom rlang .data
+is_panel_balanced <- function(df) {
+  # Group by the individual variable and list all unique periods for each individual
+  periods_by_individual <- df %>%
+    dplyr::group_by(.data$ID) %>%
+    dplyr::summarise(periods = list(unique(.data$period)))
   
-  # Check if all individuals have the same number of observations
-  balanced <- length(unique(obs_count)) == 1
+  # Check if all individuals have the same unique periods
+  unique_periods <- periods_by_individual$periods[[1]]
+  balanced <- all(sapply(periods_by_individual$periods, function(x) setequal(x, unique_periods)))
   
-  return(balanced)
+  if(balanced){
+    no_periods <- length(unique(df$period))
+  } else {
+    no_periods_per_individual <- sapply(periods_by_individual$periods, length)
+    no_periods <- c(min(no_periods_per_individual), max(no_periods_per_individual))
+  }
+  
+  return(list(balanced=balanced, no_periods = no_periods))
 }

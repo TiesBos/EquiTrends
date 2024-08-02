@@ -12,7 +12,8 @@ maxTestIU_func(
   alpha,
   n,
   no_periods,
-  base_period
+  base_period,
+  is_panel_balanced
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ maxTestIU_func(
 \item{no_periods}{The number of periods in the data.}
 
 \item{base_period}{The base period for the test. Must be one of the unique periods in the data.}
+
+\item{is_panel_balanced}{A logical value indicating whether the panel data is balanced.}
 }
 \value{
 An object of class "maxEquivTestIU" containing:
@@ -43,6 +46,7 @@ An object of class "maxEquivTestIU" containing:
 \item{\code{base_period}}{the base period in the data,}
 \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+\item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
  Additionally, if \code{!(is.null(equiv_threshold))}\itemize{
  \item{\code{IU_critical_values}: a numeric vector with the individual critical values for each of the placebo coefficients,}
  \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}

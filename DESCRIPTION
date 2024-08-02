@@ -11,6 +11,8 @@ License: MIT + file LICENSE
 Imports: 
     clubSandwich,
     nloptr,
+    dplyr,
+    rlang,
     plm,
     Rcpp (>= 1.0.12),
     RcppParallel,

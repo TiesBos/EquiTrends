@@ -12,7 +12,8 @@ meanTest_func(
   alpha,
   n,
   no_periods,
-  base_period
+  base_period,
+  is_panel_balanced
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ meanTest_func(
 \item{no_periods}{The number of periods in the data.}
 
 \item{base_period}{The base period for the test. Must be one of the unique periods in the data.}
+
+\item{is_panel_balanced}{A logical value indicating whether the panel data is balanced.}
 }
 \value{
 #' An object of class "meanEquivTest" containing:
@@ -42,6 +45,7 @@ meanTest_func(
 \item{\code{num_periods}}{the number of periods in the data,}
 \item{\code{base_period}}{the base period in the data,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+\item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 
 If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
 

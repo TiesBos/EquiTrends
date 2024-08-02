@@ -13,7 +13,8 @@ maxTestBoot_func(
   no_periods,
   base_period,
   type,
-  original_names
+  original_names,
+  is_panel_balanced
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ maxTestBoot_func(
 \item{type}{The type of bootstrap to be used. Must be one of "Boot" or "Wild".}
 
 \item{original_names}{The original names of the control variables in the data.}
+
+\item{is_panel_balanced}{A logical value indicating whether the panel data is balanced.}
 }
 \value{
 an object of class "maxEquivTestBoot"  with
@@ -49,6 +52,7 @@ an object of class "maxEquivTestBoot"  with
  \item{\code{base_period}}{the base period in the data,}
  \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
  \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+ \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 }
 \description{
 This is a supporting function of the \code{maxEquivTest} function. It calculates the placebo coefficients and the absolute value of the placebo coefficients. It then calculates the critical value by bootstrap if an equivalence threshold is supplied for the test, according to Dette & Schumann (2024).

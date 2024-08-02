@@ -11,6 +11,7 @@
 #' @param n The number of cross-sectional individuals in the data.
 #' @param no_periods The number of periods in the data.
 #' @param base_period The base period for the test. Must be one of the unique periods in the data.
+#' @param is_panel_balanced A logical value indicating whether the panel data is balanced.
 #'
 #' @references 
 #' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
@@ -25,6 +26,7 @@
 #' \item{\code{num_periods}}{the number of periods in the data,}
 #' \item{\code{base_period}}{the base period in the data,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#' \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 #'
 #' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
 #' 
@@ -36,7 +38,7 @@
 #' \item \code{equiv_threshold}: the equivalence threshold specified.
 #' }
 #' 
-meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period){
+meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period, is_panel_balanced){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
@@ -104,7 +106,7 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
                          significance_level = alpha,
                          num_individuals = n,
                          num_periods = no_periods, base_period = base_period, 
-                         equiv_threshold_specified = TRUE)
+                         equiv_threshold_specified = TRUE, is_panel_balanced = is_panel_balanced)
     
   } else {
     
@@ -115,7 +117,7 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
                          minimum_equiv_threshold = minimum_equiv_threshold, significance_level = alpha,
                          num_individuals = n,
                          num_periods = no_periods, base_period = base_period, 
-                         equiv_threshold_specified = FALSE)
+                         equiv_threshold_specified = FALSE, is_panel_balanced = is_panel_balanced)
     
   }
   class(results_list) <- "meanEquivTest"

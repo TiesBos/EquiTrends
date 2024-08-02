@@ -4,7 +4,15 @@
 \alias{rmsTest_func}
 \title{An internal function of the RMS Equivalence Testing procedure}
 \usage{
-rmsTest_func(data, equiv_threshold, alpha, no_lambda, base_period)
+rmsTest_func(
+  data,
+  equiv_threshold,
+  alpha,
+  no_lambda,
+  base_period,
+  no_periods,
+  is_panel_balanced
+)
 }
 \arguments{
 \item{data}{The data.frame object containing the data for the test. Should be of the form what is returned by the \link[EquiTrends]{EquiTrends_dataconstr} function.}
@@ -16,6 +24,10 @@ rmsTest_func(data, equiv_threshold, alpha, no_lambda, base_period)
 \item{no_lambda}{See \link[EquiTrends]{rmsEquivTest}.}
 
 \item{base_period}{The base period for the test. Must be one of the unique periods in the data.}
+
+\item{no_periods}{The number of periods in the data.}
+
+\item{is_panel_balanced}{A logical value indicating whether the panel data is balanced.}
 }
 \value{
 An object of class "rmsEquivTest" containing:
@@ -26,6 +38,7 @@ An object of class "rmsEquivTest" containing:
 \item{\code{num_periods}}{the number of periods in the data,}
 \item{\code{base_period}}{the base period in the data,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+\item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 
 If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
 

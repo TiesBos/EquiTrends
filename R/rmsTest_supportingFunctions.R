@@ -32,6 +32,8 @@ rmsTest_error <- function(alpha, no_lambda){
 #' @param alpha The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1 or 0.2.
 #' @param no_lambda See \link[EquiTrends]{rmsEquivTest}.
 #' @param base_period The base period for the test. Must be one of the unique periods in the data.
+#' @param no_periods The number of periods in the data.
+#' @param is_panel_balanced A logical value indicating whether the panel data is balanced.
 #'
 #' @references 
 #' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
@@ -45,6 +47,7 @@ rmsTest_error <- function(alpha, no_lambda){
 #' \item{\code{num_periods}}{the number of periods in the data,}
 #' \item{\code{base_period}}{the base period in the data,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#' \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 #'
 #' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
 #' 
@@ -55,7 +58,7 @@ rmsTest_error <- function(alpha, no_lambda){
 #' \item \code{equiv_threshold}: the equivalence threshold specified.
 #' }
 
-rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
+rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period, no_periods, is_panel_balanced){
   # Formula for plm function:
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
@@ -64,9 +67,6 @@ rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
   # Number of individuals in the sample
   individuals <- unique(data[,"ID"])
   N <- length(individuals)
-  
-  # Number of periods:
-  no_periods <- length(unique(data[,"period"]))
   
   # Matrix storing the placebo coefficient RMS on 1/lambda of the data for 
   # lambda = 1,..., no.lambda:
@@ -121,14 +121,14 @@ rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period){
                                    significance_level = alpha,
                                    num_individuals = N, num_periods = no_periods, 
                                    base_period = base_period,
-                                   equiv_threshold_specified = TRUE),
+                                   equiv_threshold_specified = TRUE, is_panel_balanced = is_panel_balanced),
                               class = "rmsEquivTest")
   } else {
     min_equiv_threshold <- as.numeric(sqrt(MS_placebo-Q_W*V_n))
     results_list <- structure(list(placebo_coefficients = betas_placebo, rms_placebo_coefficients = RMS_placebo,
                                    minimum_equiv_threshold = min_equiv_threshold, significance_level = alpha,
                                    num_individuals = N, num_periods = no_periods, base_period = base_period,
-                                   equiv_threshold_specified = FALSE),
+                                   equiv_threshold_specified = FALSE, is_panel_balanced = is_panel_balanced),
                               class = "rmsEquivTest")
   }
   return(results_list)

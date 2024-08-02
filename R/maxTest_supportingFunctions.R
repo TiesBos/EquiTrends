@@ -13,6 +13,7 @@
 #' @param n The number of cross-sectional individuals in the data.
 #' @param no_periods The number of periods in the data.
 #' @param base_period The base period for the test. Must be one of the unique periods in the data.
+#' @param is_panel_balanced A logical value indicating whether the panel data is balanced.
 #'
 #' @references 
 #' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
@@ -28,6 +29,7 @@
 #' \item{\code{base_period}}{the base period in the data,}
 #' \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#' \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 #'  Additionally, if \code{!(is.null(equiv_threshold))}\itemize{
 #'  \item{\code{IU_critical_values}: a numeric vector with the individual critical values for each of the placebo coefficients,}
 #'  \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
@@ -38,7 +40,7 @@
 #' \item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
 #' }
 #'
-maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period){
+maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_periods, base_period, is_panel_balanced){
   # Construct the formula for the plm() function
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
@@ -97,7 +99,8 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
                                    significance_level = alpha, num_individuals = n,
                                    num_periods = no_periods, 
                                    base_period = base_period, placebo_coef_names = placebo_names,
-                                   equiv_threshold_specified = TRUE), class = "maxEquivTestIU")
+                                   equiv_threshold_specified = TRUE,
+                                   is_panel_balanced = is_panel_balanced), class = "maxEquivTestIU")
     
     return(results_list)
   } else{
@@ -116,7 +119,8 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
                                    num_individuals = n,
                                    num_periods = no_periods, base_period = base_period,
                                    placebo_coef_names = placebo_names,
-                                   equiv_threshold_specified = FALSE), class = "maxEquivTestIU")
+                                   equiv_threshold_specified = FALSE,
+                                   is_panel_balanced = is_panel_balanced), class = "maxEquivTestIU")
     
     return(results_list)
   }
@@ -170,6 +174,7 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 #' @param base_period The base period for the test. Must be one of the unique periods in the data.
 #' @param type The type of bootstrap to be used. Must be one of "Boot" or "Wild".
 #' @param original_names The original names of the control variables in the data.
+#' @param is_panel_balanced A logical value indicating whether the panel data is balanced.
 #'
 #' @references
 #' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
@@ -188,9 +193,10 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 #'  \item{\code{base_period}}{the base period in the data,}
 #'  \item{\code{placebo_names}}{the names corresponding to the placebo coefficients,}
 #'  \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
+#'  \item{\code{is_panel_balanced}}{a logical value indicating whether the panel data is balanced.}
 #'
 maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods, 
-                                 base_period, type, original_names){
+                                 base_period, type, original_names, is_panel_balanced){
   D <- as.matrix(stats::model.matrix(~0+factor(period), data=data))
   # Between transformation on D to obtain WD:
   WD <- matrix_between_transformation(D, matrix(data$ID))
@@ -275,7 +281,8 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
                                  significance_level = alpha, wild = (type=="Wild"),
                                  num_individuals = n, num_periods = no_periods, 
                                  base_period = base_period,
-                                 equiv_threshold_specified = !is.null(equiv_threshold)), class = "maxEquivTestBoot")
+                                 equiv_threshold_specified = !is.null(equiv_threshold),
+                                 is_panel_balanced = is_panel_balanced), class = "maxEquivTestBoot")
   
   return(results_list)
 }
