@@ -95,7 +95,7 @@ print.maxEquivTestIU <- function(x, ...){
   cat(" \n")
   if(x$is_panel_balanced){
     cat("Balanced Panel: \n")
-    cat(" + No. available pre-treatment periods per individual:", x$num_periods ,"\n")
+    cat(" + No. pre-treatment periods:", x$num_periods ,"\n")
   } else {
     cat("Unbalanced Panel: \n")
     range_periods <- paste((x$num_periods)[1], "-", (x$num_periods)[2])

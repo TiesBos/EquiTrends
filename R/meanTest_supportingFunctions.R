@@ -51,6 +51,7 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
   
   # Extract the estimated coefficients:
   betas <- plm_twfe$coefficients
+  placebo_names <- base::grep("placebo_",base::names(betas),value=TRUE)
   betas_placebo <- c(betas[placebo_names])
   
   # Calculating the mean of the absolute placebo coefficients:
@@ -105,9 +106,10 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
                          reject_null_hypothesis = reject_H0,
                          equiv_threshold = equiv_threshold,
                          significance_level = alpha,
+                         base_period = base_period, 
+                         equiv_threshold_specified = TRUE,
                          num_individuals = n, num_periods = no_periods, 
-                         num_observations = nrow(data), base_period = base_period, 
-                         equiv_threshold_specified = TRUE, is_panel_balanced = is_panel_balanced)
+                         num_observations = nrow(data), is_panel_balanced = is_panel_balanced)
     
   } else {
     
@@ -116,9 +118,10 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
     results_list <- list(placebo_coefficients = betas_placebo, abs_mean_placebo_coefs = mean_placebo,
                          var_mean_placebo_coef = mean_placebo_var,
                          minimum_equiv_threshold = minimum_equiv_threshold, significance_level = alpha,
+                         base_period = base_period, 
+                         equiv_threshold_specified = FALSE, 
                          num_individuals = n, num_periods = no_periods,
-                         num_observations = nrow(data), base_period = base_period, 
-                         equiv_threshold_specified = FALSE, is_panel_balanced = is_panel_balanced)
+                         num_observations = nrow(data), is_panel_balanced = is_panel_balanced)
     
   }
   class(results_list) <- "meanEquivTest"

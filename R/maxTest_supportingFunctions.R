@@ -53,6 +53,7 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
   
   # Extract the estimated coefficients:
   betas <- IU_twfe$coefficients
+  placebo_names <- base::grep("placebo_",base::names(betas),value=TRUE)
   betas_placebo <- c(betas[placebo_names])
   abs_betas_placebo <- abs(betas_placebo)
   
@@ -97,10 +98,11 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
                                    placebo_coefficients_se = beta_se, 
                                    IU_critical_values = crit_values,
                                    reject_null_hypothesis = reject_H0, equiv_threshold = equiv_threshold,
-                                   significance_level = alpha, num_individuals = n,
-                                   num_periods = no_periods, num_observations = nrow(data),
+                                   significance_level = alpha,
                                    base_period = base_period, placebo_coef_names = placebo_names,
                                    equiv_threshold_specified = TRUE,
+                                   num_individuals = n,
+                                   num_periods = no_periods, num_observations = nrow(data),
                                    is_panel_balanced = is_panel_balanced), class = "maxEquivTestIU")
     
     return(results_list)
@@ -117,10 +119,11 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
                                    minimum_equiv_threshold = minimum_equiv_threshold,
                                    minimum_equiv_thresholds = minimum_equiv_thresholds,
                                    significance_level = alpha,
-                                   num_individuals = n, num_periods = no_periods,
-                                   num_observations = nrow(data), base_period = base_period,
+                                   base_period = base_period,
                                    placebo_coef_names = placebo_names,
                                    equiv_threshold_specified = FALSE,
+                                   num_individuals = n, num_periods = no_periods,
+                                   num_observations = nrow(data),
                                    is_panel_balanced = is_panel_balanced), class = "maxEquivTestIU")
     
     return(results_list)
@@ -222,11 +225,19 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # Check multicolinearity:
   if(qr(X)$rank < ncol(X)){
-    new_X <- remove_multicollinearity(X, keep_cols = 1:length(placebo_names))
+    new_X <- remove_multicollinearity(X)
     X <- new_X$df
     removed_ind <- new_X$problematic_vars
+    if(any(removed_ind %in% 1:length(placebo_names))){
+      removed_placebos <- removed_ind[removed_ind %in% 1:length(placebo_names)]
+      period_removed_placebo <- placebo_names[removed_placebos]
+      period_removed_placebo <- sub("placebo_", "", period_removed_placebo)
+      warning(paste("The placebo corresponding to period(s) ", paste(period_removed_placebo, collapse = ", "), " removed due to multicolinearity."))
+      removed_ind <- removed_ind[!(removed_ind %in% 1:length(placebo_names))]
+      placebo_names <- placebo_names[-removed_placebos]
+    }
     removed_names <- colnames(model_matrix)[removed_ind]
-    warning(paste("The following columns were removed due to multicolinearity: ", removed_names))
+    warning(paste("The following control variables were removed due to multicolinearity: ", removed_names))
   }
   
   Y <- as.matrix(double_demean(matrix(data$Y),individual = matrix(data$ID), time = matrix(data$period), WD = WD))
@@ -285,9 +296,9 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
                                  equiv_threshold = equiv_threshold,
                                  B = B, 
                                  significance_level = alpha, wild = (type=="Wild"),
-                                 num_individuals = n, num_periods = no_periods, num_observations = nrow(data),
                                  base_period = base_period,
                                  equiv_threshold_specified = !is.null(equiv_threshold),
+                                 num_individuals = n, num_periods = no_periods, num_observations = nrow(data),
                                  is_panel_balanced = is_panel_balanced), class = "maxEquivTestBoot")
   
   return(results_list)
@@ -297,7 +308,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
 #   ---- Supporting functions for the Bootstrap Approach ----
 
 # Removing multicolinear columns:
-remove_multicollinearity <- function(df, keep_cols = character(0)) {
+remove_multicollinearity <- function(df) {
   # Create the design matrix
   mat <- as.matrix(df)
   
@@ -306,9 +317,6 @@ remove_multicollinearity <- function(df, keep_cols = character(0)) {
   
   # Identify the problematic variables
   problematic_vars <- qr_mat$pivot[seq(from = qr_mat$rank + 1, to = ncol(mat))]
-  
-  # Make sure specific variables are NOT dropped.
-  problematic_vars <- setdiff(problematic_vars, keep_cols)
   
   df <- df[,-problematic_vars]
   return(list(df = df, problematic_vars = problematic_vars))

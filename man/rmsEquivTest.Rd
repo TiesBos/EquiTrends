@@ -46,13 +46,14 @@ An object of class "rmsEquivTest" containing:
 \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
 \item{\code{rms_placebo_coefs}}{the root mean squared value of the placebo coefficients,}
 \item{\code{significance_level}}{the significance level of the test,}
-\item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
-\item{\code{num_periods}}{the number of pre-treatment periods in the data,}
-\item{\code{num_observations}}{the total number of observations in the data,}
-\item{\code{base_period}}{the base period in the data,}
+\item{\code{base_period}}{the base period used in the testing procedure,}
+\item{\code{num_individuals}}{the number of cross-sectional individuals in the panel,}
+\item{\code{num_periods}}{the number of pre-treatment periods in the panel,}
+\item{\code{num_observations}}{the total number of observations in the panel,}
+\item{\code{is_panel_balanced}}{a logical value indicating whether the panel is balanced,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 
-If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
 
 if \code{!(is.null(equiv_threshold))}, then additionally
 \itemize{
@@ -68,6 +69,9 @@ This function performs an equivalence test for pre-trends based on the root mean
 \code{no_lambda} determines the proportions lambda/\code{no.lambda} for lambda = 1,...,\code{no_lambda} of the cross-sectional units at which the placebo coefficients are estimated. The placebo coefficients are estimated for each of these proportions and the root mean squared (RMS) of the placebo coefficients is calculated, which are then used to construct the critical value at a significance level of \code{alpha}. See Dette & Schumann (2024, s. 4.2.3.) for more details.
 }
 \examples{
+
+
+# ---- OLD EXAMPLE ----
 # Simulate data
 sim_data <- sim_paneldata()
 

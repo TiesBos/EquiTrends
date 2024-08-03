@@ -87,13 +87,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G        X_1        X_2
-#> 1  1      1  3.5339699 0  1.1450064  1.4016870
-#> 2  1      2 -1.3101156 0  1.5250547 -1.7822728
-#> 3  1      3 -2.5215817 0 -1.8525786 -0.1679562
-#> 4  1      4 -3.0922237 0 -0.8760159 -1.2051780
-#> 5  1      5  1.4149344 0  0.8324306  0.9792956
-#> 6  2      1  0.8091497 1 -0.7104327 -0.2756529
+#>   ID period          Y G         X_1        X_2
+#> 1  1      1  2.6140606 0  2.25756749 -0.5661679
+#> 2  1      2  0.7226140 0 -0.06823813  0.7520332
+#> 3  1      3 -1.2470239 0 -1.14795513 -0.2081381
+#> 4  1      4  0.6947220 0 -0.01709956  0.7453142
+#> 5  1      5 -0.6875697 0  1.28377754 -2.0971105
+#> 6  2      1 -1.8851298 1 -0.67178722  0.3521126
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -185,7 +185,7 @@ IU_equivalence_test1 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "peri
 # and autocorrelation robust variance-covariance matrix estimator:
 IU_equivalence_test2 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4, vcov = "HAC", type = "IU")
+                           base_period = 4, type = "IU", vcov = "HAC")
 
 # Perform the test without specifying the equivalence threshold with a custom
 # variance-covariance matrix estimator:
@@ -193,7 +193,7 @@ vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
 
 IU_equivalence_test3 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
                            data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
-                           base_period = 4, vcov = vcov_func, type = "IU")
+                           base_period = 4, type = "IU", vcov = vcov_func)
 ```
 
 The package also contains print functions to create a summary output:
@@ -213,18 +213,21 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.15367          0.0097          0.984         
-#> 0.09671          0.0097          0.984         
-#> 0.15144          0.0097          0.984         
+#> 0.03299          0.009846        0.9838        
+#> 0.45089          0.009846        0.9838        
+#> 0.04280          0.009846        0.9838        
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 ``` r
-# An output withoout an equivalence threshold specified
+# An output without an equivalence threshold specified
 print(IU_equivalence_test3)
 #> 
 #>                ==================================================
@@ -233,17 +236,20 @@ print(IU_equivalence_test3)
 #> Type: Intersection Union 
 #> Significance level: 0.05 
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
-#> Minimum equivalence threshold to accept the alternative: 0.1673 
+#> Minimum equivalence threshold to accept the alternative: 0.465 
 #> ---
 #>  Estimate    Std. Error   Minimum Equivalence Threshold 
-#> 0.15367      0.008288    0.1673    
-#> 0.09671      0.008312    0.1104    
-#> 0.15144      0.008250    0.1650    
+#> 0.03299      0.008666    0.04724   
+#> 0.45089      0.008547    0.46495   
+#> 0.04280      0.008656    0.05703   
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 ##### Implementation of the bootstrap approaches
@@ -298,12 +304,15 @@ boot_equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "per
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1537                   0.6993                      TRUE      
+#> 0.4509                   0.6445                      TRUE      
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel:
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 The Wild boostrap with 100 bootstrap iterations:
@@ -323,12 +332,15 @@ The Wild boostrap with 100 bootstrap iterations:
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1537                   0.6312                      TRUE      
+#> 0.4509                   0.6287                      TRUE      
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel:
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 ### The `meanEquivTest` function
@@ -415,12 +427,15 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.03149                  0.02376     <2e-16  TRUE      
+#> 0.1536                   0.02412     <2e-16  TRUE      
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 ``` r
@@ -435,12 +450,15 @@ print(mean_equivalence_test3)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
-#> 0.03149                  0.02003     0.06443               
+#> 0.1536                   0.02138     0.1887                
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 ### The `rmsEquivTest` function
@@ -509,12 +527,15 @@ print(rms_equivalence_test)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.1365               0.781                   TRUE      
+#> 0.2622               0.9219                  TRUE      
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 ``` r
@@ -528,12 +549,15 @@ print(rms_equivalence_test2)
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> RMS Placebo Effect   Min. Equiv. Threshold 
-#> 0.1365               0.3346                
+#> 0.2622               0.4205                
 #> ---
-#> No. placebo coefficients estimated (T): 3 
-#> No. pre-treatment periods (T+1): 4 
+#> No. placebo coefficients estimated: 3 
 #> Base period: 4 
-#> No. Individuals (N): 500
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
 ```
 
 ## References

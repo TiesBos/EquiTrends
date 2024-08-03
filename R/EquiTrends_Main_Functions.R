@@ -4,17 +4,17 @@
 #'
 #' @param Y A numeric vector with the variable of interest. If \code{data} is supplied, \code{Y} should be a scalar indicating the column number or column-name character string that corresponds to the numeric dependent (outcome) variable in ’data’.
 #' @param ID A numeric vector identifying the different cross-sectional units in the dataset. If \code{data} is supplied, \code{ID} should be a scalar indicating the column number or column-name character string that corresponds to the cross-sectional units identifier in \code{data}.
-#' @param G A binary or logic vector (of the same dimension as \code{Y} and \code{ID}) indicating if the individual (e.g. as indicated by \code{ID}) receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). f 'data' is supplied, \code{G} should be a scalar identifying the column number or column-name character string associated to \code{G} in \code{data}.
+#' @param G A binary or logic vector (of the same dimension as \code{Y} and \code{ID}) indicating if the individual (e.g. as indicated by \code{ID}) receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). If 'data' is supplied, \code{G} should be a scalar identifying the column number or column-name character string associated to \code{G} in \code{data}.
 #' @param period A numeric vector (of the same dimension as Y) indicating time. If \code{data} is supplied, \code{period} should be a scalar indicating the column number or column-name character string that corresponds to the time identifier in \code{data}.
 #' @param X  A vector, matrix, or data.frame containing the control variables. If \code{data} is supplied, \code{X} must be a vector of column numbers or column-name character strings that identifies the control variables’ columns. 
 #' @param data An optional \code{data.frame} object containing the variables in Y, ID, G, T and, if supplied, X and cluster as its columns.
 #' @param equiv_threshold The scalar equivalence threshold (must be positive). The default is NULL, implying that the function must look for the minimum value for which the null hypothesis of ”non-negligible differences” can still be rejected.
 #' @param pretreatment_period A numeric vector identifying the pre-treatment periods that should be used for testing. \code{pretreatment_period} must be a subset of the periods included through \code{period}. The default is to use all periods that are included in \code{period}.
 #' @param base_period The pre-treatment period to compare the post-treatment observation to. The default is to take the last period of the pre-treatment period.
+#' @param type The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2024) and "Wild" for the Wild bootstrap procedure.
 #' @param vcov The variance-covariance matrix that needs to be used. See \emph{Details} for more details.
 #' @param cluster If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as Y. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster. Only required if \code{vcov = "CL"} and \code{type = "IU"}.
 #' @param alpha Significance level of the test. The default is 0.05. Only required if \code{equiv_threshold} is not specified.
-#' @param type The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2023) and "Wild" for the Wild bootstrap procedure.
 #' @param B If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.
 #'
 #' 
@@ -53,18 +53,19 @@
 #' \item{\code{abs_placebo_coefficients}: a numeric vector with the absolute values of estimated placebo coefficients,}
 #' \item{\code{placebo_coefficients_se}: a numeric vector with the standard errors of the placebo coefficients,}
 #' \item{\code{significance_level}: the chosen significance level of the test,}
-#' \item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
-#' \item{\code{num_periods}: the number of periods in \code{data},}
-#' \item{\code{num_observations}: the total number of observations in the data,}
-#' \item{\code{base_period}: the base period in the data,}
+#' \item{\code{base_period}: the base period used in the testing procedure,}
 #' \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
+#' \item{\code{num_individuals}: the number of cross-sectional individuals in the panel,}
+#' \item{\code{num_periods}: the number of periods in the panel,}
+#' \item{\code{num_observations}: the total number of observations in the panel,}
+#' \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced,}
 #' \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
-#' \item{if \code{!(is.null(equiv_threshold))}\itemize{
+#' \item{if \code{!(is.null(equiv_threshold))}, then additionally\itemize{
 #'  \item{\code{IU_critical_values}: a numeric vector with the individual critical values for each of the placebo coefficients,}
 #'  \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
 #'  \item{\code{equiv_threshold}: the equivalence threshold employed.}
 #' }}
-#' \item{Additionally, if \code{is.null(equiv_threshold)}\itemize{
+#' \item{if \code{is.null(equiv_threshold)}, then additionally\itemize{
 #' \item{\code{minimum_equiv_thresholds}: a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
 #' \item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
 #' }}}
@@ -77,12 +78,13 @@
 #'  \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
 #'  \item{\code{B}: the number of bootstrap samples used to find the critical value,}
 #'  \item{\code{significance_level}: the chosen significance level of the test \code{alpha},}
-#'  \item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
-#'  \item{\code{num_periods}: the number of periods in \code{data},}
-#'  \item{\code{num_observations}: the total number of observations in the data,}
-#'  \item{\code{base_period}: the base period in the data,}
+#'  \item{\code{base_period}: the base period used in the testing procedure,}
 #'  \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
 #'  \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
+#'  \item{\code{num_individuals}: the number of cross-sectional individuals in the panel,}
+#'  \item{\code{num_periods}: the number of periods in the panel,}
+#'  \item{\code{num_observations}: the total number of observations in the panel,}
+#'  \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced.}
 #' }
 #' 
 #' @examples
@@ -102,7 +104,7 @@
 #' # and autocorrelation robust variance-covariance matrix estimator:
 #' equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
 #'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, vcov = "HAC", type = "IU")
+#'                            base_period = 4, type = "IU", vcov = "HAC")
 #' print(equivalence_test)
 #' 
 #' # Perform the test without specifying the equivalence threshold with a custom
@@ -111,7 +113,7 @@
 #' 
 #' equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
 #'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, vcov = vcov_func, type = "IU")
+#'                            base_period = 4, type = "IU", vcov = vcov_func)
 #' print(equivalence_test)
 #' 
 #' #-----------------  Bootstrap Approach -----------------
@@ -132,9 +134,10 @@
 #' @export
 #' 
 maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshold = NULL,  
-                       pretreatment_period = NULL, base_period = NULL, 
+                       pretreatment_period = NULL, base_period = NULL,
+                       type = c("IU", "Boot", "Wild"),
                        vcov = NULL, cluster = NULL, alpha = 0.05, 
-                       type = c("IU", "Boot", "Wild"), B = 1000){
+                       B = 1000){
   # If no type is specified, the type is "IU"
   if(identical(type, c("IU", "Boot", "Wild"))){
     type <- "IU"
@@ -222,20 +225,21 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
 #' estimated by the \link[plm:plm]{plm::plm()} function.
 #'
 #' @return 
-#' An object of class "meanEquivTest" containing:\itemize{
-#' \item{\code{placebo_coefficients} A numeric vector of the estimated placebo coefficients,}
-#' \item{\code{abs_mean_placebo_coefs} the absolute value of the mean of the placebo coefficients,}
-#' \item{\code{var_mean_placebo_coef} the estimated variance of the mean placebo coefficient,}
-#' \item{\code{significance_level} the significance level of the test,}
-#' \item{\code{num_individuals} the number of cross-sectional individuals in the data,}
-#' \item{\code{num_periods} the number of periods in the data,}
-#' \item{\code{num_observations}: the total number of observations in the data,}
-#' \item{\code{base_period} the base period in the data,}
-#' \item{\code{equiv_threshold_specified} a logical value indicating whether an equivalence threshold was specified.}
-#'}
-#' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+#' An object of class "meanEquivTest" containing:
+#' \item{\code{placebo_coefficients}}{ a numeric vector of the estimated placebo coefficients,}
+#' \item{\code{abs_mean_placebo_coefs}}{ the absolute value of the mean of the placebo coefficients,}
+#' \item{\code{var_mean_placebo_coef}}{ the estimated variance of the mean placebo coefficient,}
+#' \item{\code{significance_level}}{ the significance level of the test,}
+#' \item{\code{base_period}}{ the base period used in the testing procedure,}
+#' \item{\code{num_individuals}}{ the number of cross-sectional individuals in the panel,}
+#' \item{\code{num_periods}}{ the number of periods in the panel,}
+#' \item{\code{num_observations}}{ the total number of observations in the panel,}
+#' \item{\code{is_panel_balanced}}{ a logical value indicating whether the panel is balanced,}
+#' \item{\code{equiv_threshold_specified}}{ a logical value indicating whether an equivalence threshold was specified.}
+#'
+#' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
 #' 
-#' if \code{!(is.null(equiv_threshold))}, then additionally \itemize{
+#' If \code{!(is.null(equiv_threshold))}, then additionally \itemize{
 #' \item \code{mean_critical_value}: the critical value at the alpha level,
 #' \item \code{p_value}: the p-value of the test,
 #' \item \code{reject_null_hypothesis}: A logical value indicating whether to reject the null hypothesis,
@@ -345,13 +349,14 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
 #' \item{\code{placebo_coefficients}}{A numeric vector of the estimated placebo coefficients,}
 #' \item{\code{rms_placebo_coefs}}{the root mean squared value of the placebo coefficients,}
 #' \item{\code{significance_level}}{the significance level of the test,}
-#' \item{\code{num_individuals}}{the number of cross-sectional individuals in the data,}
-#' \item{\code{num_periods}}{the number of pre-treatment periods in the data,}
-#' \item{\code{num_observations}}{the total number of observations in the data,}
-#' \item{\code{base_period}}{the base period in the data,}
+#' \item{\code{base_period}}{the base period used in the testing procedure,}
+#' \item{\code{num_individuals}}{the number of cross-sectional individuals in the panel,}
+#' \item{\code{num_periods}}{the number of pre-treatment periods in the panel,}
+#' \item{\code{num_observations}}{the total number of observations in the panel,}
+#' \item{\code{is_panel_balanced}}{a logical value indicating whether the panel is balanced,}
 #' \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 #'
-#' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+#' If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
 #' 
 #' if \code{!(is.null(equiv_threshold))}, then additionally
 #' \itemize{
@@ -365,6 +370,9 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
 #' 
 #' 
 #' @examples
+#' 
+#' 
+#' # ---- OLD EXAMPLE ----
 #' # Simulate data
 #' sim_data <- sim_paneldata()
 #' 

@@ -45,20 +45,21 @@ meanEquivTest(
 \item{alpha}{Significance level of the test. The default is 0.05. Only required if \code{equiv_threshold} is not specified.}
 }
 \value{
-An object of class "meanEquivTest" containing:\itemize{
-\item{\code{placebo_coefficients} A numeric vector of the estimated placebo coefficients,}
-\item{\code{abs_mean_placebo_coefs} the absolute value of the mean of the placebo coefficients,}
-\item{\code{var_mean_placebo_coef} the estimated variance of the mean placebo coefficient,}
-\item{\code{significance_level} the significance level of the test,}
-\item{\code{num_individuals} the number of cross-sectional individuals in the data,}
-\item{\code{num_periods} the number of periods in the data,}
-\item{\code{num_observations}: the total number of observations in the data,}
-\item{\code{base_period} the base period in the data,}
-\item{\code{equiv_threshold_specified} a logical value indicating whether an equivalence threshold was specified.}
-}
-If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differnces can be rejected. 
+An object of class "meanEquivTest" containing:
+\item{\code{placebo_coefficients}}{ a numeric vector of the estimated placebo coefficients,}
+\item{\code{abs_mean_placebo_coefs}}{ the absolute value of the mean of the placebo coefficients,}
+\item{\code{var_mean_placebo_coef}}{ the estimated variance of the mean placebo coefficient,}
+\item{\code{significance_level}}{ the significance level of the test,}
+\item{\code{base_period}}{ the base period used in the testing procedure,}
+\item{\code{num_individuals}}{ the number of cross-sectional individuals in the panel,}
+\item{\code{num_periods}}{ the number of periods in the panel,}
+\item{\code{num_observations}}{ the total number of observations in the panel,}
+\item{\code{is_panel_balanced}}{ a logical value indicating whether the panel is balanced,}
+\item{\code{equiv_threshold_specified}}{ a logical value indicating whether an equivalence threshold was specified.}
 
-if \code{!(is.null(equiv_threshold))}, then additionally \itemize{
+If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
+
+If \code{!(is.null(equiv_threshold))}, then additionally \itemize{
 \item \code{mean_critical_value}: the critical value at the alpha level,
 \item \code{p_value}: the p-value of the test,
 \item \code{reject_null_hypothesis}: A logical value indicating whether to reject the null hypothesis,

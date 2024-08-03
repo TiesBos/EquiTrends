@@ -95,7 +95,7 @@ IU_equivalence_test1 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "peri
 # and autocorrelation robust variance-covariance matrix estimator:
 IU_equivalence_test2 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4, vcov = "HAC", type = "IU")
+                           base_period = 4, type = "IU", vcov = "HAC")
 
 # Perform the test without specifying the equivalence threshold with a custom
 # variance-covariance matrix estimator:
@@ -103,7 +103,7 @@ vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
 
 IU_equivalence_test3 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
                            data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
-                           base_period = 4, vcov = vcov_func, type = "IU")
+                           base_period = 4, type = "IU", vcov = vcov_func)
 ```
 The package also contains print functions to create a summary output:
 ```{r}
@@ -114,7 +114,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 ```
 
 ```{r}
-# An output withoout an equivalence threshold specified
+# An output without an equivalence threshold specified
 print(IU_equivalence_test3)
 ```
 

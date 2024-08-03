@@ -14,10 +14,10 @@ maxEquivTest(
   equiv_threshold = NULL,
   pretreatment_period = NULL,
   base_period = NULL,
+  type = c("IU", "Boot", "Wild"),
   vcov = NULL,
   cluster = NULL,
   alpha = 0.05,
-  type = c("IU", "Boot", "Wild"),
   B = 1000
 )
 }
@@ -26,7 +26,7 @@ maxEquivTest(
 
 \item{ID}{A numeric vector identifying the different cross-sectional units in the dataset. If \code{data} is supplied, \code{ID} should be a scalar indicating the column number or column-name character string that corresponds to the cross-sectional units identifier in \code{data}.}
 
-\item{G}{A binary or logic vector (of the same dimension as \code{Y} and \code{ID}) indicating if the individual (e.g. as indicated by \code{ID}) receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). f 'data' is supplied, \code{G} should be a scalar identifying the column number or column-name character string associated to \code{G} in \code{data}.}
+\item{G}{A binary or logic vector (of the same dimension as \code{Y} and \code{ID}) indicating if the individual (e.g. as indicated by \code{ID}) receives treatment (e.g. 1 or TRUE) or not (0 or FALSE). If 'data' is supplied, \code{G} should be a scalar identifying the column number or column-name character string associated to \code{G} in \code{data}.}
 
 \item{period}{A numeric vector (of the same dimension as Y) indicating time. If \code{data} is supplied, \code{period} should be a scalar indicating the column number or column-name character string that corresponds to the time identifier in \code{data}.}
 
@@ -40,13 +40,13 @@ maxEquivTest(
 
 \item{base_period}{The pre-treatment period to compare the post-treatment observation to. The default is to take the last period of the pre-treatment period.}
 
+\item{type}{The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2023) and "Wild" for the Wild bootstrap procedure.}
+
 \item{vcov}{The variance-covariance matrix that needs to be used. See \emph{Details} for more details.}
 
 \item{cluster}{If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as Y. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster. Only required if \code{vcov = "CL"} and \code{type = "IU"}.}
 
 \item{alpha}{Significance level of the test. The default is 0.05. Only required if \code{equiv_threshold} is not specified.}
-
-\item{type}{The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2023) and "Wild" for the Wild bootstrap procedure.}
 
 \item{B}{If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.}
 }
@@ -56,18 +56,19 @@ If \code{type = "IU"}, an object of class \code{maxEquivTestIU}  with \itemize{
 \item{\code{abs_placebo_coefficients}: a numeric vector with the absolute values of estimated placebo coefficients,}
 \item{\code{placebo_coefficients_se}: a numeric vector with the standard errors of the placebo coefficients,}
 \item{\code{significance_level}: the chosen significance level of the test,}
-\item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
-\item{\code{num_periods}: the number of periods in \code{data},}
-\item{\code{num_observations}: the total number of observations in the data,}
-\item{\code{base_period}: the base period in the data,}
+\item{\code{base_period}: the base period used in the testing procedure,}
 \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
+\item{\code{num_individuals}: the number of cross-sectional individuals in the panel,}
+\item{\code{num_periods}: the number of periods in the panel,}
+\item{\code{num_observations}: the total number of observations in the panel,}
+\item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced,}
 \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
-\item{if \code{!(is.null(equiv_threshold))}\itemize{
+\item{if \code{!(is.null(equiv_threshold))}, then additionally\itemize{
  \item{\code{IU_critical_values}: a numeric vector with the individual critical values for each of the placebo coefficients,}
  \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
  \item{\code{equiv_threshold}: the equivalence threshold employed.}
 }}
-\item{Additionally, if \code{is.null(equiv_threshold)}\itemize{
+\item{if \code{is.null(equiv_threshold)}, then additionally\itemize{
 \item{\code{minimum_equiv_thresholds}: a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
 \item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
 }}}
@@ -80,12 +81,13 @@ if \code{type = "Boot"} or \code{type = "Wild"}, an object of class "maxEquivTes
  \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
  \item{\code{B}: the number of bootstrap samples used to find the critical value,}
  \item{\code{significance_level}: the chosen significance level of the test \code{alpha},}
- \item{\code{num_individuals}: the number of cross-sectional individuals in \code{data},}
- \item{\code{num_periods}: the number of periods in \code{data},}
- \item{\code{num_observations}: the total number of observations in the data,}
- \item{\code{base_period}: the base period in the data,}
+ \item{\code{base_period}: the base period used in the testing procedure,}
  \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
  \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
+ \item{\code{num_individuals}: the number of cross-sectional individuals in the panel,}
+ \item{\code{num_periods}: the number of periods in the panel,}
+ \item{\code{num_observations}: the total number of observations in the panel,}
+ \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced.}
 }
 }
 \description{
@@ -128,7 +130,7 @@ print(equivalence_test)
 # and autocorrelation robust variance-covariance matrix estimator:
 equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4, vcov = "HAC", type = "IU")
+                           base_period = 4, type = "IU", vcov = "HAC")
 print(equivalence_test)
 
 # Perform the test without specifying the equivalence threshold with a custom
@@ -137,7 +139,7 @@ vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
 
 equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4, vcov = vcov_func, type = "IU")
+                           base_period = 4, type = "IU", vcov = vcov_func)
 print(equivalence_test)
 
 #-----------------  Bootstrap Approach -----------------
