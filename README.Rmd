@@ -60,7 +60,8 @@ The `EquiTrends` package contains functions to test for equivalence of pre-trend
 The maxEquivTest implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating what negligible is to the user. That is, if 
 
 $$\lVert\beta\rVert_\infty = \max_{l=1,...T} |\beta_l|,$$ 
-the testing procedure can be represented as
+
+the tested hypotheses can be represented as
 
 $$H_0: \lVert\beta\rVert_\infty \geq \delta \quad \text{vs.} \quad H_1: \lVert\beta\rVert_\infty < \delta.$$
 
@@ -196,7 +197,7 @@ The meanEquivTest implements the equivalence testing procedure surrounding the m
 
 $$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l,$$ 
 
-the testing procedure can be represented as
+the tested hypotheses can be represented as
 
 $$H_0: |\bar{\beta}| \geq \delta \quad \text{vs.} \quad H_1: |\bar{\beta}| < \delta.$$
 
@@ -281,7 +282,7 @@ The rmsEquivTest implements the equivalence testing procedure surrounding the ro
 
 $$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
 
-the testing procedure can be represented as
+the tested hypotheses can be represented as
 
 $$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
 
