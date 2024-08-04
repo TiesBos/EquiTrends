@@ -58,10 +58,12 @@ The `EquiTrends` package contains functions to test for equivalence of pre-trend
 
 ### The `maxEquivTest` function
 The maxEquivTest implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating what negligible is to the user. That is, if 
+
 $$\lVert\beta\rVert_\infty = \max_{l=1,...T} |\beta_l|,$$ 
 the testing procedure can be represented as
 
 $$H_0: \lVert\beta\rVert_\infty \geq \delta \quad \text{vs.} \quad H_1: \lVert\beta\rVert_\infty < \delta.$$
+
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. 
 
 The function `maxEquivTest` contains three testing procedures for this test, as described in Section 4.2.1. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function allows for the testing of the equivalence of pre-trends using a bootstrap for spherical errors (`type = "Boot"`), a wild bootstrap for clustered standard errors (`type = "Wild"`), and an Intersection Union  approach (`type = "IU"`) that rejects the null if all $\beta_1,...,\beta_{T}$ are smaller than their individual critical values. The function returns an object of class `maxEquivTestBoot` if `type = "Boot"` or `type = "Wild"` or `maxEquivTestIU` if `type = "IU"`. If no type is specified, `maxEquivTest` applies the Intersection Union procedure for efficiency reasons. 
@@ -197,6 +199,7 @@ $$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l,$$
 the testing procedure can be represented as
 
 $$H_0: |\bar{\beta}| \geq \delta \quad \text{vs.} \quad H_1: |\bar{\beta}| < \delta.$$
+
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. Implementation of the test is similar to the `maxEquivTest` function, in terms of the possible variance-covariance matrices (for more information on the possible variance-covariance matrices, see the documentation of the `meanEquivTest` function). The function returns an object of class `meanEquivTest` containing
 
 
@@ -281,6 +284,7 @@ $$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
 the testing procedure can be represented as
 
 $$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
+
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. The function returns an object of class `rmsEquivTest` containing
 
 - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients,
