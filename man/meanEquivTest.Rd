@@ -57,9 +57,9 @@ An object of class "meanEquivTest" containing:
 \item{\code{is_panel_balanced}}{ a logical value indicating whether the panel is balanced,}
 \item{\code{equiv_threshold_specified}}{ a logical value indicating whether an equivalence threshold was specified.}
 
-If \code{is.null(equiv_threshold)}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
+If \code{equiv_threshold_specified = FALSE}, then additionally \code{minimum_equiv_threshold}: the minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
 
-If \code{!(is.null(equiv_threshold))}, then additionally \itemize{
+If \code{equiv_threshold_specified = TRUE}, then additionally \itemize{
 \item \code{mean_critical_value}: the critical value at the alpha level,
 \item \code{p_value}: the p-value of the test,
 \item \code{reject_null_hypothesis}: A logical value indicating whether to reject the null hypothesis,

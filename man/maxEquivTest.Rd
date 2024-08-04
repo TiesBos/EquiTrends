@@ -63,12 +63,12 @@ If \code{type = "IU"}, an object of class \code{maxEquivTestIU}  with \itemize{
 \item{\code{num_observations}: the total number of observations in the panel,}
 \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced,}
 \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
-\item{if \code{!(is.null(equiv_threshold))}, then additionally\itemize{
+\item{if \code{equiv_threshold_specified = TRUE}, then additionally\itemize{
  \item{\code{IU_critical_values}: a numeric vector with the individual critical values for each of the placebo coefficients,}
  \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
  \item{\code{equiv_threshold}: the equivalence threshold employed.}
 }}
-\item{if \code{is.null(equiv_threshold)}, then additionally\itemize{
+\item{if \code{equiv_threshold_specified = FALSE}, then additionally\itemize{
 \item{\code{minimum_equiv_thresholds}: a numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,}
 \item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.}
 }}}

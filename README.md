@@ -86,13 +86,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G        X_1        X_2
-#> 1  1      1 -0.8427388 0 -1.4957557  1.1755321
-#> 2  1      2  1.0730637 0  1.0043815  1.0528372
-#> 3  1      3  3.1034021 0  1.6830003  0.3740572
-#> 4  1      4  3.6703776 0 -0.1065842  1.6072937
-#> 5  1      5 -0.7911343 0 -0.2453866 -0.8432843
-#> 6  2      1 -0.6712679 1 -1.4911113  0.1912795
+#>   ID period          Y G         X_1         X_2
+#> 1  1      1  0.8924617 0  0.75300314 -1.17823063
+#> 2  1      2  0.1826494 0  0.03631835 -0.07145882
+#> 3  1      3 -1.6622285 0 -1.06100626  0.22117210
+#> 4  1      4  3.4030413 0  0.64505208  1.01616032
+#> 5  1      5  1.6724796 0  0.36741150  0.49046374
+#> 6  2      1 -0.2539209 1 -0.85272295  0.35119328
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -112,10 +112,10 @@ surrounding the maximum absolute placebo coefficient. The function tests
 the null hypothesis that the maximum placebo coefficient is larger than
 or equal to a user-specified equivalence threshold, $\delta$, indicating
 what negligible is to the user. That is, if
-$$||\beta||_\infty = \max_{l=1,...T} |\beta_l|,$$ the testing procedure
-can be represented as
+$$\lVert\beta\rVert_\infty = \max_{l=1,...T} |\beta_l|,$$ the testing
+procedure can be represented as
 
-$$H_0: ||\beta||_\infty \geq \delta \quad \text{vs.} \quad H_1: ||\beta||_\infty < \delta.$$
+$$H_0: \lVert\beta\rVert_\infty \geq \delta \quad \text{vs.} \quad H_1: \lVert\beta\rVert_\infty < \delta.$$
 The null and alternative hypothesis can therefore be seen as
 non-negligible and negligible differences in pre-trends, respectively.
 
@@ -145,34 +145,34 @@ function returns an object of class `maxEquivTestIU` containing the
 following information:
 
 - `placebo_coefficients`: A numeric vector of the estimated placebo
-  coefficients.
+  coefficients,
 - `abs_placebo_coefficients`: A numeric vector with the absolute values
-  of estimated placebo coefficients.
+  of estimated placebo coefficients,
 - `placebo_coefficients_se`: A numeric vector with the standard errors
-  of the placebo coefficients.
-- `significance_level`: The chosen significance level of the test.
-- `base_period`: The base period used in the testing procedure.
-- `placebo_names`: The names corresponding to the placebo coefficients.
+  of the placebo coefficients,
+- `significance_level`: The chosen significance level of the test,
+- `base_period`: The base period used in the testing procedure,
+- `placebo_names`: The names corresponding to the placebo coefficients,
 - `num_individuals`: The number of cross-sectional individuals in the
-  panel.
-- `num_periods`: The number of periods in the panel.
-- `num_observations`: The number of observations in the panel.
+  panel,
+- `num_periods`: The number of periods in the panel,
+- `num_observations`: The number of observations in the panel,
 - `is_panel_balanced`: A logical value indicating whether the panel data
-  is balanced.
+  is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
-- Additionally, if `!(is.null(equiv_threshold))`:
+- Additionally, if `equiv_threshold_specified = TRUE`:
   - `IU_critical_values`: A numeric vector with the individual critical
-    values for each of the placebo coefficients.
+    values for each of the placebo coefficients,
   - `reject_null_hypothesis`: A logical value indicating whether the
     null hypothesis of negligible pre-trend differences can be rejected
-    at the specified significance level `alpha`.
+    at the specified significance level `alpha`,
   - `equiv_threshold`: The equivalence threshold employed.
-- Additionally, if `is.null(equiv_threshold)`:
+- Additionally, if `equiv_threshold_specified = FALSE`:
   - `minimum_equiv_thresholds`: A numeric vector including for each
     placebo coefficient the minimum equivalence threshold for which the
     null hypothesis of negligible pre-trend differences can be rejected
-    for the corresponding placebo coefficient individually.
+    for the corresponding placebo coefficient individually,
   - `minimum_equiv_threshold`: A numeric scalar minimum equivalence
     threshold for which the null hypothesis of negligible pre-trend
     differences can be rejected for all placebo coefficients
@@ -195,9 +195,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.09425          0.005760        0.9905        
-#> 0.14255          0.005757        0.9905        
-#> 0.04837          0.005759        0.9905        
+#> 0.02959          0.005772        0.9905        
+#> 0.10194          0.005775        0.9905        
+#> 0.19062          0.005779        0.9905        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -226,9 +226,9 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.09425          0.005760        0.9905        
-#> 0.14255          0.005757        0.9905        
-#> 0.04837          0.005759        0.9905        
+#> 0.02959          0.005772        0.9905        
+#> 0.10194          0.005775        0.9905        
+#> 0.19062          0.005779        0.9905        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -252,12 +252,12 @@ maxEquivTest(Y = 3, ID = 1, G = 4, period = 2,
 #> Type: Intersection Union 
 #> Significance level: 0.05 
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
-#> Minimum equivalence threshold to accept the alternative: 0.1853 
+#> Minimum equivalence threshold to accept the alternative: 0.5312 
 #> ---
 #>  Estimate    Std. Error   Minimum Equivalence Threshold 
-#> 0.13194      0.009453    0.14748   
-#> 0.08341      0.010032    0.09991   
-#> 0.16957      0.009540    0.18527   
+#> 0.207513     0.010036    0.2240    
+#> 0.001381     0.010020    0.0126    
+#> 0.515274     0.009705    0.5312    
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -306,28 +306,28 @@ is required to perform the test. Furthermore, both testing procedures
 return an object of class “maxEquivTestBoot” containing
 
 - `placebo_coefficients`: A numeric vector of the estimated placebo
-  coefficients.
+  coefficients,
 - `abs_placebo_coefficients`: A numeric vector with the absolute values
-  of estimated placebo coefficients.
+  of estimated placebo coefficients,
 - `max_abs_coefficient`: The maximum absolute estimated placebo
-  coefficient.
+  coefficient,
 - `bootstrap_critical_value`: The by bootstrap found critical value for
   the equivalence test based on the maximum absolute placebo
-  coefficient.
+  coefficient,
 - `reject_null_hypothesis`: A logical value indicating whether the null
   hypothesis of negligible pre-trend differences can be rejected at the
-  specified significance level `alpha`.
-- `B`: The number of bootstrap samples used to find the critical value.
+  specified significance level `alpha`,
+- `B`: The number of bootstrap samples used to find the critical value,
 - `significance_level`: The chosen significance level of the test
-  `alpha`.
-- `base_period`: The base period used in the testing procedure.
-- `placebo_names`: The names corresponding to the placebo coefficients.
+  `alpha`,
+- `base_period`: The base period used in the testing procedure,
+- `placebo_names`: The names corresponding to the placebo coefficients,
 - `num_individuals`: The number of cross-sectional individuals in the
-  panel.
-- `num_periods`: The number of periods in the panel.
-- `num_observations`: The total number of observations in the panel.
+  panel,
+- `num_periods`: The number of periods in the panel,
+- `num_observations`: The total number of observations in the panel,
 - `is_panel_balanced`: A logical value indicating whether the panel data
-  is balanced.
+  is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
 
@@ -348,7 +348,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1696                   0.6604                      TRUE      
+#> 0.5153                   0.6311                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -376,7 +376,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1696                   0.6515                      TRUE      
+#> 0.5153                   0.6332                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -423,31 +423,31 @@ the `meanEquivTest` function). The function returns an object of class
 `meanEquivTest` containing
 
 - `placebo_coefficients`: A numeric vector of the estimated placebo
-  coefficients.
+  coefficients,
 - `abs_mean_placebo_coefs`: The absolute value of the mean of the
-  placebo coefficients.
+  placebo coefficients,
 - `var_mean_placebo_coef`: The estimated variance of the mean placebo
-  coefficient.
-- `significance_level`: The significance level of the test.
-- `base_period`: The base period used in the testing procedure.
+  coefficient,
+- `significance_level`: The significance level of the test,
+- `base_period`: The base period used in the testing procedure,
 - `num_individuals`: The number of cross-sectional individuals in the
-  panel.
-- `num_periods`: The number of periods in the panel.
-- `num_observations`: The total number of observations in the panel.
+  panel,
+- `num_periods`: The number of periods in the panel,
+- `num_observations`: The total number of observations in the panel,
 - `is_panel_balanced`: A logical value indicating whether the panel is
-  balanced.
+  balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
-- If `is.null(equiv_threshold)`, then additionally:
+- If `equiv_threshold_specified = TRUE`, then additionally:
+  - `mean_critical_value`: The critical value at the alpha level,
+  - `p_value`: The p-value of the test,
+  - `reject_null_hypothesis`: A logical value indicating whether to
+    reject the null hypothesis,
+  - `equiv_threshold`: The equivalence threshold specified.
+- If `equiv_threshold_specified = FALSE`, then additionally:
   - `minimum_equiv_threshold`: The minimum equivalence threshold for
     which the null hypothesis of non-negligible (based on the
     equivalence threshold) trend-differences can be rejected.
-- If `!(is.null(equiv_threshold))`, then additionally:
-  - `mean_critical_value`: The critical value at the alpha level.
-  - `p_value`: The p-value of the test.
-  - `reject_null_hypothesis`: A logical value indicating whether to
-    reject the null hypothesis.
-  - `equiv_threshold`: The equivalence threshold specified.
 
 ``` r
 # Perform the test with equivalent threshold specified as 1 based on 
@@ -464,7 +464,7 @@ the `meanEquivTest` function). The function returns an object of class
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.06281                  0.01411     <2e-16  TRUE      
+#> 0.1074                   0.01415     <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -502,7 +502,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
-#> 0.06281                  0.01405     0.08592               
+#> 0.1074                   0.01395     0.1303                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -573,15 +573,15 @@ The function returns an object of class `rmsEquivTest` containing
   is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
-- If `is.null(equiv_threshold)`, then additionally:
-  - `minimum_equiv_threshold`: The minimum equivalence threshold for
-    which the null hypothesis of non-negligible (based on the
-    equivalence threshold) trend-differences can be rejected.
-- If `!(is.null(equiv_threshold))`, then additionally:
+- If `equiv_threshold_specified = TRUE`, then additionally:
   - `rms_critical_value`: The critical value at the alpha level,
   - `reject_null_hypothesis`: A logical value indicating whether to
     reject the null hypothesis,
   - `equiv_threshold`: The equivalence threshold specified.
+- If `equiv_threshold_specified = FALSE`, then additionally:
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for
+    which the null hypothesis of non-negligible (based on the
+    equivalence threshold) trend-differences can be rejected.
 
 ``` r
 # Perform the equivalence test using an equivalence threshold of 1 with periods 
@@ -600,7 +600,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.1025               0.962                   TRUE      
+#> 0.126                0.9807                  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -648,7 +648,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> RMS Placebo Effect   Min. Equiv. Threshold 
-#> 0.1025               0.3091                
+#> 0.126                0.2448                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 

@@ -58,10 +58,10 @@ The `EquiTrends` package contains functions to test for equivalence of pre-trend
 
 ### The `maxEquivTest` function
 The maxEquivTest implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating what negligible is to the user. That is, if 
-$$||\beta||_\infty = \max_{l=1,...T} |\beta_l|,$$ 
+$$\lVert\beta\rVert_\infty = \max_{l=1,...T} |\beta_l|,$$ 
 the testing procedure can be represented as
 
-$$H_0: ||\beta||_\infty \geq \delta \quad \text{vs.} \quad H_1: ||\beta||_\infty < \delta.$$
+$$H_0: \lVert\beta\rVert_\infty \geq \delta \quad \text{vs.} \quad H_1: \lVert\beta\rVert_\infty < \delta.$$
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. 
 
 The function `maxEquivTest` contains three testing procedures for this test, as described in Section 4.2.1. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function allows for the testing of the equivalence of pre-trends using a bootstrap for spherical errors (`type = "Boot"`), a wild bootstrap for clustered standard errors (`type = "Wild"`), and an Intersection Union  approach (`type = "IU"`) that rejects the null if all $\beta_1,...,\beta_{T}$ are smaller than their individual critical values. The function returns an object of class `maxEquivTestBoot` if `type = "Boot"` or `type = "Wild"` or `maxEquivTestIU` if `type = "IU"`. If no type is specified, `maxEquivTest` applies the Intersection Union procedure for efficiency reasons. 
@@ -69,23 +69,23 @@ The function `maxEquivTest` contains three testing procedures for this test, as 
 #### Implemention of the `maxEquivTest` function with `type = "IU"`
 Examples of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below (for more information on the possible variance-covariance matrices, see the documentation of the `maxEquivTest` function). If an equivalence threshold is supplied, the function will test the previous hypothesis. If no equivalence threshold is supplied, the function finds the critical value for the test at the specified significance level. The function returns an object of class `maxEquivTestIU` containing the following information:
 
-  - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
-  - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
-  - `placebo_coefficients_se`: A numeric vector with the standard errors of the placebo coefficients.
-  - `significance_level`: The chosen significance level of the test.
-  - `base_period`: The base period used in the testing procedure.
-  - `placebo_names`: The names corresponding to the placebo coefficients.
-  - `num_individuals`: The number of cross-sectional individuals in the panel.
-  - `num_periods`: The number of periods in the panel.
-  - `num_observations`: The number of observations in the panel.
-  - `is_panel_balanced`: A logical value indicating whether the panel data is balanced.
+  - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients,
+  - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients,
+  - `placebo_coefficients_se`: A numeric vector with the standard errors of the placebo coefficients,
+  - `significance_level`: The chosen significance level of the test,
+  - `base_period`: The base period used in the testing procedure,
+  - `placebo_names`: The names corresponding to the placebo coefficients,
+  - `num_individuals`: The number of cross-sectional individuals in the panel,
+  - `num_periods`: The number of periods in the panel,
+  - `num_observations`: The number of observations in the panel,
+  - `is_panel_balanced`: A logical value indicating whether the panel data is balanced,
   - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
-  - Additionally, if `!(is.null(equiv_threshold))`:
-    - `IU_critical_values`: A numeric vector with the individual critical values for each of the placebo coefficients.
-    - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`.
+  - Additionally, if `equiv_threshold_specified = TRUE`:
+    - `IU_critical_values`: A numeric vector with the individual critical values for each of the placebo coefficients,
+    - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`,
     - `equiv_threshold`: The equivalence threshold employed.
-  - Additionally, if `is.null(equiv_threshold)`:
-    - `minimum_equiv_thresholds`: A numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually.
+  - Additionally, if `equiv_threshold_specified = FALSE`:
+    - `minimum_equiv_thresholds`: A numeric vector including for each placebo coefficient the minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the corresponding placebo coefficient individually,
     - `minimum_equiv_threshold`: A numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for all placebo coefficients individually.
 
 ```{r}
@@ -144,19 +144,19 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 ##### Implementation of the bootstrap approaches
 Examples of implementing the bootstrap based test are provided below. For both `type = "Boot"` and `type = "Wild"`, an equivalence threshold is required to perform the test. Furthermore, both testing procedures return an object of class "maxEquivTestBoot" containing 
 
-- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
-- `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
-- `max_abs_coefficient`: The maximum absolute estimated placebo coefficient.
-- `bootstrap_critical_value`: The by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient.
-- `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`.
-- `B`: The number of bootstrap samples used to find the critical value.
-- `significance_level`: The chosen significance level of the test `alpha`.
-- `base_period`: The base period used in the testing procedure.
-- `placebo_names`: The names corresponding to the placebo coefficients.
-- `num_individuals`: The number of cross-sectional individuals in the panel.
-- `num_periods`: The number of periods in the panel.
-- `num_observations`: The total number of observations in the panel.
-- `is_panel_balanced`: A logical value indicating whether the panel data is balanced.
+- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients,
+- `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients,
+- `max_abs_coefficient`: The maximum absolute estimated placebo coefficient,
+- `bootstrap_critical_value`: The by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,
+- `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`,
+- `B`: The number of bootstrap samples used to find the critical value,
+- `significance_level`: The chosen significance level of the test `alpha`,
+- `base_period`: The base period used in the testing procedure,
+- `placebo_names`: The names corresponding to the placebo coefficients,
+- `num_individuals`: The number of cross-sectional individuals in the panel,
+- `num_periods`: The number of periods in the panel,
+- `num_observations`: The total number of observations in the panel,
+- `is_panel_balanced`: A logical value indicating whether the panel data is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
 
 The bootstrap for spherical errors with 1000 bootstrap iterations:
@@ -200,23 +200,23 @@ $$H_0: |\bar{\beta}| \geq \delta \quad \text{vs.} \quad H_1: |\bar{\beta}| < \de
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. Implementation of the test is similar to the `maxEquivTest` function, in terms of the possible variance-covariance matrices (for more information on the possible variance-covariance matrices, see the documentation of the `meanEquivTest` function). The function returns an object of class `meanEquivTest` containing
 
 
-- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
-- `abs_mean_placebo_coefs`: The absolute value of the mean of the placebo coefficients.
-- `var_mean_placebo_coef`: The estimated variance of the mean placebo coefficient.
-- `significance_level`: The significance level of the test.
-- `base_period`: The base period used in the testing procedure.
-- `num_individuals`: The number of cross-sectional individuals in the panel.
-- `num_periods`: The number of periods in the panel.
-- `num_observations`: The total number of observations in the panel.
-- `is_panel_balanced`: A logical value indicating whether the panel is balanced.
+- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients,
+- `abs_mean_placebo_coefs`: The absolute value of the mean of the placebo coefficients,
+- `var_mean_placebo_coef`: The estimated variance of the mean placebo coefficient,
+- `significance_level`: The significance level of the test,
+- `base_period`: The base period used in the testing procedure,
+- `num_individuals`: The number of cross-sectional individuals in the panel,
+- `num_periods`: The number of periods in the panel,
+- `num_observations`: The total number of observations in the panel,
+- `is_panel_balanced`: A logical value indicating whether the panel is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
-- If `is.null(equiv_threshold)`, then additionally:
-  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
-- If `!(is.null(equiv_threshold))`, then additionally:
-  - `mean_critical_value`: The critical value at the alpha level.
-  - `p_value`: The p-value of the test.
-  - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis.
+- If `equiv_threshold_specified = TRUE`, then additionally:
+  - `mean_critical_value`: The critical value at the alpha level,
+  - `p_value`: The p-value of the test,
+  - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis,
   - `equiv_threshold`: The equivalence threshold specified.
+- If `equiv_threshold_specified = FALSE`, then additionally:
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
 
 ```{r}
 # Perform the test with equivalent threshold specified as 1 based on 
@@ -292,12 +292,12 @@ The null and alternative hypothesis can therefore be seen as non-negligible and 
 - `num_observations`: The total number of observations in the panel,
 - `is_panel_balanced`: A logical value indicating whether the panel data is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
-- If `is.null(equiv_threshold)`, then additionally:
-  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
-- If `!(is.null(equiv_threshold))`, then additionally:
+- If `equiv_threshold_specified = TRUE`, then additionally:
   - `rms_critical_value`: The critical value at the alpha level,
   - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis,
   - `equiv_threshold`: The equivalence threshold specified.
+- If `equiv_threshold_specified = FALSE`, then additionally:
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
 
 ```{r}
 # Perform the equivalence test using an equivalence threshold of 1 with periods 
