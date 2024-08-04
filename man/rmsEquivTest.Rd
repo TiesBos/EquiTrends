@@ -147,3 +147,6 @@ Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Diff
 \seealso{
 \code{\link[=print.rmsEquivTest]{print.rmsEquivTest}}
 }
+\author{
+Ties Bos
+}

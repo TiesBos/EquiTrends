@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/TiesBos/EquiTrends/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/TiesBos/EquiTrends/actions/workflows/R-CMD-check.yaml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
-Testing for parallel trends is crucial in the Difference-in-Difference framework. The goal of EquiTrends is to provide a set of functions to test for equivalence of pre-trends in difference-in-differences estimation. The procedures follow the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The package provides functions to test for equivalence of pre-trends in difference-in-differences estimation using the placebo coefficient estimates, used to compare the trends in the pre-treatment period to some base period (generally the final period in the pre-treatment period). 
+Testing for parallel trends is crucial in the Difference-in-Difference framework. The goal of EquiTrends is to provide a set of functions to test for equivalence of pre-trends in difference-in-differences estimation, based on the placebo coefficients (used to compare the trends of the treated and control group in the pre-treatment period to some base period, generally the final period in the pre-treatment period). The procedures follow the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). 
 
 The package contains the functions `maxEquivTest` to perform the testing procedure surrounding the maximum placebo coefficient (see equation (3.1) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121))), `meanEquivTest` to perform the testing procedure surrounding the mean placebo coefficient (see equation (3.2) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121))) and `rmsEquivTest` to perform the testing procedure surrounding the root mean squared placebo coefficient (see equation (3.3) and (3.4) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121))). Furthermore, the package contains the function `sim_paneldata` to simulate a paneldataset for such testing purposes.
 
@@ -34,8 +34,8 @@ devtools::install_github("TiesBos/EquiTrends")
 
 ## Data Simulation
 
-The `EquiTrends` package contains a function to simulate panel data, tailored to the Difference-in-Difference framework. The function `sim_paneldata` simulates a panel dataset with a given number of individuals $N$ (`N`), periods $T+1$ (in the setting of this package, indicating the number of pre-treatment periods. In code $T+1$ is referred to as `tt`), covariates $p$ (`p`), and treatment effects. Period $T+1$ is referred to as the \textit{base period}. The function returns a data frame with the following columns: `ID` (the cross-sectional individual identifier), `period` (the time identifier), `Y` (the dependent variable), `G` (a binary vector indicating if an individual receives treatment, indicated by 1, or not, indicated by 0), `X_1`, `X_2`, ..., `X_p` (additional control variables). The function also allows for the simulation of heterogeneity in treatment effects (specified through `alpha`), time fixed effects (through `lambda`), heteroscedasticty (specified through the binary variable `het`), serial correlation (through the AR(1) coefficient `phi`), and clustering of the standard errors. The construction of the dependent variable follows the two-way fixed effect model, similar to the model in equation (2.5) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
-$$Y_{i,t} =  \alpha_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \forall i=1,...,N, t=1,...,T+1$$
+The `EquiTrends` package contains a function to simulate panel data, tailored to the Difference-in-Difference framework. The function `sim_paneldata` simulates a panel dataset with a given number of individuals $N$ (`N`), number of periods $T+1$ (in the setting of this package, indicating the number of pre-treatment periods. In code $T+1$ is referred to as `tt`), number of covariates $p$ (`p`), and treatment effects. Generally, period $T+1$ is referred to as the \textit{base period}. The function returns a data frame with the following columns: `ID` (the cross-sectional individual identifier), `period` (the time identifier), `Y` (the dependent variable), `G` (a binary vector indicating if an individual receives treatment, indicated by 1, or not, indicated by 0), `X_1`, `X_2`, ..., `X_p` (additional control variables). The function also allows for the simulation of heterogeneity in treatment effects (specified through `alpha`), time fixed effects (through `lambda`), heteroscedasticty (specified through the binary variable `het`), serial correlation (through the AR(1) coefficient `phi`), and clustering of the standard errors. The construction of the dependent variable follows the two-way fixed effect model, similar to the model in equation (2.5) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
+$$Y_{i,t} =  \alpha_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \text{with} \; i=1,...,N, t=1,...,T+1$$
 where $D_l(t)$ is a dummy variable that equals 1 if $t=l$ and 0 otherwise. The error-terms $u_{i,t}$ are generated through a normal distribution with mean 0 and a variance-covariance structure depending on the user-specified parameters. In the following, the $\beta_l$ coefficients are referred to as placebo coefficients, since they represent the difference in pre-trends between the treatment and control group before treatment has been assigned.
 
 An example of the `sim_paneldata` function is provided below:
@@ -54,27 +54,31 @@ head(sim_data)
 
 ## Testing for Equivalence of Pre-Trends
 
-The `EquiTrends` package contains functions to test for equivalence of pre-trends in difference-in-differences estimation. The functions `maxEquivTest`, `meanEquivTest`, and `rmsEquivTest` are used to test for equivalence of pre-trends in difference-in-differences estimation using the placebo coefficientm $\beta_{l} \; (l=1,...,T)$ estimates. The functions are based on the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)).
+The `EquiTrends` package contains functions to test for equivalence of pre-trends in difference-in-differences estimation. The functions `maxEquivTest`, `meanEquivTest`, and `rmsEquivTest` are used to test for equivalence of pre-trends in difference-in-differences estimation using the placebo coefficients $\beta_{l} \; (l=1,...,T)$ estimates. The functions are based on the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)).
 
 ### The `maxEquivTest` function
-The maxEquivTest implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if $||\beta||_\infty = \max_{l=1,...T} |\beta_l|$, the testing procedure can be represented as
+The maxEquivTest implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating what negligible is to the user. That is, if 
+$$||\beta||_\infty = \max_{l=1,...T} |\beta_l|,$$ 
+the testing procedure can be represented as
 
 $$H_0: ||\beta||_\infty \geq \delta \quad \text{vs.} \quad H_1: ||\beta||_\infty < \delta.$$
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. 
 
-The function `maxEquivTest` has contains three testing procedures for this test, as described in Section 4.2.1. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function allows for the testing of the equivalence of pre-trends using a bootstrap for spherical errors (`type = "Boot"`)  and a wild bootstrap for clustered standard errors (`type = "Wild"`), and an Intersection Union (`type = "IU"`) approach that rejects the null if all $\beta_1,...,\beta_{T}$ are smaller than their individual critical values. The function returns an object of class `maxEquivTestBoot` or `maxEquivTestWild` depending on the type of test performed. 
+The function `maxEquivTest` contains three testing procedures for this test, as described in Section 4.2.1. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function allows for the testing of the equivalence of pre-trends using a bootstrap for spherical errors (`type = "Boot"`), a wild bootstrap for clustered standard errors (`type = "Wild"`), and an Intersection Union  approach (`type = "IU"`) that rejects the null if all $\beta_1,...,\beta_{T}$ are smaller than their individual critical values. The function returns an object of class `maxEquivTestBoot` if `type = "Boot"` or `type = "Wild"` or `maxEquivTestIU` if `type = "IU"`. If no type is specified, `maxEquivTest` applies the Intersection Union procedure for efficiency reasons. 
 
 #### Implemention of the `maxEquivTest` function with `type = "IU"`
-An example of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below (for more information on the possible variance-covariance matrices, see the documentation of the `maxEquivTest` function). If an equivalence threshold is supplied, the function will test the previous hypothesis. If no equivalence threshold is supplied, the function finds the critical value for the test at the specified significance level. The function returns an object of class `maxEquivTestIU` containing the following information:
+Examples of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below (for more information on the possible variance-covariance matrices, see the documentation of the `maxEquivTest` function). If an equivalence threshold is supplied, the function will test the previous hypothesis. If no equivalence threshold is supplied, the function finds the critical value for the test at the specified significance level. The function returns an object of class `maxEquivTestIU` containing the following information:
 
   - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
   - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
   - `placebo_coefficients_se`: A numeric vector with the standard errors of the placebo coefficients.
   - `significance_level`: The chosen significance level of the test.
-  - `num_individuals`: The number of cross-sectional individuals in `data`.
-  - `num_periods`: The number of periods in `data`.
-  - `base_period`: The base period in the data.
+  - `base_period`: The base period used in the testing procedure.
   - `placebo_names`: The names corresponding to the placebo coefficients.
+  - `num_individuals`: The number of cross-sectional individuals in the panel.
+  - `num_periods`: The number of periods in the panel.
+  - `num_observations`: The number of observations in the panel.
+  - `is_panel_balanced`: A logical value indicating whether the panel data is balanced.
   - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
   - Additionally, if `!(is.null(equiv_threshold))`:
     - `IU_critical_values`: A numeric vector with the individual critical values for each of the placebo coefficients.
@@ -86,40 +90,59 @@ An example of implementing the Intersection unit test with different possible va
 
 ```{r}
 # Perform the test with equivalent threshold specified as 1 based on 
-# pre-treatment periods 1:4 and homoscedastic error-terms:
-IU_equivalence_test1 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                                 data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                                 base_period = 4, type = "IU")
+# pre-treatment periods 1-4 and homoscedastic error-terms:
+  # To select variables, one can use the column names / numbers in the panel data
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
+              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+              base_period = 4, type = "IU")
 
+  # Alternatively, one can enter the variables separately:
+data_Y <- sim_data$Y
+data_ID <- sim_data$ID
+data_G <- sim_data$G
+data_period <- sim_data$period
+data_X <- sim_data[, c(5, 6)]
+maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+             equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4, type = "IU")
+```
+```{r}
 # Perform the test without specifying the equivalence threshold with heteroscedastic 
 # and autocorrelation robust variance-covariance matrix estimator:
-IU_equivalence_test2 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4, type = "IU", vcov = "HAC")
-
+maxEquivTest(Y = 3, ID = 1, G = 4, period = 2, 
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4, type = "IU", vcov = "HAC")
+```
+```{r echo=TRUE, results='hide'}
 # Perform the test without specifying the equivalence threshold with a custom
 # variance-covariance matrix estimator:
 vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
-
-IU_equivalence_test3 <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                           data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
-                           base_period = 4, type = "IU", vcov = vcov_func)
-```
-The package also contains print functions to create a summary output:
-```{r}
-# An output with an equivalence threshold specified
 maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-             base_period = 4, type = "IU")
+             base_period = 4, type = "IU", vcov = vcov_func)
+ 
+# Perform the test using clustered standard errors based on a vector indicating 
+# the cluster. For instance, two clusters with the following rule: all
+# individuals with an ID below 250 are in the same cluster.
+cluster_ind <- ifelse(sim_data$ID < 250, 1, 2)
+maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+               equiv_threshold = 1, pretreatment_period = 1:4,
+               base_period = 4, type = "IU", vcov = "CL", cluster = cluster_ind)
+
+# Note that the testing procedure can also handle unbalanced panels. 
+# Finally, one should note that the test procedure also works for unbalanced panels.
+# To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+# 70% of the observations from the balanced panel dataset:
+random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indeces, ]
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+              data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+              base_period = 4, type = "IU", vcov = "HAC")
 ```
 
-```{r}
-# An output without an equivalence threshold specified
-print(IU_equivalence_test3)
-```
 
 ##### Implementation of the bootstrap approaches
-An example of implementing the Intersection unit test with different possible variance-covariance matrices (required to perform the test) is provided below. For both `type = "Boot"` and `type = "Wild"`, an equivalence threshold is required to perform the test. Furthermore, both testing procedures return an object of class "maxEquivTestBoot" containing 
+Examples of implementing the bootstrap based test are provided below. For both `type = "Boot"` and `type = "Wild"`, an equivalence threshold is required to perform the test. Furthermore, both testing procedures return an object of class "maxEquivTestBoot" containing 
 
 - `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
 - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients.
@@ -128,36 +151,46 @@ An example of implementing the Intersection unit test with different possible va
 - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`.
 - `B`: The number of bootstrap samples used to find the critical value.
 - `significance_level`: The chosen significance level of the test `alpha`.
-- `num_individuals`: The number of cross-sectional individuals in `data`.
-- `num_periods`: The number of periods in `data`.
-- `base_period`: The base period in the data.
+- `base_period`: The base period used in the testing procedure.
 - `placebo_names`: The names corresponding to the placebo coefficients.
+- `num_individuals`: The number of cross-sectional individuals in the panel.
+- `num_periods`: The number of periods in the panel.
+- `num_observations`: The total number of observations in the panel.
+- `is_panel_balanced`: A logical value indicating whether the panel data is balanced.
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
-
-A `print` function is available to create a summary output.
 
 The bootstrap for spherical errors with 1000 bootstrap iterations:
 ```{r}
-# Perform the test with equivalent threshold specified as 1 based on 
+# Perform the test with equivalence threshold specified as 1 based on 
 # pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
-boot_equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                            base_period = 4, type = "Boot", B = 1000)
- print(boot_equivalence_test)
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4, type = "Boot", B = 1000)
 ```
 
-The Wild boostrap with 100 bootstrap iterations:
+The Wild boostrap with 1000 bootstrap iterations:
 ```{r}
-# Perform the test with equivalent threshold specified as 1 based on 
+# Perform the test with the equivalence threshold specified as 1 based on 
 # pre-treatment periods 1:4 (with base period 4) with the wild bootstrap procedure:
- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-              base_period = 4, type = "Wild", B = 1000)
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4, type = "Wild")
 ```
 
+```{r echo = TRUE, results='hide'}
+ # The bootstrap procedures can handle unbalanced panels:
+ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = unbalanced_sim_data, equiv_threshold = 1, 
+             pretreatment_period = 1:4,
+             base_period = 4, type = "Boot", B = 1000)
+ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = unbalanced_sim_data, equiv_threshold = 1, 
+             pretreatment_period = 1:4,
+             base_period = 4, type = "Wild", B = 1000) 
+```
 
 ### The `meanEquivTest` function
-The meanEquivTest implements the equivalence testing procedure surrounding the mean placebo coefficientas described in Section 4.2.2. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the absolute mean placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if 
+The meanEquivTest implements the equivalence testing procedure surrounding the mean placebo coefficient, as described in Section 4.2.2. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the absolute mean placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if 
 
 $$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l,$$ 
 
@@ -171,9 +204,11 @@ The null and alternative hypothesis can therefore be seen as non-negligible and 
 - `abs_mean_placebo_coefs`: The absolute value of the mean of the placebo coefficients.
 - `var_mean_placebo_coef`: The estimated variance of the mean placebo coefficient.
 - `significance_level`: The significance level of the test.
-- `num_individuals`: The number of cross-sectional individuals in the data.
-- `num_periods`: The number of periods in the data.
-- `base_period`: The base period in the data.
+- `base_period`: The base period used in the testing procedure.
+- `num_individuals`: The number of cross-sectional individuals in the panel.
+- `num_periods`: The number of periods in the panel.
+- `num_observations`: The total number of observations in the panel.
+- `is_panel_balanced`: A logical value indicating whether the panel is balanced.
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
 - If `is.null(equiv_threshold)`, then additionally:
   - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
@@ -184,39 +219,59 @@ The null and alternative hypothesis can therefore be seen as non-negligible and 
   - `equiv_threshold`: The equivalence threshold specified.
 
 ```{r}
- # Perform the test with equivalent threshold specified as 1 based on 
- # pre-treatment periods 1:4 and homoscedastic error-terms:
- mean_equivalence_test1 <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                            base_period = 4)
- 
- # Perform the test without equivalence threshold specified as 1 with heteroscedastic  
- # and autocorrelation robust variance-covariance matrix estimator:
- mean_equivalence_test2 <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                            base_period = 4, vcov = "HAC")
+# Perform the test with equivalent threshold specified as 1 based on 
+# pre-treatment periods 1-4 and assuming homoscedastic error-terms:
+  # To select variables, one can use the column names / column numbers in the panel data:
+  meanEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X = c(5, 6),
+                data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                base_period = 4)
 
- # Perform the test without specifying the equivalence threshold with a custom
- # variance-covariance matrix estimator:
- vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
-
- mean_equivalence_test3 <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                            data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
-                            base_period = 4, vcov = vcov_func)
 ```
-The package also contains print functions to create a summary output:
+```{r echo = TRUE, results='hide'}
+  # Alternatively, one can use separate variables:
+  data_Y <- sim_data$Y
+  data_ID <- sim_data$ID
+  data_G <- sim_data$G
+  data_period <- sim_data$period
+  data_X <- sim_data[, c(5, 6)]
+  meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+                equiv_threshold = 1, pretreatment_period = 1:4,
+                base_period = 4)
+```
 ```{r}
-# With equivalence threshold specified
+# Perform the test with a heteroscedastic and autocorrelation robust 
+# variance-covariance matrix estimator, and without specifying the equivalence threshold:
+meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+              base_period = 4, vcov = "HAC")
+```
+```{r echo = TRUE, results='hide'}
+# Perform the test with an equivalence threshold of 1 and a custom
+# variance-covariance matrix estimator:
+vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
 meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
               data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-              base_period = 4)
-```
+              base_period = 4, vcov = vcov_func)
+               
+# Perform the test using clustered standard errors based on a vector indicating 
+# the cluster. For instance, two clusters with the following rule: all
+# individuals with an ID below 250 are in the same cluster:
+cluster_ind <- ifelse(sim_data$ID < 250, 1, 2)
+meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+               equiv_threshold = 1, pretreatment_period = 1:4,
+               base_period = 4, vcov = "CL", cluster = cluster_ind)
 
-```{r}
-# Without equivalence threshold specified:
-print(mean_equivalence_test3)
-```
+# Note that the testing procedure can also handle unbalanced panels. 
+# Finally, one should note that the test procedure also works for unbalanced panels.
+# To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+# 70% of the observations from the balanced panel dataset:
+random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indeces, ]
+meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+              data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+              base_period = 4, vcov = "HAC")
 
+```
 
 ### The `rmsEquivTest` function
 The rmsEquivTest implements the equivalence testing procedure surrounding the root mean squared placebo coefficient as described in section 4.2.3 of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the root mean squared placebo coefficient is larger to a user-specified equivalence threshold, $\delta$, indicating the what negligible is to the user. That is, if 
@@ -228,40 +283,75 @@ the testing procedure can be represented as
 $$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
 The null and alternative hypothesis can therefore be seen as non-negligible and negligible differences in pre-trends, respectively. The function returns an object of class `rmsEquivTest` containing
 
-- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients.
-- `rms_placebo_coefs`: The root mean squared value of the placebo coefficients.
-- `significance_level`: The significance level of the test.
-- `num_individuals`: The number of cross-sectional individuals in the data.
-- `num_periods`: The number of periods in the data.
-- `base_period`: The base period in the data.
+- `placebo_coefficients`: A numeric vector of the estimated placebo coefficients,
+- `rms_placebo_coefs`: The root mean squared value of the placebo coefficients,
+- `significance_level`: The significance level of the test,
+- `base_period`: The base period used in the testing procedure,
+- `num_individuals`: The number of cross-sectional individuals in the panel,
+- `num_periods`: The number of periods in the panel,
+- `num_observations`: The total number of observations in the panel,
+- `is_panel_balanced`: A logical value indicating whether the panel data is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
 - If `is.null(equiv_threshold)`, then additionally:
   - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of non-negligible (based on the equivalence threshold) trend-differences can be rejected. 
 - If `!(is.null(equiv_threshold))`, then additionally:
-  - `rms_critical_value`: The critical value at the alpha level.
-  - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis.
+  - `rms_critical_value`: The critical value at the alpha level,
+  - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis,
   - `equiv_threshold`: The equivalence threshold specified.
 
 ```{r}
-#' # Perform the test with equivalent threshold specified as 1 based on 
-#' # pre-treatment periods 1:4 and homoscedastic error-terms:
-rms_equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                                 data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                                 base_period = 4)
-
- # Perform the test without specifying the equivalence threshold:
-rms_equivalence_test2 <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                            data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
-                            base_period = 4)
-
+# Perform the equivalence test using an equivalence threshold of 1 with periods 
+# 1-4 as pre-treatment periods based on the RMS testing procedure:
+#  - option 1: using column names in the panel
+# One can use the names of the columns in the panel to specify the variables:
+rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
 ```
-The package also contains print functions to create a summary output:
-```{r}
-print(rms_equivalence_test)
-```
+```{r echo = TRUE, results='hide'}
+#  - option 2: using column numbers in the panel 
+# Alternatively, one can use the column numbers in the panel to specify the variables:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
+             
+#  - option 3: using separate variables 
+# One can also use the variables directly without specifying the data variable:
+data_Y <- sim_data$Y
+data_ID <- sim_data$ID
+data_G <- sim_data$G
+data_period <- sim_data$period
+data_X <- cbind(sim_data$X_1, sim_data$X_2)
 
+rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+             equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
+```
 ```{r}
-print(rms_equivalence_test2)
+# The testing procedures can also be performed without specifying the 
+# equivalence threshold specified. Then, the minimum equivalence threshold is returned
+# for which the null hypothesis of non-negligible trend-differences can be rejected.
+# Again, the three possible ways of entering the data as above can be used:
+rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4)
+```
+```{r echo = TRUE, results='hide'}
+# Finally, one should note that the test procedure also works for unbalanced panels.
+# To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+# 70% of the observations from the balanced panel dataset:
+
+random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indeces, ]
+#  With Equivalence Threshold:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = unbalanced_sim_data, equiv_threshold = 1, 
+             pretreatment_period = 1:4, base_period = 4)
+
+#  Without Equivalence Threshold:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = unbalanced_sim_data, equiv_threshold = NULL, 
+             pretreatment_period = 1:4, base_period = 4)
 ```
 
 

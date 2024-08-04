@@ -161,3 +161,6 @@ White H (1980). “A heteroskedasticity-consistent covariance matrix estimator a
 \seealso{
 \code{\link[=print.meanEquivTest]{print.meanEquivTest}}
 }
+\author{
+Ties Bos
+}

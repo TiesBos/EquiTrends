@@ -87,6 +87,8 @@
 #'  \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced.}
 #' }
 #' 
+#' @author Ties Bos
+#' 
 #' @examples
 #' # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
 #' # 5 time periods (labeled 1-5), a binary variable indicating which individual 
@@ -288,6 +290,8 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
 #' \item \code{equiv_threshold}: the equivalence threshold specified.
 #' }
 #' 
+#' @author Ties Bos
+#' 
 #' @examples
 #' # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
 #' # 5 time periods (labeled 1-5), a binary variable indicating which individual 
@@ -444,6 +448,7 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
 #' @references
 #' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
 #' 
+#' @author Ties Bos
 #' 
 #' @examples
 #' # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
