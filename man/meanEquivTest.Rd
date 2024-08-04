@@ -40,7 +40,7 @@ meanEquivTest(
 
 \item{vcov}{The variance-covariance matrix that needs to be used. See \emph{Details} for more details.}
 
-\item{cluster}{If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as Y. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster.}
+\item{cluster}{If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as the panel. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster.}
 
 \item{alpha}{Significance level of the test. The default is 0.05. Only required if \code{equiv_threshold} is not specified.}
 }
@@ -88,31 +88,65 @@ If no \code{vcov} parameter is provided, the function defaults to using the vari
 estimated by the \link[plm:plm]{plm::plm()} function.
 }
 \examples{
-# Simulate data
-sim_data <- sim_paneldata()
+# Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
+# 5 time periods (labeled 1-5), a binary variable indicating which individual 
+# receives treatment and 2 control variables ("X_1" and "X_2") 
+# The error-terms are generated without heteroscedasticity, autocorrelation, 
+# or any significant clusters. Furthermore, there are no fixed effects 
+# and no pre-trends present in the data (all values in beta are 0). 
+# See sim_paneldata() for more details.
 
+sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5), 
+                          gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
+                          burnins = 50)
+                          
 # Perform the test with equivalent threshold specified as 1 based on 
-# pre-treatment periods 1:4 and homoscedastic error-terms:
-equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4)
-print(equivalence_test)
+# pre-treatment periods 1-4 and assuming homoscedastic error-terms:
+  # To select variables, one can use the column names / column numbers in the panel data:
+  meanEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X = c(5, 6),
+                data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+                base_period = 4)
+  # Alternatively, one can use separate variables:
+  data_Y <- sim_data$Y
+  data_ID <- sim_data$ID
+  data_G <- sim_data$G
+  data_period <- sim_data$period
+  data_X <- sim_data[, c(5, 6)]
+  meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+                equiv_threshold = 1, pretreatment_period = 1:4,
+                base_period = 4)
+   
+# Perform the test with a heteroscedastic and autocorrelation robust 
+# variance-covariance matrix estimator, and without specifying the equivalence threshold:
+meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+              base_period = 4, vcov = "HAC")
 
-# Perform the test without specifying the equivalence threshold with heteroscedastic 
-# and autocorrelation robust variance-covariance matrix estimator:
-equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4, vcov = "HAC")
-print(equivalence_test)
-
-# Perform the test without specifying the equivalence threshold with a custom
+# Perform the test with an equivalence threshold of 1 and a custom
 # variance-covariance matrix estimator:
 vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
+meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+              base_period = 4, vcov = vcov_func)
+               
+# Perform the test using clustered standard errors based on a vector indicating 
+# the cluster. For instance, two clusters with the following rule: all
+# individuals with an ID below 250 are in the same cluster:
+cluster_ind <- ifelse(sim_data$ID < 250, 1, 2)
+meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+               equiv_threshold = 1, pretreatment_period = 1:4,
+               base_period = 4, vcov = "CL", cluster = cluster_ind)
 
-equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4, vcov = vcov_func)
-print(equivalence_test)
+# Note that the testing procedure can also handle unbalanced panels. 
+# Finally, one should note that the test procedure also works for unbalanced panels.
+# To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+# 70\% of the observations from the balanced panel dataset:
+random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indeces, ]
+meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+              data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+              base_period = 4, vcov = "HAC")
+
 
 }
 \references{

@@ -12,8 +12,8 @@
 #' @param pretreatment_period A numeric vector identifying the pre-treatment periods that should be used for testing. \code{pretreatment_period} must be a subset of the periods included through \code{period}. The default is to use all periods that are included in \code{period}.
 #' @param base_period The pre-treatment period to compare the post-treatment observation to. The default is to take the last period of the pre-treatment period.
 #' @param type The type of maximum test that should be performed. "IU" for the intersection-union test, "Boot" for the regular bootstrap procedure from Dette & Schumann (2024) and "Wild" for the Wild bootstrap procedure.
-#' @param vcov The variance-covariance matrix that needs to be used. See \emph{Details} for more details.
-#' @param cluster If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as Y. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster. Only required if \code{vcov = "CL"} and \code{type = "IU"}.
+#' @param vcov If \code{type = "IU"}, the variance-covariance matrix that needs to be used. See \emph{Details} for more details.
+#' @param cluster If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as the panel. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster. Only required if \code{vcov = "CL"} and \code{type = "IU"}.
 #' @param alpha Significance level of the test. The default is 0.05. Only required if \code{equiv_threshold} is not specified.
 #' @param B If type = Boot or type = Wild, the number of bootstrap samples used. The default is 1000.
 #'
@@ -88,48 +88,90 @@
 #' }
 #' 
 #' @examples
-#' # generate some data
-#' # Simulate data
-#' sim_data <- sim_paneldata()
+#' # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
+#' # 5 time periods (labeled 1-5), a binary variable indicating which individual 
+#' # receives treatment and 2 control variables ("X_1" and "X_2") The error-terms are generated without 
+#' # heteroscedasticity,  autocorrelation, or any significant clusters. 
+#' # Furthermore, there are no fixed effects (lambda and alpha are both vectors 
+#' # containing only 0) and no pre-trends present in the data (all values in 
+#' # beta are 0). See sim_paneldata() for more details.
+#' 
+#' sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5), 
+#'                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
+#'                           burnins = 50)
 #' 
 #' # -----------------  IU Approach -----------------
 #' # Perform the test with equivalent threshold specified as 1 based on 
-#' # pre-treatment periods 1:4 and homoscedastic error-terms:
-#' equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                                  data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                                  base_period = 4, type = "IU")
-#' print(equivalence_test)
-#' 
+#' # pre-treatment periods 1-4 and homoscedastic error-terms:
+#'   # To select variables, one can use the column names / numbers in the panel data
+#' maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
+#'               data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'               base_period = 4, type = "IU")
+#'   # Alternatively, one can enter the variables separately:
+#' data_Y <- sim_data$Y
+#' data_ID <- sim_data$ID
+#' data_G <- sim_data$G
+#' data_period <- sim_data$period
+#' data_X <- sim_data[, c(5, 6)]
+#' maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+#'              equiv_threshold = 1, pretreatment_period = 1:4,
+#'              base_period = 4, type = "IU")
+#'              
 #' # Perform the test without specifying the equivalence threshold with heteroscedastic 
 #' # and autocorrelation robust variance-covariance matrix estimator:
-#' equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, type = "IU", vcov = "HAC")
-#' print(equivalence_test)
+#' maxEquivTest(Y = 3, ID = 1, G = 4, period = 2, 
+#'              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+#'              base_period = 4, type = "IU", vcov = "HAC")
 #' 
 #' # Perform the test without specifying the equivalence threshold with a custom
 #' # variance-covariance matrix estimator:
 #' vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
+#' maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+#'              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'              base_period = 4, type = "IU", vcov = vcov_func)
+#'  
+#' # Perform the test using clustered standard errors based on a vector indicating 
+#' # the cluster. For instance, two clusters with the following rule: all
+#' # individuals with an ID below 250 are in the same cluster.
+#' cluster_ind <- ifelse(sim_data$ID < 250, 1, 2)
+#' maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+#'                equiv_threshold = 1, pretreatment_period = 1:4,
+#'                base_period = 4, type = "IU", vcov = "CL", cluster = cluster_ind)
 #' 
-#' equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, type = "IU", vcov = vcov_func)
-#' print(equivalence_test)
+#' # Note that the testing procedure can also handle unbalanced panels. 
+#' # Finally, one should note that the test procedure also works for unbalanced panels.
+#' # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+#' # 70% of the observations from the balanced panel dataset:
+#' random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+#' unbalanced_sim_data <- sim_data[random_indeces, ]
+#' maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+#'               data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'               base_period = 4, type = "IU", vcov = "HAC")
 #' 
 #' #-----------------  Bootstrap Approach -----------------
-#' # Perform the test with equivalent threshold specified as 1 based on 
-#' # pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
-#' equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, type = "Boot")
-#' print(equivalence_test)
+#' # NOTE: For the bootstrap procedures the equivalence threshold must be specified.
 #' 
-#' # Perform the test with equivalent threshold specified as 1 based on 
+#' # Perform the test with equivalence threshold specified as 1 based on 
+#' # pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
+#' maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+#'              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'              base_period = 4, type = "Boot")
+#' 
+#' # Perform the test with the equivalence threshold specified as 1 based on 
 #' # pre-treatment periods 1:4 (with base period 4) with the wild bootstrap procedure:
-#' equivalence_test <- maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, type = "Wild")
-#' print(equivalence_test)
+#' maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+#'              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'              base_period = 4, type = "Wild")
+#'  
+#'  # The bootstrap procedures can handle unbalanced panels:
+#'  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+#'              data = unbalanced_sim_data, equiv_threshold = 1, 
+#'              pretreatment_period = 1:4,
+#'              base_period = 4, type = "Boot")
+#'  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+#'              data = unbalanced_sim_data, equiv_threshold = 1, 
+#'              pretreatment_period = 1:4,
+#'              base_period = 4, type = "Wild")            
 #' 
 #' @export
 #' 
@@ -201,7 +243,7 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
 #' @param pretreatment_period A numeric vector identifying the pre-treatment periods that should be used for testing. \code{pretreatment_period} must be a subset of the periods included through \code{period}. The default is to use all periods that are included in \code{period}.
 #' @param base_period The pre-treatment period to compare the post-treatment observation to. The default is to take the last period of the pre-treatment period.
 #' @param vcov The variance-covariance matrix that needs to be used. See \emph{Details} for more details.
-#' @param cluster If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as Y. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster.
+#' @param cluster If \code{vcov = "CL"}, a vector indicating which observations belong to the same cluster. \code{cluster} must be of the same length as the panel. If \code{data} is supplied, \code{cluster} must be either the column index or column name of this vector in the data.frame/matrix. The default (\code{cluster=NULL}) assumes every unit in ID is its own cluster.
 #' @param alpha Significance level of the test. The default is 0.05. Only required if \code{equiv_threshold} is not specified.
 #' 
 #' @seealso \code{\link[=print.meanEquivTest]{print.meanEquivTest}}
@@ -247,31 +289,65 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
 #' }
 #' 
 #' @examples
-#' # Simulate data
-#' sim_data <- sim_paneldata()
+#' # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
+#' # 5 time periods (labeled 1-5), a binary variable indicating which individual 
+#' # receives treatment and 2 control variables ("X_1" and "X_2") 
+#' # The error-terms are generated without heteroscedasticity, autocorrelation, 
+#' # or any significant clusters. Furthermore, there are no fixed effects 
+#' # and no pre-trends present in the data (all values in beta are 0). 
+#' # See sim_paneldata() for more details.
 #' 
+#' sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5), 
+#'                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
+#'                           burnins = 50)
+#'                           
 #' # Perform the test with equivalent threshold specified as 1 based on 
-#' # pre-treatment periods 1:4 and homoscedastic error-terms:
-#' equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4)
-#' print(equivalence_test)
+#' # pre-treatment periods 1-4 and assuming homoscedastic error-terms:
+#'   # To select variables, one can use the column names / column numbers in the panel data:
+#'   meanEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X = c(5, 6),
+#'                 data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'                 base_period = 4)
+#'   # Alternatively, one can use separate variables:
+#'   data_Y <- sim_data$Y
+#'   data_ID <- sim_data$ID
+#'   data_G <- sim_data$G
+#'   data_period <- sim_data$period
+#'   data_X <- sim_data[, c(5, 6)]
+#'   meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+#'                 equiv_threshold = 1, pretreatment_period = 1:4,
+#'                 base_period = 4)
+#'    
+#' # Perform the test with a heteroscedastic and autocorrelation robust 
+#' # variance-covariance matrix estimator, and without specifying the equivalence threshold:
+#' meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+#'               data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+#'               base_period = 4, vcov = "HAC")
 #' 
-#' # Perform the test without specifying the equivalence threshold with heteroscedastic 
-#' # and autocorrelation robust variance-covariance matrix estimator:
-#' equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, vcov = "HAC")
-#' print(equivalence_test)
-#' 
-#' # Perform the test without specifying the equivalence threshold with a custom
+#' # Perform the test with an equivalence threshold of 1 and a custom
 #' # variance-covariance matrix estimator:
 #' vcov_func <- function(x) {plm::vcovHC(x, method = "white1", type = "HC2")}
+#' meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+#'               data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'               base_period = 4, vcov = vcov_func)
+#'                
+#' # Perform the test using clustered standard errors based on a vector indicating 
+#' # the cluster. For instance, two clusters with the following rule: all
+#' # individuals with an ID below 250 are in the same cluster:
+#' cluster_ind <- ifelse(sim_data$ID < 250, 1, 2)
+#' meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+#'                equiv_threshold = 1, pretreatment_period = 1:4,
+#'                base_period = 4, vcov = "CL", cluster = cluster_ind)
 #' 
-#' equivalence_test <- meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4, vcov = vcov_func)
-#' print(equivalence_test)
+#' # Note that the testing procedure can also handle unbalanced panels. 
+#' # Finally, one should note that the test procedure also works for unbalanced panels.
+#' # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+#' # 70% of the observations from the balanced panel dataset:
+#' random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+#' unbalanced_sim_data <- sim_data[random_indeces, ]
+#' meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
+#'               data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'               base_period = 4, vcov = "HAC")
+#' 
 #' 
 #' @references
 #' Arellano M (1987). “Computing Robust Standard Errors for Within-groups Estimators.” \emph{Oxford bulletin of Economics and Statistics}, 49(4), 431–434.
@@ -370,24 +446,75 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
 #' 
 #' 
 #' @examples
+#' # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
+#' # 5 time periods (labeled 1-5), a binary variable indicating which individual 
+#' # receives treatment and 2 control variables ("X_1" and "X_2"). 
+#' # The error-terms are generated without  heteroscedasticity,  autocorrelation, 
+#' # or any significant clusters. Furthermore, there are no fixed effects and 
+#' # no pre-trends present in the data (all values in  beta are 0). 
+#' # See sim_paneldata() for more details.
 #' 
+#' sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5), 
+#'                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
+#'                           burnins = 50)
+#'
+#' # Perform the equivalence test using an equivalence threshold of 1 with periods 
+#' # 1-4 as pre-treatment periods based on the RMS testing procedure:
+#' #  - option 1: using column names in the panel
+#' # One can use the names of the columns in the panel to specify the variables:
+#' rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+#'              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'              base_period = 4)
 #' 
-#' # ---- OLD EXAMPLE ----
-#' # Simulate data
-#' sim_data <- sim_paneldata()
+#' #  - option 2: using column numbers in the panel 
+#' # Alternatively, one can use the column numbers in the panel to specify the variables:
+#' rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+#'              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+#'              base_period = 4)
+#'              
+#' #  - option 3: using separate variables 
+#' # One can also use the variables directly without specifying the data variable:
+#' data_Y <- sim_data$Y
+#' data_ID <- sim_data$ID
+#' data_G <- sim_data$G
+#' data_period <- sim_data$period
+#' data_X <- cbind(sim_data$X_1, sim_data$X_2)
 #' 
-#' # Perform the test with equivalent threshold specified as 1 based on 
-#' # pre-treatment periods 1:4 and homoscedastic error-terms:
-#' equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                                  data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                                  base_period = 4)
-#' print(equivalence_test)
+#' rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+#'              equiv_threshold = 1, pretreatment_period = 1:4,
+#'              base_period = 4)
 #' 
-#' # Perform the test without specifying the equivalence threshold:
-#' equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-#'                            data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-#'                            base_period = 4)
-#' print(equivalence_test)
+#' # The testing procedures can also be performed without specifying the 
+#' # equivalence threshold specified. Then, the minimum equivalence threshold is returned
+#' # for which the null hypothesis of non-negligible trend-differences can be rejected.
+#' # Again, the three possible ways of entering the data as above can be used:
+#' rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+#'              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+#'              base_period = 4)
+#' 
+#' rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+#'              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+#'              base_period = 4)
+#'              
+#' rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X= data_X,
+#'              equiv_threshold = NULL, pretreatment_period = 1:4,
+#'              base_period = 4)
+#' 
+#' # Finally, one should note that the test procedure also works for unbalanced panels.
+#' # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+#' # 70% of the observations from the balanced panel dataset:
+#' 
+#' random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+#' unbalanced_sim_data <- sim_data[random_indeces, ]
+#' #  With Equivalence Threshold:
+#' rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+#'              data = unbalanced_sim_data, equiv_threshold = 1, 
+#'              pretreatment_period = 1:4, base_period = 4)
+#' 
+#' #  Without Equivalence Threshold:
+#' rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+#'              data = unbalanced_sim_data, equiv_threshold = NULL, 
+#'              pretreatment_period = 1:4, base_period = 4)
 #' 
 #' 
 #' @export

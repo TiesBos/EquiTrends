@@ -69,24 +69,75 @@ This function performs an equivalence test for pre-trends based on the root mean
 \code{no_lambda} determines the proportions lambda/\code{no.lambda} for lambda = 1,...,\code{no_lambda} of the cross-sectional units at which the placebo coefficients are estimated. The placebo coefficients are estimated for each of these proportions and the root mean squared (RMS) of the placebo coefficients is calculated, which are then used to construct the critical value at a significance level of \code{alpha}. See Dette & Schumann (2024, s. 4.2.3.) for more details.
 }
 \examples{
+# Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
+# 5 time periods (labeled 1-5), a binary variable indicating which individual 
+# receives treatment and 2 control variables ("X_1" and "X_2"). 
+# The error-terms are generated without  heteroscedasticity,  autocorrelation, 
+# or any significant clusters. Furthermore, there are no fixed effects and 
+# no pre-trends present in the data (all values in  beta are 0). 
+# See sim_paneldata() for more details.
 
+sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5), 
+                          gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
+                          burnins = 50)
 
-# ---- OLD EXAMPLE ----
-# Simulate data
-sim_data <- sim_paneldata()
+# Perform the equivalence test using an equivalence threshold of 1 with periods 
+# 1-4 as pre-treatment periods based on the RMS testing procedure:
+#  - option 1: using column names in the panel
+# One can use the names of the columns in the panel to specify the variables:
+rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
 
-# Perform the test with equivalent threshold specified as 1 based on 
-# pre-treatment periods 1:4 and homoscedastic error-terms:
-equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                                 data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                                 base_period = 4)
-print(equivalence_test)
+#  - option 2: using column numbers in the panel 
+# Alternatively, one can use the column numbers in the panel to specify the variables:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
+             
+#  - option 3: using separate variables 
+# One can also use the variables directly without specifying the data variable:
+data_Y <- sim_data$Y
+data_ID <- sim_data$ID
+data_G <- sim_data$G
+data_period <- sim_data$period
+data_X <- cbind(sim_data$X_1, sim_data$X_2)
 
-# Perform the test without specifying the equivalence threshold:
-equivalence_test <- rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
-                           data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-                           base_period = 4)
-print(equivalence_test)
+rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+             equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
+
+# The testing procedures can also be performed without specifying the 
+# equivalence threshold specified. Then, the minimum equivalence threshold is returned
+# for which the null hypothesis of non-negligible trend-differences can be rejected.
+# Again, the three possible ways of entering the data as above can be used:
+rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4)
+
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4)
+             
+rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X= data_X,
+             equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4)
+
+# Finally, one should note that the test procedure also works for unbalanced panels.
+# To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+# 70\% of the observations from the balanced panel dataset:
+
+random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indeces, ]
+#  With Equivalence Threshold:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = unbalanced_sim_data, equiv_threshold = 1, 
+             pretreatment_period = 1:4, base_period = 4)
+
+#  Without Equivalence Threshold:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = unbalanced_sim_data, equiv_threshold = NULL, 
+             pretreatment_period = 1:4, base_period = 4)
 
 
 }
