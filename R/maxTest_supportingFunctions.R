@@ -76,13 +76,13 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
     }
     vcov_mat <- vcov(IU_twfe)
   }
-  
+
   # Extracting the variances of the slope coefficients
-  subvcov_mat <- vcov_mat[placebo_names, placebo_names]
+  subvcov_mat <- as.matrix(vcov_mat[placebo_names, placebo_names, drop = FALSE])
   beta_var <- diag(subvcov_mat)
   
   # Calculating the standard errors
-  beta_se <- as.matrix(sqrt(beta_var/n))
+  beta_se <- sqrt(beta_var/n)
   
   if(!is.null(equiv_threshold)){
     
@@ -208,7 +208,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # Check for possible multicolinearity:
   if(qr(WD)$rank < ncol(WD)){
-    WD <- remove_multicollinearity(WD)$df
+    WD <- remove_multicollinearity(WD, asmatrix = TRUE)$df
   }
   
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
@@ -222,7 +222,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # Double demean the data:
   X <- double_demean(x = model_matrix, individual = matrix(data$ID), time = matrix(data$period), WD = WD)
-  
+
   # Check multicolinearity:
   if(qr(X)$rank < ncol(X)){
     new_X <- remove_multicollinearity(X)
@@ -251,7 +251,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # its maximum absolute entry is:
   max_unconstr_coef <- max(abs(unconstrained_coefs[1:length(placebo_names)]))
-  
+
   if(max_unconstr_coef >= equiv_threshold){
     constrained_coefs <- unconstrained_coefs
   } else {
@@ -266,11 +266,13 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
                                      x=X, y=Y,
                                      time = data$period,
                                      ID = data$ID)
+
     # Run the Bootstrap:
     bootstrap_maxcoefs <- maxTestBoot_bootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
                                                 variance = resid_variance, ID = data$ID,
                                                 period = data$period, WD=WD, 
                                                 no_placebos = length(placebo_names))
+
   } else {
     u_ddot <- Y - X%*%constrained_coefs
     
@@ -287,7 +289,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # Reject Or Not:
   reject_H0 <- (max(abs(unconstrained_coefs[1:length(placebo_names)])) < boot_crit_value)
-  
+
   results_list <- structure(list(placebo_coefficients = placebo_coefs,
                                  abs_placebo_coefficients = abs(placebo_coefs),
                                  max_abs_coefficient =max(abs(unconstrained_coefs[1:length(placebo_names)])),
@@ -308,7 +310,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
 #   ---- Supporting functions for the Bootstrap Approach ----
 
 # Removing multicolinear columns:
-remove_multicollinearity <- function(df) {
+remove_multicollinearity <- function(df, asmatrix = FALSE) {
   # Create the design matrix
   mat <- as.matrix(df)
   
@@ -319,6 +321,9 @@ remove_multicollinearity <- function(df) {
   problematic_vars <- qr_mat$pivot[seq(from = qr_mat$rank + 1, to = ncol(mat))]
   
   df <- df[,-problematic_vars]
+  if(asmatrix){
+    df <- as.matrix(df)
+  }
   return(list(df = df, problematic_vars = problematic_vars))
 }
 

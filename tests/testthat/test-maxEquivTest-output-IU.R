@@ -28,7 +28,7 @@ test_that("maxEquivTest return for matrix input and standard variance-covariance
   beta_var <- diag(subcov_mat)
   
   # Calculating the standard errors
-  beta_se <- as.matrix(sqrt(beta_var/500))
+  beta_se <- sqrt(beta_var/500)
   
   maxEquivTest_results <- maxEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                        period = period_data, X=X_data, 
@@ -125,7 +125,7 @@ test_that("maxEquivTest return for HC-type variance-covariance matrix",{
   beta_var <- diag(subcov_mat)
   
   # Calculating the standard errors
-  beta_se <- as.matrix(sqrt(beta_var/500))
+  beta_se <- sqrt(beta_var/500)
   
   maxEquivTest_results <- maxEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                        period = period_data, X=X_data, 
@@ -223,7 +223,7 @@ test_that("maxEquivTest return for HAC-type variance-covariance matrix",{
   beta_var <- diag(subcov_mat)
   
   # Calculating the standard errors
-  beta_se <- as.matrix(sqrt(beta_var/500))
+  beta_se <- sqrt(beta_var/500)
   
   maxEquivTest_results <- maxEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                        period = period_data, X=X_data, 
@@ -321,7 +321,7 @@ test_that("maxEquivTest return for CL-type variance-covariance matrix without cl
   beta_var <- diag(subcov_mat)
   
   # Calculating the standard errors
-  beta_se <- as.matrix(sqrt(beta_var/500))
+  beta_se <- sqrt(beta_var/500)
   
   maxEquivTest_results <- maxEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                        period = period_data, X=X_data, 
@@ -412,11 +412,11 @@ test_that("maxEquivTest return for CL-type variance-covariance matrix with clust
   placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
   vcov_mat <- clubSandwich::vcovCR(plm_test, cluster= cluster_data, type="CR0")
   
-  subcov_mat <- vcov_mat[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
+  subcov_mat <- vcov_mat[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), drop = FALSE]
   beta_var <- diag(subcov_mat)
   
   # Calculating the standard errors
-  beta_se <- as.matrix(sqrt(beta_var/500))
+  beta_se <- sqrt(beta_var/500)
   
   maxEquivTest_results <- maxEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                        period = period_data, X=X_data, 
