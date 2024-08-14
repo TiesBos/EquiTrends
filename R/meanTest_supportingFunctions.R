@@ -85,8 +85,7 @@ meanTest_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_per
   
   # The estimated variance of the mean placebo coefficient estimator:
   placebo_vcov <- vcov_mat[placebo_names, placebo_names]
-  sum_variance <- as.numeric(t(one_vec)%*%placebo_vcov%*%one_vec)
-  mean_placebo_var <- sum_variance/n
+  mean_placebo_var <- as.numeric(t(demean_vec)%*%placebo_vcov%*%demean_vec)
   
   # If delta is not NULL, we calculate the critical value / p-value. Else, the minimum delta 
   # for which H0 can be rejected.

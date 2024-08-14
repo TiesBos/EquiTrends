@@ -82,7 +82,7 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
   beta_var <- diag(subvcov_mat)
   
   # Calculating the standard errors
-  beta_se <- sqrt(beta_var/n)
+  beta_se <- sqrt(beta_var)
   
   if(!is.null(equiv_threshold)){
     

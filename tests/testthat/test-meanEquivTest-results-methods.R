@@ -23,7 +23,7 @@ test_that("meanEquivTest return for matrix input and standard variance-covarianc
   plm_test <- plm::plm(test_formula, data=subdata, effect="twoways", model="within", index=c("ID","period"))
   placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
   
-  mean_var <- sum((plm_test$vcov)[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 500
+  mean_var <- sum((plm_test$vcov)[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 16
   
   
   meanEquivTest_results <- meanEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
@@ -40,7 +40,7 @@ test_that("meanEquivTest return for matrix input and standard variance-covarianc
   expect_equal(meanEquivTest_results$num_individuals, 500)
   expect_equal(meanEquivTest_results$num_periods, 5)
   expect_equal(meanEquivTest_results$base_period, 5)
-  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.1403176)
+  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.24250704475537498972)
   expect_equal(length(meanEquivTest_results$placebo_coefficients), 4)
   expect_equal(length(meanEquivTest_results$abs_mean_placebo_coefs), 1)
   expect_equal(meanEquivTest_results$abs_mean_placebo_coefs, abs(mean(placebo_coefs)))
@@ -74,7 +74,7 @@ test_that("meanEquivTest return for matrix input and standard variance-covarianc
   expect_equal(prob_crit_val, 0.1, tolerance = 1e-7)
   expect_equal(VGAM::qfoldnorm(alpha, mean=meanEquivTest_results2$equiv_threshold, sd=sqrt(meanEquivTest_results2$var_mean_placebo_coef)), meanEquivTest_results2$mean_critical_value)
   reject_conclusion <- meanEquivTest_results2$reject_null_hypothesis
-  expect_equal(reject_conclusion, TRUE)
+  expect_equal(reject_conclusion, FALSE)
   expect_equal(meanEquivTest_results2$equiv_threshold, 0.2)
   
   # with index input:
@@ -124,7 +124,7 @@ test_that("meanEquivTest return for HC-type variance-covariance matrix",{
   plm_test <- plm::plm(test_formula, data=subdata, effect="twoways", model="within", index=c("ID","period"))
   placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
   var_cov <- plm::vcovHC(plm_test, type="HC1", method = "white1")
-  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 500
+  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 16
   
   
   meanEquivTest_results <- meanEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
@@ -141,7 +141,7 @@ test_that("meanEquivTest return for HC-type variance-covariance matrix",{
   expect_equal(meanEquivTest_results$num_individuals, 500)
   expect_equal(meanEquivTest_results$num_periods, 5)
   expect_equal(meanEquivTest_results$base_period, 5)
-  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.13751285)
+  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.22687340815107762126)
   expect_equal(length(meanEquivTest_results$placebo_coefficients), 4)
   expect_equal(length(meanEquivTest_results$abs_mean_placebo_coefs), 1)
   expect_equal(meanEquivTest_results$abs_mean_placebo_coefs, abs(mean(placebo_coefs)))
@@ -175,7 +175,7 @@ test_that("meanEquivTest return for HC-type variance-covariance matrix",{
   expect_equal(prob_crit_val, 0.1, tolerance = 1e-7)
   expect_equal(VGAM::qfoldnorm(alpha, mean=meanEquivTest_results2$equiv_threshold, sd=sqrt(meanEquivTest_results2$var_mean_placebo_coef)), meanEquivTest_results2$mean_critical_value)
   reject_conclusion <- meanEquivTest_results2$reject_null_hypothesis
-  expect_equal(reject_conclusion, TRUE)
+  expect_equal(reject_conclusion, FALSE)
   expect_equal(meanEquivTest_results2$equiv_threshold, 0.2)
   
   # with index input:
@@ -304,7 +304,7 @@ test_that("meanEquivTest return for CL-type variance-covariance matrix",{
   plm_test <- plm::plm(test_formula, data=subdata, effect="twoways", model="within", index=c("ID","period"))
   placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
   var_cov <- clubSandwich::vcovCR(plm_test, cluster=cluster_data, type="CR0")
-  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 500
+  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 16
   
   
   meanEquivTest_results <- meanEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
@@ -321,7 +321,7 @@ test_that("meanEquivTest return for CL-type variance-covariance matrix",{
   expect_equal(meanEquivTest_results$num_individuals, 500)
   expect_equal(meanEquivTest_results$num_periods, 5)
   expect_equal(meanEquivTest_results$base_period, 5)
-  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.1261254, tolerance = 1e-7)
+  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.16322737373597387411, tolerance = 1e-7)
   expect_equal(length(meanEquivTest_results$placebo_coefficients), 4)
   expect_equal(length(meanEquivTest_results$abs_mean_placebo_coefs), 1)
   expect_equal(meanEquivTest_results$abs_mean_placebo_coefs, abs(mean(placebo_coefs)))
@@ -486,7 +486,7 @@ test_that("meanEquivTest return for HAC type variance-covariance matrix",{
   placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
   var_cov <- plm::vcovHC(plm_test, type="HC3", method = "arellano")
   
-  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 500
+  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 16
   
   
   meanEquivTest_results <- meanEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
@@ -503,7 +503,7 @@ test_that("meanEquivTest return for HAC type variance-covariance matrix",{
   expect_equal(meanEquivTest_results$num_individuals, 500)
   expect_equal(meanEquivTest_results$num_periods, 5)
   expect_equal(meanEquivTest_results$base_period, 5)
-  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.13966959, tolerance = 1e-7)
+  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.23890025676027837331, tolerance = 1e-7)
   expect_equal(length(meanEquivTest_results$placebo_coefficients), 4)
   expect_equal(length(meanEquivTest_results$abs_mean_placebo_coefs), 1)
   expect_equal(meanEquivTest_results$abs_mean_placebo_coefs, abs(mean(placebo_coefs)))
@@ -537,7 +537,7 @@ test_that("meanEquivTest return for HAC type variance-covariance matrix",{
   expect_equal(prob_crit_val, 0.1, tolerance = 1e-7)
   expect_equal(VGAM::qfoldnorm(alpha, mean=meanEquivTest_results2$equiv_threshold, sd=sqrt(meanEquivTest_results2$var_mean_placebo_coef)), meanEquivTest_results2$mean_critical_value)
   reject_conclusion <- meanEquivTest_results2$reject_null_hypothesis
-  expect_equal(reject_conclusion, TRUE)
+  expect_equal(reject_conclusion, FALSE)
   expect_equal(meanEquivTest_results2$equiv_threshold, 0.2)
   
   meanEquivTest_results3 <- meanEquivTest(Y = 1, ID= 2, G = 4, 
@@ -666,7 +666,7 @@ test_that("meanEquivTest return for CL-type variance-covariance matrix (no clust
   plm_test <- plm::plm(test_formula, data=subdata, effect="twoways", model="within", index=c("ID","period"))
   placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
   var_cov <- clubSandwich::vcovCR(plm_test, cluster = "ID", type="CR0")
-  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 500
+  mean_var <- sum(var_cov[c("placebo_1", "placebo_2", "placebo_3", "placebo_4"), c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]) / 16
   
   
   meanEquivTest_results <- meanEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
@@ -682,7 +682,7 @@ test_that("meanEquivTest return for CL-type variance-covariance matrix (no clust
   expect_equal(meanEquivTest_results$num_individuals, 500)
   expect_equal(meanEquivTest_results$num_periods, 5)
   expect_equal(meanEquivTest_results$base_period, 5)
-  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.1396184, tolerance = 2e-7)
+  expect_equal(meanEquivTest_results$minimum_equiv_threshold, 0.23861523182253563391, tolerance = 2e-7)
   expect_equal(length(meanEquivTest_results$placebo_coefficients), 4)
   expect_equal(length(meanEquivTest_results$abs_mean_placebo_coefs), 1)
   expect_equal(meanEquivTest_results$abs_mean_placebo_coefs, abs(mean(placebo_coefs)))
@@ -715,7 +715,7 @@ test_that("meanEquivTest return for CL-type variance-covariance matrix (no clust
   expect_equal(prob_crit_val, 0.1, tolerance = 1e-7)
   expect_equal(VGAM::qfoldnorm(alpha, mean=meanEquivTest_results2$equiv_threshold, sd=sqrt(meanEquivTest_results2$var_mean_placebo_coef)), meanEquivTest_results2$mean_critical_value)
   reject_conclusion <- meanEquivTest_results2$reject_null_hypothesis
-  expect_equal(reject_conclusion, TRUE)
+  expect_equal(reject_conclusion, FALSE)
   expect_equal(meanEquivTest_results2$equiv_threshold, 0.2)
   
   meanEquivTest_results3 <- meanEquivTest(Y = 1, ID= 2, G = 4, 
