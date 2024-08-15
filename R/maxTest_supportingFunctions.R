@@ -214,6 +214,9 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
   X_df <- data[, c(placebo_names, X_names)]
+  if(length(c(placebo_names, X_names)) == 1){
+    X_df <- as.data.frame(X_df)
+  }
   colnames(X_df) <- c(placebo_names, original_names)
   
   # Create a model.matrix:
