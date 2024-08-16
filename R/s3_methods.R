@@ -141,19 +141,28 @@ print.maxEquivTestBoot <- function(x, ...){
   
   # Additional details
   cat("Significance level:", x$significance_level, "\n")
-  cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
-  cat("---\n")
+  if(x$equiv_threshold_specified){
+    cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
+    
+    # Display results
+    df_print <- data.frame(number_rep(x$max_abs_coefficient), 
+                            number_rep(x$bootstrap_critical_value),
+                            x$reject_null_hypothesis)
+    colnames(df_print) <- c("Max. Abs. Coefficient", "Bootstrap Critical Value", "Reject H0")
+    rownames(df_print) <- c("")
+  } else {
+    cat("Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.\n")
+    df_print <- data.frame(number_rep(x$max_abs_coefficient), 
+                           number_rep(x$minimum_equiv_threshold))
+    colnames(df_print) <- c("Max. Abs. Coefficient", "Min. Equiv. Threshold")
+    rownames(df_print) <- c("")
+  }
   
-  # Display results
-  df_print <- data.frame(number_rep(x$max_abs_coefficient), 
-                          number_rep(x$bootstrap_critical_value),
-                          x$reject_null_hypothesis)
-  colnames(df_print) <- c("Max. Abs. Coefficient", "Bootstrap Critical Value", "Reject H0")
-  rownames(df_print) <- c("")
+  cat("---\n")
   pretty_print(df_print)
-  
-  # Summary statistics
   cat("---\n")
+  
+  # Dataset statistics:
   cat("No. placebo coefficients estimated:", length(x$abs_placebo_coefficients), "\n")
   cat("Base period:", x$base_period ,"\n")
   cat(" \n")

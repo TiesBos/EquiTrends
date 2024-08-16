@@ -200,6 +200,10 @@ maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshol
   
   if(error_test$error){stop(error_test$message)}
   
+  if(!is.null(X) && !(type == "IU")){
+    message("NOTE: Please be aware that including control variables (X) might lead to higher computation times for type = \"Boot\" and type = \"Wild\", due to unconstrained parameters in the optimization problem that estimates the constrained placebo coefficients.")
+  }
+  
   # Structuring the data:
   data_constr <- EquiTrends_dataconstr(Y, ID, G, period, X, data, pretreatment_period, base_period,
                                    cluster)

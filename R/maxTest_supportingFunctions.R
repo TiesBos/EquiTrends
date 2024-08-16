@@ -210,7 +210,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   if(qr(WD)$rank < ncol(WD)){
     WD <- remove_multicollinearity(WD, asmatrix = TRUE)$df
   }
-  
+
   placebo_names <- base::grep("placebo_",base::names(data),value=TRUE)
   X_names <- base::grep("X_", base::names(data), value=TRUE)
   X_df <- data[, c(placebo_names, X_names)]
@@ -244,7 +244,7 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   }
   
   Y <- as.matrix(double_demean(matrix(data$Y),individual = matrix(data$ID), time = matrix(data$period), WD = WD))
-  
+
   # The unconstrained coefficient is:
   unconstrained_coefs <- solve(t(X)%*%X, t(X)%*%Y)
   
@@ -254,58 +254,79 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   # its maximum absolute entry is:
   max_unconstr_coef <- max(abs(unconstrained_coefs[1:length(placebo_names)]))
-
-  if(max_unconstr_coef >= equiv_threshold){
-    constrained_coefs <- unconstrained_coefs
-  } else {
-    constrained_coefs <- boot_optimization_function(x=X, y=Y, no_placebos = length(placebo_names), 
-                                                    equiv_threshold = equiv_threshold,
-                                                    start_val = unconstrained_coefs)
-  }
   
-  if(type == "Boot"){
-    # Calculate the variance based on the constrained coefficient:
-    resid_variance <- sigma_hathat_c(parameter = constrained_coefs,  
-                                     x=X, y=Y,
-                                     time = data$period,
-                                     ID = data$ID)
+  if(!is.null(equiv_threshold)){
 
-    # Run the Bootstrap:
-    bootstrap_maxcoefs <- maxTestBoot_bootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
-                                                variance = resid_variance, ID = data$ID,
-                                                period = data$period, WD=WD, 
-                                                no_placebos = length(placebo_names))
-
-  } else {
-    u_ddot <- Y - X%*%constrained_coefs
+    if(max_unconstr_coef >= equiv_threshold){
+      constrained_coefs <- unconstrained_coefs
+    } else {
+      constrained_coefs <- boot_optimization_function(x=X, y=Y, no_placebos = length(placebo_names), 
+                                                      equiv_threshold = equiv_threshold,
+                                                      start_val = unconstrained_coefs)
+    }
     
-    # Run the Wild Bootstrap:
-    bootstrap_maxcoefs <- maxTestBoot_wildbootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
-                                                     u_ddot = u_ddot,
-                                                     ID = data$ID, period = data$period,
-                                                     no_placebos = length(placebo_names),
-                                                     WD = WD)
-  }
-  
-  # Find the critical value at the alpha level:
-  boot_crit_value <- unname(stats::quantile(bootstrap_maxcoefs, probs = alpha))
-  
-  # Reject Or Not:
-  reject_H0 <- (max(abs(unconstrained_coefs[1:length(placebo_names)])) < boot_crit_value)
+    if(type == "Boot"){
 
-  results_list <- structure(list(placebo_coefficients = placebo_coefs,
-                                 abs_placebo_coefficients = abs(placebo_coefs),
-                                 max_abs_coefficient =max(abs(unconstrained_coefs[1:length(placebo_names)])),
-                                 bootstrap_critical_value = boot_crit_value,
-                                 reject_null_hypothesis = reject_H0, 
-                                 equiv_threshold = equiv_threshold,
-                                 B = B, 
-                                 significance_level = alpha, wild = (type=="Wild"),
-                                 base_period = base_period,
-                                 equiv_threshold_specified = !is.null(equiv_threshold),
-                                 num_individuals = n, num_periods = no_periods, num_observations = nrow(data),
-                                 is_panel_balanced = is_panel_balanced), class = "maxEquivTestBoot")
+      # Calculate the variance based on the constrained coefficient:
+      resid_variance <- sigma_hathat_c(parameter = constrained_coefs,  
+                                       x=X, y=Y,
+                                       time = data$period,
+                                       ID = data$ID)
   
+      # Run the Bootstrap:
+      bootstrap_maxcoefs <- maxTestBoot_bootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
+                                                  variance = resid_variance, ID = data$ID,
+                                                  period = data$period, WD=WD, 
+                                                  no_placebos = length(placebo_names))
+  
+    } else {
+      u_ddot <- Y - X%*%constrained_coefs
+      
+      # Run the Wild Bootstrap:
+      bootstrap_maxcoefs <- maxTestBoot_wildbootstrap(Xb = X%*%constrained_coefs, X=X, B=B,
+                                                       u_ddot = u_ddot,
+                                                       ID = data$ID, period = data$period,
+                                                       no_placebos = length(placebo_names),
+                                                       WD = WD)
+    }
+    
+    # Find the critical value at the alpha level:
+    boot_crit_value <- unname(stats::quantile(bootstrap_maxcoefs, probs = alpha))
+    
+    # Reject Or Not:
+    reject_H0 <- (max(abs(unconstrained_coefs[1:length(placebo_names)])) < boot_crit_value)
+  
+    results_list <- structure(list(placebo_coefficients = placebo_coefs,
+                                   abs_placebo_coefficients = abs(placebo_coefs),
+                                   max_abs_coefficient =max(abs(unconstrained_coefs[1:length(placebo_names)])),
+                                   bootstrap_critical_value = boot_crit_value,
+                                   reject_null_hypothesis = reject_H0, 
+                                   equiv_threshold = equiv_threshold,
+                                   B = B, 
+                                   significance_level = alpha, wild = (type=="Wild"),
+                                   base_period = base_period,
+                                   equiv_threshold_specified = !is.null(equiv_threshold),
+                                   num_individuals = n, num_periods = no_periods, num_observations = nrow(data),
+                                   is_panel_balanced = is_panel_balanced), class = "maxEquivTestBoot")
+   } else {
+    # Find the minimum delta for which the null hypothesis can be rejected:
+    min_equiv_thr <- min_delta(data = data, equiv_threshold = equiv_threshold, alpha = alpha, n = n, B = B,
+                               no_periods = no_periods, base_period = base_period, type = type,
+                               original_names = original_names, is_panel_balanced = is_panel_balanced,
+                               max_abs_coef = max_unconstr_coef)
+
+
+    results_list <- structure(list(placebo_coefficients = placebo_coefs,
+                                   abs_placebo_coefficients = abs(placebo_coefs),
+                                   max_abs_coefficient = max(abs(unconstrained_coefs[1:length(placebo_names)])),
+                                   minimum_equiv_threshold = min_equiv_thr,
+                                   significance_level = alpha,
+                                   B = B, wild = (type=="Wild"),
+                                   base_period = base_period,
+                                   equiv_threshold_specified = !is.null(equiv_threshold),
+                                   num_individuals = n, num_periods = no_periods, num_observations = nrow(data),
+                                   is_panel_balanced = is_panel_balanced), class = "maxEquivTestBoot")
+  }
   return(results_list)
 }
 
@@ -409,6 +430,34 @@ sigma_hathat_c <- function(parameter, x, y, ID, time){
   return(c_sigma_hathat)
 }
 
+# Minimum equivalence threshold for the Bootstrap approaches:
+
+min_delta <- function(data, equiv_threshold, alpha, n, B, no_periods, 
+                      base_period, type, original_names, is_panel_balanced, max_abs_coef){
+  
+  # Using a wrapper function that 
+  wrapper_func <- function(x){
+    bootstrapTest_result <- maxTestBoot_func(data = data, equiv_threshold = x, alpha = alpha, n = n, B = B, 
+                                             no_periods = no_periods, base_period = base_period, type = type, 
+                                             original_names = original_names, is_panel_balanced = is_panel_balanced)
+    value <- ifelse(bootstrapTest_result$reject_null_hypothesis, -exp(-x), 1)
+    return(value)
+  }
+  
+  result <- nloptr::nloptr(x0 = max_abs_coef,
+                           eval_f = wrapper_func,
+                           eval_grad_f = NULL,
+                           lb = max_abs_coef,
+                           ub = 10*max_abs_coef,
+                           eval_g_ineq = NULL,
+                           eval_jac_g_ineq = NULL,
+                           eval_g_eq = NULL,
+                           eval_jac_g_eq = NULL,
+                           opts = list("algorithm" = "NLOPT_LN_COBYLA",
+                                       maxeval=2000000, xtol_rel = 1e-06))
+  return(result$solution)
+  
+}
 
 
 # --- maxTest Error Function ---
@@ -446,10 +495,6 @@ maxTest_error <- function(type, equiv_threshold, vcov, B){
     }
   }
   
-  # if type != IU, equiv_threshold cannot be NULL
-  if(type != "IU" && is.null(equiv_threshold)){
-    return(list(error=TRUE, message = "equiv_threshold must be specified for types Boot and Wild."))
-  }
   
   return(list(error=FALSE))
 }

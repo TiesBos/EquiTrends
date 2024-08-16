@@ -83,11 +83,9 @@ test_that("Remaining data inputs for type = boot of maxEquivTest",{
   expect_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,
                             equiv_threshold = 1, pretreatment_period = 1:5, base_period = 6, type = "Wild", B = 10))
   
-  # Expect an error if equiv_threshold = NULL
-  expect_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,
-                            equiv_threshold = NULL, pretreatment_period = 1:5, base_period = 5, type = "Boot", B = 10))
-  expect_error(maxEquivTest(Y= Y_data, ID= ID_data, G = G_data, period = period_data, X=c(5,6), data = sim_data,
-                            equiv_threshold = NULL, pretreatment_period = 1:5, base_period = 5, type = "Boot", B = 10))
+  # Expect no error if equiv_threshold = NULL
+  expect_no_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,
+                            equiv_threshold = NULL, pretreatment_period = 1:5, base_period = 5, type = "Wild", B = 10))
   
   # Expect error if equiv threshold is negative or not an numeric value or not a scalar:
   expect_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,

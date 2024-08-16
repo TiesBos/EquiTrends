@@ -78,12 +78,10 @@ test_that("Input data of type = boot for maxEquivTest",{
   expect_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,
                             equiv_threshold = 1, pretreatment_period = 1:8, base_period = 5, type = "Boot", B = 10))
   
-  # Expect an error if equiv_threshold = NULL
-  expect_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,
+  # Expect no error if equiv_threshold = NULL
+  expect_no_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,
                             equiv_threshold = NULL, pretreatment_period = 1:5, base_period = 5, type = "Boot", B = 10))
-  expect_error(maxEquivTest(Y= Y_data, ID= ID_data, G = G_data, period = period_data, X=c(5,6), data = sim_data,
-                            equiv_threshold = NULL, pretreatment_period = 1:5, base_period = 5, type = "Boot", B = 10))
-  
+   
   # expect an error if the base period is not a scalar or not in pre_treatment period:
   expect_error(maxEquivTest(Y= 3, ID= 1, G = 4, period = 2, X=c(5,6), cluster =7, data = sim_data,
                             equiv_threshold = 1, pretreatment_period = 1:5, base_period = c(4,5), type = "Boot", B = 10))
