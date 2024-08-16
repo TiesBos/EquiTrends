@@ -62,5 +62,5 @@ if \code{!(is.null(equiv_threshold))}, then additionally
 This is a supporting function of the \code{meanEquivTest} function. It calculates the placebo coefficients and the absolute value of the mean of the placebo coefficients. It then calculates the critical value and p-values if an equivalence threshold is supplied for the test, according to Dette & Schumann (2024). If equivalence threshold is not supplied, it calculates the minimum equivalence threshold for which the null of non-negligible pre-trend differences can be rejected.
 }
 \references{
-Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 }

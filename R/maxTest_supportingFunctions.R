@@ -16,7 +16,7 @@
 #' @param is_panel_balanced A logical value indicating whether the panel data is balanced.
 #'
 #' @references 
-#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 #'
 #' @return
 #' An object of class "maxEquivTestIU" containing:
@@ -181,7 +181,7 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
 #' @param is_panel_balanced A logical value indicating whether the panel data is balanced.
 #'
 #' @references
-#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 #'
 #' @return
 #' an object of class "maxEquivTestBoot"  with
@@ -358,7 +358,7 @@ boot_constraint_function <- function(parameter, x, y, no_placebos, equiv_thresho
 #' @param start_val The starting values for the optimization.
 #'
 #' @references 
-#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 #'
 #' @return
 #' A numeric vector containing the restricted placebo coefficients

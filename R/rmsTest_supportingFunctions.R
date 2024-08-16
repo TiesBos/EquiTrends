@@ -36,7 +36,7 @@ rmsTest_error <- function(alpha, no_lambda){
 #' @param is_panel_balanced A logical value indicating whether the panel data is balanced.
 #'
 #' @references 
-#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 #'
 #' @return
 #' An object of class "rmsEquivTest" containing:
@@ -149,7 +149,7 @@ rmsTest_func <- function(data, equiv_threshold, alpha, no_lambda, base_period, n
 #' @param significance_level The significance level for the test. Must be one of 0.01, 0.025, 0.05, 0.1, 0.2, 0.8, 0.9, 0.95, 0.975, 0.99.
 #' 
 #' @references 
-#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+#' Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 #'
 #' @return
 #' A numeric scalar with the critical value for the W distribution at the given significance level.

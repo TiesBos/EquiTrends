@@ -152,9 +152,9 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 \references{
 Arellano M (1987). “Computing Robust Standard Errors for Within-groups Estimators.” \emph{Oxford bulletin of Economics and Statistics}, 49(4), 431–434.
 
-Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 
-Liang, K.-Y., & Zeger, S. L. (1986). "Longitudinal data analysis using generalized linear models." \emph{Biometrika}, 73(1), 13-22. \href{doi:10.1093/biomet/73.1.13}{doi:10.1093/biomet/73.1.13}
+Liang, K.-Y., & Zeger, S. L. (1986). "Longitudinal data analysis using generalized linear models." \emph{Biometrika}, 73(1), 13-22. DOI: \doi{10.1093/biomet/73.1.13}
 
 White H (1980). “A heteroskedasticity-consistent covariance matrix estimator and a direct test for heteroskedasticity.” \emph{Econometrica}, 48(4), 817–838.
 }

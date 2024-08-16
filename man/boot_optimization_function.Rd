@@ -24,5 +24,5 @@ A numeric vector containing the restricted placebo coefficients
 \code{boot_optimization_function} solves the optimization problem to find the restricted placebo coefficients, according to Dette & Schumann (2024).
 }
 \references{
-Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \href{https://doi.org/10.1080/07350015.2024.2308121}{10.1080/07350015.2024.2308121}
+Dette, H., & Schumann, M. (2024). "Testing for Equivalence of Pre-Trends in Difference-in-Differences Estimation." \emph{Journal of Business & Economic Statistics}, 1–13. DOI: \doi{10.1080/07350015.2024.2308121}
 }

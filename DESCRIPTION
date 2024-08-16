@@ -1,12 +1,12 @@
 Package: EquiTrends
 Type: Package
-Title: Equivalence Testing for the Pre-Trends
-Version: 1.0
+Title: Equivalence Testing for Pre-Trends in Difference-in-Differences Designs
+Version: 1.0.0
 Authors@R: c(
     person("Ties", "Bos", email = "tc.bos@student.maastrichtuniversity.nl", role = c("aut","cre")),
     person("Martin", "Schumann", email = "m.schumann@maastrichtuniversity.nl", role = "ctb"))
 Maintainer: Ties Bos <tc.bos@student.maastrichtuniversity.nl>
-Description: Testing for parallel trends is crucial for Difference-in-Difference. This package implements the testing procedures for equivalence of pre-trends in the context of Difference-in-Differences designs proposed by Dette & Schumann (2024) <doi: 10.1080/07350015.2024.2308121>. 
+Description: Testing for parallel trends is crucial in the Difference-in-Difference framework. This package implements the testing procedures for equivalence of pre-trends in the context of Difference-in-Differences designs proposed by Dette & Schumann (2024) <doi: 10.1080/07350015.2024.2308121>. 
 License: MIT + file LICENSE
 Imports: 
     clubSandwich,
