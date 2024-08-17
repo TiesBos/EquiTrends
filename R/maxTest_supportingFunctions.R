@@ -394,9 +394,27 @@ boot_optimization_function <- function(x, y, no_placebos, equiv_threshold, start
                                         eval_g_eq = NULL,
                                         eval_jac_g_eq = NULL,
                                         opts = list("algorithm" = "NLOPT_LN_COBYLA", 
-                                                    maxeval=2000000, xtol_rel = 1e-06),
-                                        x = x, y=y, no_placebos = no_placebos, equiv_threshold=equiv_threshold)$solution
-  return(constrained_optimum)
+                                                    maxeval=2000000, xtol_rel = 1e-6),
+                                        x = x, y=y, no_placebos = no_placebos, equiv_threshold=equiv_threshold)
+   #its <- constrained_optimum$iterations
+  while(!(constrained_optimum$status %in%  c(1, 4))){
+    constrained_optimum <- nloptr::nloptr(x0 = constrained_optimum$solution,
+                                          eval_f = boot_objective_function,
+                                          eval_grad_f = NULL,
+                                          lb = rep(-Inf, length(start_val)),
+                                          ub = rep(Inf, length(start_val)),
+                                          eval_g_ineq = boot_constraint_function,
+                                          eval_jac_g_ineq = NULL,
+                                          eval_g_eq = NULL,
+                                          eval_jac_g_eq = NULL,
+                                          opts = list("algorithm" = "NLOPT_LN_COBYLA",
+                                                      maxeval=100000, xtol_rel = 1e-10),
+                                          x = x, y=y, no_placebos = no_placebos, equiv_threshold=equiv_threshold)
+    #its <- its + constrained_optimum$iterations
+  }
+  # print(its)
+  # print(constrained_optimum$solution)
+  return(constrained_optimum$solution)
 }
 
 # Constrained Variance:

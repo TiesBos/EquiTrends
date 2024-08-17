@@ -77,8 +77,6 @@ if \code{type = "Boot"} or \code{type = "Wild"}, an object of class "maxEquivTes
  \item{\code{placebo_coefficients}: a numeric vector of the estimated placebo coefficients,}
  \item{\code{abs_placebo_coefficients}: a numeric vector with the absolute values of estimated placebo coefficients,}
  \item{\code{max_abs_coefficient}: the maximum absolute estimated placebo coefficient,}
- \item{\code{bootstrap_critical_value}: the by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,}
- \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}
  \item{\code{B}: the number of bootstrap samples used to find the critical value,}
  \item{\code{significance_level}: the chosen significance level of the test \code{alpha},}
  \item{\code{base_period}: the base period used in the testing procedure,}
@@ -88,6 +86,13 @@ if \code{type = "Boot"} or \code{type = "Wild"}, an object of class "maxEquivTes
  \item{\code{num_periods}: the number of periods in the panel,}
  \item{\code{num_observations}: the total number of observations in the panel,}
  \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced.}
+ \item{if \code{equiv_threshold_specified = TRUE}, then additionally}\itemize{
+   \item{\code{bootstrap_critical_value}: the by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,}
+   \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}} 
+ \item{if \code{equiv_threshold_specified = FALSE}, then additionally}\itemize{
+   \item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure.}
+ }
+ 
 }
 }
 \description{
@@ -111,7 +116,7 @@ This parameter can take two types of inputs:
 If no \code{vcov} parameter is provided, the function defaults to using the variance-covariance matrix 
 estimated by the \link[plm:plm]{plm::plm()} function.
 
-Note that for the bootstrap functions (\code{type= "Boot"} and \code{type = "Wild"}), the equiv_threshold must be specified. Currently, no option exist to find the minimum equivalence threshold for these types.
+NOTE: Please be aware that including control variables (X) might lead to higher computation times for type = \"Boot\" and type = \"Wild\", due to unconstrained parameters in the optimization problem that estimates the constrained placebo coefficients.
 }
 \examples{
 # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
