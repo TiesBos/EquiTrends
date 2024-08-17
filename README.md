@@ -88,24 +88,162 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G        X_1         X_2
-#> 1  1      1 -0.1712416 0 -1.0976925  0.84159839
-#> 2  1      2  1.6585354 0  0.3212466  0.57760096
-#> 3  1      3  0.3947713 0 -0.2910131  0.35772393
-#> 4  1      4 -1.3575622 0  0.3004854 -0.70636582
-#> 5  1      5 -2.4108881 0 -2.6427448 -0.08975011
-#> 6  2      1 -0.7658307 1  0.8850967  0.34713386
+#>   ID period          Y G         X_1        X_2
+#> 1  1      1 -0.5474388 0 -0.08665398  0.3428321
+#> 2  1      2 -0.9474737 0  0.71117864 -0.8730526
+#> 3  1      3  1.6734332 0  0.58129414  0.5684792
+#> 4  1      4 -0.2379911 0 -0.08470090  0.5890108
+#> 5  1      5  1.3235621 0  1.19491278 -0.9119378
+#> 6  2      1  1.8981102 1  0.37399860  0.9722620
 ```
 
 ## Testing for Equivalence of Pre-Trends
 
 The `EquiTrends` package contains functions to test for equivalence of
 pre-trends in difference-in-differences estimation. The functions
-`maxEquivTest`, `meanEquivTest`, and `rmsEquivTest` are used to test for
-equivalence of pre-trends in difference-in-differences estimation using
-the placebo coefficients $\beta_{l} \; (l=1,...,T)$ estimates. The
-functions are based on the work of Dette & Schumann
+``` rmsEquivTest``, ```meanEquivTest`, and`maxEquivTest\` are used to
+test for equivalence of pre-trends in difference-in-differences
+estimation using the placebo coefficients $\beta_{l} \; (l=1,...,T)$
+estimates. The functions are based on the work of Dette & Schumann
 ([2024](https://doi.org/10.1080/07350015.2024.2308121)).
+
+### The `rmsEquivTest` function
+
+The rmsEquivTest implements the equivalence testing procedure
+surrounding the root mean squared placebo coefficient as described in
+section 4.2.3 of Dette & Schumann
+([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function
+tests the null hypothesis that the root mean squared placebo coefficient
+is larger to a user-specified equivalence threshold, $\delta$,
+indicating the what negligible is to the user. That is, if
+
+$$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
+
+the tested hypotheses can be represented as
+
+$$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
+
+The null and alternative hypothesis can therefore be seen as
+non-negligible and negligible differences in pre-trends, respectively.
+The function returns an object of class `rmsEquivTest` containing
+
+- `placebo_coefficients`: A numeric vector of the estimated placebo
+  coefficients,
+- `rms_placebo_coefs`: The root mean squared value of the placebo
+  coefficients,
+- `significance_level`: The significance level of the test,
+- `base_period`: The base period used in the testing procedure,
+- `num_individuals`: The number of cross-sectional individuals in the
+  panel,
+- `num_periods`: The number of periods in the panel,
+- `num_observations`: The total number of observations in the panel,
+- `is_panel_balanced`: A logical value indicating whether the panel data
+  is balanced,
+- `equiv_threshold_specified`: A logical value indicating whether an
+  equivalence threshold was specified.
+- If `equiv_threshold_specified = TRUE`, then additionally:
+  - `rms_critical_value`: The critical value at the alpha level,
+  - `reject_null_hypothesis`: A logical value indicating whether to
+    reject the null hypothesis,
+  - `equiv_threshold`: The equivalence threshold specified.
+- If `equiv_threshold_specified = FALSE`, then additionally:
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for
+    which the null hypothesis of non-negligible (based on the
+    equivalence threshold) trend-differences can be rejected.
+
+``` r
+# Perform the equivalence test using an equivalence threshold of 1 with periods 
+# 1-4 as pre-treatment periods based on the RMS testing procedure:
+#  - option 1: using column names in the panel
+# One can use the names of the columns in the panel to specify the variables:
+rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
+#> 
+#>                ==================================================
+#>                Equivalence Tests for Pre-trends in DiD Estimation
+#>                ==================================================
+#> Type: Root Mean Squared Placebo Effect 
+#> Significance level: 0.05 
+#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
+#> ---
+#> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
+#> 0.08189              0.9547                  TRUE      
+#> ---
+#> No. placebo coefficients estimated: 3 
+#> Base period: 4 
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
+```
+
+``` r
+#  - option 2: using column numbers in the panel 
+# Alternatively, one can use the column numbers in the panel to specify the variables:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
+             
+#  - option 3: using separate variables 
+# One can also use the variables directly without specifying the data variable:
+data_Y <- sim_data$Y
+data_ID <- sim_data$ID
+data_G <- sim_data$G
+data_period <- sim_data$period
+data_X <- cbind(sim_data$X_1, sim_data$X_2)
+
+rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
+             equiv_threshold = 1, pretreatment_period = 1:4,
+             base_period = 4)
+```
+
+``` r
+# The testing procedures can also be performed without specifying the 
+# equivalence threshold specified. Then, the minimum equivalence threshold is returned
+# for which the null hypothesis of non-negligible trend-differences can be rejected.
+# Again, the three possible ways of entering the data as above can be used:
+rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4)
+#> 
+#>                ==================================================
+#>                Equivalence Tests for Pre-trends in DiD Estimation
+#>                ==================================================
+#> Type: Root Mean Squared Placebo Effect 
+#> Significance level: 0.05 
+#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
+#> ---
+#> RMS Placebo Effect   Min. Equiv. Threshold 
+#> 0.08189              0.2052                
+#> ---
+#> No. placebo coefficients estimated: 3 
+#> Base period: 4 
+#>  
+#> Balanced Panel: 
+#>  + No. pre-treatment periods: 4 
+#>  + No. individuals: 500 
+#>  + Total no. observations: 2000
+```
+
+``` r
+# Finally, one should note that the test procedure also works for unbalanced panels.
+# To illustrate this, we generate an unbalanced panel dataset by randomly selecting
+# 70% of the observations from the balanced panel dataset:
+
+random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indeces, ]
+#  With Equivalence Threshold:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = unbalanced_sim_data, equiv_threshold = 1, 
+             pretreatment_period = 1:4, base_period = 4)
+
+#  Without Equivalence Threshold:
+rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
+             data = unbalanced_sim_data, equiv_threshold = NULL, 
+             pretreatment_period = 1:4, base_period = 4)
+```
 
 ### The `maxEquivTest` function
 
@@ -200,9 +338,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.2696           0.1266          0.7918        
-#> 0.2616           0.1265          0.7920        
-#> 0.1740           0.1265          0.7919        
+#> 0.10429          0.1243          0.7956        
+#> 0.08533          0.1243          0.7956        
+#> 0.04430          0.1245          0.7953        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -231,9 +369,9 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.2696           0.1266          0.7918        
-#> 0.2616           0.1265          0.7920        
-#> 0.1740           0.1265          0.7919        
+#> 0.10429          0.1243          0.7956        
+#> 0.08533          0.1243          0.7956        
+#> 0.04430          0.1245          0.7953        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -257,12 +395,12 @@ maxEquivTest(Y = 3, ID = 1, G = 4, period = 2,
 #> Type: Intersection Union 
 #> Significance level: 0.05 
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
-#> Minimum equivalence threshold to accept the alternative: 0.4827 
+#> Minimum equivalence threshold to accept the alternative: 0.5236 
 #> ---
 #>  Estimate    Std. Error   Minimum Equivalence Threshold 
-#> 0.02630      0.2154      0.2490    
-#> 0.13758      0.2120      0.4827    
-#> 0.07306      0.2052      0.3882    
+#> 0.01876      0.2204      0.1724    
+#> 0.08344      0.2200      0.4247    
+#> 0.15507      0.2258      0.5236    
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -316,12 +454,6 @@ return an object of class “maxEquivTestBoot” containing
   of estimated placebo coefficients,
 - `max_abs_coefficient`: The maximum absolute estimated placebo
   coefficient,
-- `bootstrap_critical_value`: The by bootstrap found critical value for
-  the equivalence test based on the maximum absolute placebo
-  coefficient,
-- `reject_null_hypothesis`: A logical value indicating whether the null
-  hypothesis of negligible pre-trend differences can be rejected at the
-  specified significance level `alpha`,
 - `B`: The number of bootstrap samples used to find the critical value,
 - `significance_level`: The chosen significance level of the test
   `alpha`,
@@ -335,6 +467,17 @@ return an object of class “maxEquivTestBoot” containing
   is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
+- Additionally, if `equiv_threshold_specified = TRUE`:
+  - `bootstrap_critical_value`: The by bootstrap found critical value
+    for the equivalence test based on the maximum absolute placebo
+    coefficient,
+  - `reject_null_hypothesis`: A logical value indicating whether the
+    null hypothesis of negligible pre-trend differences can be rejected
+    at the specified significance level `alpha`,
+- Additionally, if `equiv_threshold_specified = FALSE`:
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for
+    which the null hypothesis of negligible pre-trend differences can be
+    rejected for the bootstrap procedure.
 
 The bootstrap for spherical errors with 1000 bootstrap iterations:
 
@@ -353,7 +496,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1376                   0.6529                      TRUE      
+#> 0.1551                   0.6467                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -381,7 +524,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1376                   0.6415                      TRUE      
+#> 0.1551                   0.6245                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -469,8 +612,8 @@ the `meanEquivTest` function). The function returns an object of class
 #> Type: Mean Placebo Effect 
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
-#> Abs. Mean Placebo Effect Std. Error  p-value         Reject H0 
-#> 0.2351                   0.1033      6.700818e-14    TRUE      
+#> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
+#> 0.04844                  0.1015      <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -508,7 +651,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
-#> 0.2351                   0.1027      0.404                 
+#> 0.04844                  0.1039      0.2137                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -544,144 +687,6 @@ unbalanced_sim_data <- sim_data[random_indeces, ]
 meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
               data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
               base_period = 4, vcov = "HAC")
-```
-
-### The `rmsEquivTest` function
-
-The rmsEquivTest implements the equivalence testing procedure
-surrounding the root mean squared placebo coefficient as described in
-section 4.2.3 of Dette & Schumann
-([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function
-tests the null hypothesis that the root mean squared placebo coefficient
-is larger to a user-specified equivalence threshold, $\delta$,
-indicating the what negligible is to the user. That is, if
-
-$$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
-
-the tested hypotheses can be represented as
-
-$$H_0: \beta_{RMS} \geq \delta \quad \text{vs.} \quad H_1: \beta_{RMS} < \delta.$$
-
-The null and alternative hypothesis can therefore be seen as
-non-negligible and negligible differences in pre-trends, respectively.
-The function returns an object of class `rmsEquivTest` containing
-
-- `placebo_coefficients`: A numeric vector of the estimated placebo
-  coefficients,
-- `rms_placebo_coefs`: The root mean squared value of the placebo
-  coefficients,
-- `significance_level`: The significance level of the test,
-- `base_period`: The base period used in the testing procedure,
-- `num_individuals`: The number of cross-sectional individuals in the
-  panel,
-- `num_periods`: The number of periods in the panel,
-- `num_observations`: The total number of observations in the panel,
-- `is_panel_balanced`: A logical value indicating whether the panel data
-  is balanced,
-- `equiv_threshold_specified`: A logical value indicating whether an
-  equivalence threshold was specified.
-- If `equiv_threshold_specified = TRUE`, then additionally:
-  - `rms_critical_value`: The critical value at the alpha level,
-  - `reject_null_hypothesis`: A logical value indicating whether to
-    reject the null hypothesis,
-  - `equiv_threshold`: The equivalence threshold specified.
-- If `equiv_threshold_specified = FALSE`, then additionally:
-  - `minimum_equiv_threshold`: The minimum equivalence threshold for
-    which the null hypothesis of non-negligible (based on the
-    equivalence threshold) trend-differences can be rejected.
-
-``` r
-# Perform the equivalence test using an equivalence threshold of 1 with periods 
-# 1-4 as pre-treatment periods based on the RMS testing procedure:
-#  - option 1: using column names in the panel
-# One can use the names of the columns in the panel to specify the variables:
-rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
-             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-             base_period = 4)
-#> 
-#>                ==================================================
-#>                Equivalence Tests for Pre-trends in DiD Estimation
-#>                ==================================================
-#> Type: Root Mean Squared Placebo Effect 
-#> Significance level: 0.05 
-#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
-#> ---
-#> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.239                0.7908                  TRUE      
-#> ---
-#> No. placebo coefficients estimated: 3 
-#> Base period: 4 
-#>  
-#> Balanced Panel: 
-#>  + No. pre-treatment periods: 4 
-#>  + No. individuals: 500 
-#>  + Total no. observations: 2000
-```
-
-``` r
-#  - option 2: using column numbers in the panel 
-# Alternatively, one can use the column numbers in the panel to specify the variables:
-rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
-             data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
-             base_period = 4)
-             
-#  - option 3: using separate variables 
-# One can also use the variables directly without specifying the data variable:
-data_Y <- sim_data$Y
-data_ID <- sim_data$ID
-data_G <- sim_data$G
-data_period <- sim_data$period
-data_X <- cbind(sim_data$X_1, sim_data$X_2)
-
-rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
-             equiv_threshold = 1, pretreatment_period = 1:4,
-             base_period = 4)
-```
-
-``` r
-# The testing procedures can also be performed without specifying the 
-# equivalence threshold specified. Then, the minimum equivalence threshold is returned
-# for which the null hypothesis of non-negligible trend-differences can be rejected.
-# Again, the three possible ways of entering the data as above can be used:
-rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
-             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
-             base_period = 4)
-#> 
-#>                ==================================================
-#>                Equivalence Tests for Pre-trends in DiD Estimation
-#>                ==================================================
-#> Type: Root Mean Squared Placebo Effect 
-#> Significance level: 0.05 
-#> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
-#> ---
-#> RMS Placebo Effect   Min. Equiv. Threshold 
-#> 0.239                0.6189                
-#> ---
-#> No. placebo coefficients estimated: 3 
-#> Base period: 4 
-#>  
-#> Balanced Panel: 
-#>  + No. pre-treatment periods: 4 
-#>  + No. individuals: 500 
-#>  + Total no. observations: 2000
-```
-
-``` r
-# Finally, one should note that the test procedure also works for unbalanced panels.
-# To illustrate this, we generate an unbalanced panel dataset by randomly selecting
-# 70% of the observations from the balanced panel dataset:
-
-random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
-unbalanced_sim_data <- sim_data[random_indeces, ]
-#  With Equivalence Threshold:
-rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
-             data = unbalanced_sim_data, equiv_threshold = 1, 
-             pretreatment_period = 1:4, base_period = 4)
-
-#  Without Equivalence Threshold:
-rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
-             data = unbalanced_sim_data, equiv_threshold = NULL, 
-             pretreatment_period = 1:4, base_period = 4)
 ```
 
 ## References

@@ -180,17 +180,16 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
               base_period = 4, type = "IU", vcov = "HAC")
 
 #-----------------  Bootstrap Approach -----------------
-# NOTE: For the bootstrap procedures the equivalence threshold must be specified.
 
-# Perform the test with equivalence threshold specified as 1 based on 
-# pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
-maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+ # Perform the test with equivalence threshold specified as 1 based on 
+ # pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
+ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
              base_period = 4, type = "Boot")
 
-# Perform the test with the equivalence threshold specified as 1 based on 
-# pre-treatment periods 1:4 (with base period 4) with the wild bootstrap procedure:
-maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+ # Perform the test with the equivalence threshold specified as 1 based on 
+ # pre-treatment periods 1:4 (with base period 4) with the wild bootstrap procedure:
+ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
              base_period = 4, type = "Wild")
  
@@ -202,7 +201,16 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
              data = unbalanced_sim_data, equiv_threshold = 1, 
              pretreatment_period = 1:4,
-             base_period = 4, type = "Wild")            
+             base_period = 4, type = "Wild") 
+ 
+ # Performing the test without specifying the equivalence threshold:
+ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4, type = "Boot")
+
+ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4, type = "Wild")           
 
 }
 \references{
