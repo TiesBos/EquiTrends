@@ -70,6 +70,9 @@ test_that("Output of maxEquivTest with type = Boot",{
   reject_null <- max(abs(placebo_coefs)) < maxEquivTest_results2$bootstrap_critical_value
   expect_equal(maxEquivTest_results2$reject_null_hypothesis, reject_null)
   
+  test_formula <- as.formula(Y ~ placebo_1 + placebo_2 + placebo_3 + placebo_4)
+  plm_test <- plm::plm(test_formula, data=subdata, effect="twoways", model="within", index=c("ID","period"))
+  placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
   maxEquivTest_results3 <- maxEquivTest(Y = 1, ID= 2, G = 4, 
                                         period = 3, 
                                         equiv_threshold = NULL,
@@ -78,20 +81,16 @@ test_that("Output of maxEquivTest with type = Boot",{
                                         alpha = alpha, B=B, type = "Boot")
   expect_equal(class(maxEquivTest_results3), "maxEquivTestBoot")
   expect_equal(maxEquivTest_results3$equiv_threshold_specified, FALSE)
-  expect_equal(maxEquivTest_results2$significance_level, alpha)
-  expect_equal(maxEquivTest_results2$num_individuals, 500)
-  expect_equal(maxEquivTest_results2$num_periods, 5)
-  expect_equal(maxEquivTest_results2$base_period, 5)
-  expect_equal(length(maxEquivTest_results2$placebo_coefficients), 4)
-  expect_equal(max(abs(placebo_coefs)), maxEquivTest_results2$max_abs_coefficient)
-  expect_equal(maxEquivTest_results2$placebo_coefficients, placebo_coefs, tolerance = 1e-3)
-  expect_equal(maxEquivTest_results2$B, B)
+  expect_equal(maxEquivTest_results3$significance_level, alpha)
+  expect_equal(maxEquivTest_results3$num_individuals, 500)
+  expect_equal(maxEquivTest_results3$num_periods, 5)
+  expect_equal(maxEquivTest_results3$base_period, 5)
+  expect_equal(length(maxEquivTest_results3$placebo_coefficients), 4)
+  expect_equal(max(abs(placebo_coefs)), maxEquivTest_results3$max_abs_coefficient)
+  expect_equal(maxEquivTest_results3$placebo_coefficients, placebo_coefs, tolerance = 1e-3)
+  expect_equal(maxEquivTest_results3$B, B)
   expect_equal(length(B), 1)
-  expect_equal(length(maxEquivTest_results2$bootstrap_critical_value), 1)
-  reject_null <- max(abs(placebo_coefs)) < maxEquivTest_results2$bootstrap_critical_value
-  expect_equal(maxEquivTest_results2$reject_null_hypothesis, reject_null)
-  
-  
-
+  expect_equal(length(maxEquivTest_results3$minimum_equiv_threshold), 1)
+  expect_equal((maxEquivTest_results3$minimum_equiv_threshold >= maxEquivTest_results3$max_abs_coefficient), TRUE )
 })
 

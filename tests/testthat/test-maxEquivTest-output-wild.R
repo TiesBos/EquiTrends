@@ -69,6 +69,10 @@ test_that("Output of maxEquivTest with type = Wild",{
   reject_null <- max(abs(placebo_coefs)) < maxEquivTest_results2$bootstrap_critical_value
   expect_equal(maxEquivTest_results2$reject_null_hypothesis, reject_null)
   
+  test_formula <- as.formula(Y ~ placebo_1 + placebo_2 + placebo_3 + placebo_4)
+  plm_test <- plm::plm(test_formula, data=subdata, effect="twoways", model="within", index=c("ID","period"))
+  placebo_coefs <- plm_test$coefficients[c("placebo_1", "placebo_2", "placebo_3", "placebo_4")]
+  
   maxEquivTest_results3 <- maxEquivTest(Y = 1, ID= 2, G = 4, 
                                         period = 3,  
                                         equiv_threshold = NULL,
@@ -86,8 +90,7 @@ test_that("Output of maxEquivTest with type = Wild",{
   expect_equal(maxEquivTest_results3$placebo_coefficients, placebo_coefs, tolerance = 1e-3)
   expect_equal(maxEquivTest_results3$B, B)
   expect_equal(length(B), 1)
-  expect_equal(length(maxEquivTest_results3$bootstrap_critical_value), 1)
-  reject_null <- max(abs(placebo_coefs)) < maxEquivTest_results2$bootstrap_critical_value
-  expect_equal(maxEquivTest_results3$reject_null_hypothesis, reject_null)
+  expect_equal(length(maxEquivTest_results3$minimum_equiv_threshold), 1)
+  expect_equal((maxEquivTest_results3$minimum_equiv_threshold >= maxEquivTest_results3$max_abs_coefficient), TRUE )
   
 })
