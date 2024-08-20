@@ -90,7 +90,7 @@ if \code{type = "Boot"} or \code{type = "Wild"}, an object of class "maxEquivTes
    \item{\code{bootstrap_critical_value}: the by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,}
    \item{\code{reject_null_hypothesis}: a logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level \code{alpha},}} 
  \item{if \code{equiv_threshold_specified = FALSE}, then additionally}\itemize{
-   \item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure.}
+   \item{\code{minimum_equiv_threshold}: a numeric scalar minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure. Note that if the minimum equivalence threshold exceeds 5 times the maximum absolute placebo coefficient, the minimum equivalence threshold is returned as \code{Inf}.}
  }
  
 }

@@ -88,13 +88,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G         X_1        X_2
-#> 1  1      1 -0.5474388 0 -0.08665398  0.3428321
-#> 2  1      2 -0.9474737 0  0.71117864 -0.8730526
-#> 3  1      3  1.6734332 0  0.58129414  0.5684792
-#> 4  1      4 -0.2379911 0 -0.08470090  0.5890108
-#> 5  1      5  1.3235621 0  1.19491278 -0.9119378
-#> 6  2      1  1.8981102 1  0.37399860  0.9722620
+#>   ID period          Y G         X_1         X_2
+#> 1  1      1 -0.6925813 0 -1.74561850 -0.03990102
+#> 2  1      2 -2.4174553 0 -0.09745807 -0.33196453
+#> 3  1      3  0.9744211 0 -0.35720480 -0.41177404
+#> 4  1      4  2.1199811 0  1.43105009  0.45873966
+#> 5  1      5  0.9819906 0 -0.85344573  0.43209252
+#> 6  2      1  0.2991187 1 -0.62134899 -0.54263887
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -168,7 +168,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.08189              0.9547                  TRUE      
+#> 0.08842              0.9721                  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -199,11 +199,13 @@ rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
              base_period = 4)
 ```
 
+The testing procedures can also be performed without specifying the
+equivalence threshold specified. Then, the minimum equivalence threshold
+is returned for which the null hypothesis of non-negligible
+trend-differences can be rejected. Again, the three possible ways of
+entering the data as above can be used:
+
 ``` r
-# The testing procedures can also be performed without specifying the 
-# equivalence threshold specified. Then, the minimum equivalence threshold is returned
-# for which the null hypothesis of non-negligible trend-differences can be rejected.
-# Again, the three possible ways of entering the data as above can be used:
 rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
              base_period = 4)
@@ -216,7 +218,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> RMS Placebo Effect   Min. Equiv. Threshold 
-#> 0.08189              0.2052                
+#> 0.08842              0.303                 
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -227,8 +229,10 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #>  + Total no. observations: 2000
 ```
 
+Finally, one should note that the test procedure also works for
+unbalanced panels.
+
 ``` r
-# Finally, one should note that the test procedure also works for unbalanced panels.
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:
 
@@ -338,9 +342,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.10429          0.1243          0.7956        
-#> 0.08533          0.1243          0.7956        
-#> 0.04430          0.1245          0.7953        
+#> 0.0003816        0.1309          0.7847        
+#> 0.1529324        0.1309          0.7846        
+#> 0.0080475        0.1309          0.7847        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -369,9 +373,9 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.10429          0.1243          0.7956        
-#> 0.08533          0.1243          0.7956        
-#> 0.04430          0.1245          0.7953        
+#> 0.0003816        0.1309          0.7847        
+#> 0.1529324        0.1309          0.7846        
+#> 0.0080475        0.1309          0.7847        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -395,12 +399,12 @@ maxEquivTest(Y = 3, ID = 1, G = 4, period = 2,
 #> Type: Intersection Union 
 #> Significance level: 0.05 
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
-#> Minimum equivalence threshold to accept the alternative: 0.5236 
+#> Minimum equivalence threshold to accept the alternative: 0.5369 
 #> ---
 #>  Estimate    Std. Error   Minimum Equivalence Threshold 
-#> 0.01876      0.2204      0.1724    
-#> 0.08344      0.2200      0.4247    
-#> 0.15507      0.2258      0.5236    
+#> 0.04932      0.2162      0.3494    
+#> 0.14515      0.2064      0.4823    
+#> 0.18175      0.2165      0.5369    
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -429,9 +433,11 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 #> Registered S3 method overwritten by 'clubSandwich':
 #>   method    from    
 #>   bread.mlm sandwich
+```
 
-# Note that the testing procedure can also handle unbalanced panels. 
-# Finally, one should note that the test procedure also works for unbalanced panels.
+Note that the testing procedure can also handle unbalanced panels.
+
+``` r
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:
 random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
@@ -477,7 +483,9 @@ return an object of class “maxEquivTestBoot” containing
 - Additionally, if `equiv_threshold_specified = FALSE`:
   - `minimum_equiv_threshold`: The minimum equivalence threshold for
     which the null hypothesis of negligible pre-trend differences can be
-    rejected for the bootstrap procedure.
+    rejected for the bootstrap procedure. Note that if the minimum
+    equivalence threshold exceeds 5 times the maximum absolute placebo
+    coefficient, the minimum equivalence threshold is returned as `Inf`.
 
 The bootstrap for spherical errors with 1000 bootstrap iterations:
 
@@ -496,7 +504,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1551                   0.6467                      TRUE      
+#> 0.1818                   0.652                       TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -524,7 +532,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.1551                   0.6245                      TRUE      
+#> 0.1818                   0.6441                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -535,8 +543,20 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #>  + Total no. observations: 2000
 ```
 
+The bootstrap procedures can handle unspecified equivalence thresholds:
+
 ``` r
- # The bootstrap procedures can handle unbalanced panels:
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4, type = "Boot", B = 1000)
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4, type = "Wild", B = 1000)
+```
+
+The bootstrap procedures can handle unbalanced panels:
+
+``` r
  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
              data = unbalanced_sim_data, equiv_threshold = 1, 
              pretreatment_period = 1:4,
@@ -613,7 +633,7 @@ the `meanEquivTest` function). The function returns an object of class
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.04844                  0.1015      <2e-16  TRUE      
+#> 0.04817                  0.1069      <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -651,7 +671,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
-#> 0.04844                  0.1039      0.2137                
+#> 0.04817                  0.1045      0.2142                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -677,8 +697,11 @@ cluster_ind <- ifelse(sim_data$ID < 250, 1, 2)
 meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
                equiv_threshold = 1, pretreatment_period = 1:4,
                base_period = 4, vcov = "CL", cluster = cluster_ind)
+```
 
-# Note that the testing procedure can also handle unbalanced panels. 
+Note that the testing procedure can also handle unbalanced panels.
+
+``` r
 # Finally, one should note that the test procedure also works for unbalanced panels.
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:

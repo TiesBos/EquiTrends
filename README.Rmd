@@ -113,17 +113,15 @@ rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
              equiv_threshold = 1, pretreatment_period = 1:4,
              base_period = 4)
 ```
+
+The testing procedures can also be performed without specifying the equivalence threshold specified. Then, the minimum equivalence threshold is returned for which the null hypothesis of non-negligible trend-differences can be rejected. Again, the three possible ways of entering the data as above can be used:
 ```{r}
-# The testing procedures can also be performed without specifying the 
-# equivalence threshold specified. Then, the minimum equivalence threshold is returned
-# for which the null hypothesis of non-negligible trend-differences can be rejected.
-# Again, the three possible ways of entering the data as above can be used:
 rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
              base_period = 4)
 ```
+Finally, one should note that the test procedure also works for unbalanced panels.
 ```{r echo = TRUE, results='hide'}
-# Finally, one should note that the test procedure also works for unbalanced panels.
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:
 
@@ -217,8 +215,9 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
                equiv_threshold = 1, pretreatment_period = 1:4,
                base_period = 4, type = "IU", vcov = "CL", cluster = cluster_ind)
 
-# Note that the testing procedure can also handle unbalanced panels. 
-# Finally, one should note that the test procedure also works for unbalanced panels.
+```
+Note that the testing procedure can also handle unbalanced panels. 
+```{r echo = TRUE, results = 'hide'}
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:
 random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
@@ -248,7 +247,7 @@ Examples of implementing the bootstrap based test are provided below. For both `
   - `bootstrap_critical_value`: The by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,
   - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`,
 - Additionally, if `equiv_threshold_specified = FALSE`:
-  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure.
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure. Note that if the minimum equivalence threshold exceeds 5 times the maximum absolute placebo coefficient, the minimum equivalence threshold is returned as `Inf`.
 
 
 The bootstrap for spherical errors with 1000 bootstrap iterations:
@@ -268,9 +267,18 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
              data = sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
              base_period = 4, type = "Wild")
 ```
-
+The bootstrap procedures can handle unspecified equivalence thresholds:
 ```{r echo = TRUE, results='hide'}
- # The bootstrap procedures can handle unbalanced panels:
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4, type = "Boot", B = 1000)
+maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
+             data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
+             base_period = 4, type = "Wild", B = 1000)
+```
+
+The bootstrap procedures can handle unbalanced panels:
+```{r echo = TRUE, results='hide'}
  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
              data = unbalanced_sim_data, equiv_threshold = 1, 
              pretreatment_period = 1:4,
@@ -353,8 +361,9 @@ cluster_ind <- ifelse(sim_data$ID < 250, 1, 2)
 meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = data_X,
                equiv_threshold = 1, pretreatment_period = 1:4,
                base_period = 4, vcov = "CL", cluster = cluster_ind)
-
-# Note that the testing procedure can also handle unbalanced panels. 
+```
+Note that the testing procedure can also handle unbalanced panels. 
+```{r echo = TRUE, results='hide'}
 # Finally, one should note that the test procedure also works for unbalanced panels.
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:

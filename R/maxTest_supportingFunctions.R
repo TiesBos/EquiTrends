@@ -459,18 +459,10 @@ min_delta <- function(data, equiv_threshold, alpha, n, B, no_periods,
     return(value)
   }
   
-  result <- nloptr::nloptr(x0 = max_abs_coef,
-                           eval_f = wrapper_func,
-                           eval_grad_f = NULL,
-                           lb = max_abs_coef,
-                           ub = 6*max_abs_coef,
-                           eval_g_ineq = NULL,
-                           eval_jac_g_ineq = NULL,
-                           eval_g_eq = NULL,
-                           eval_jac_g_eq = NULL,
-                           opts = list("algorithm" = "NLOPT_LN_COBYLA",
-                                       maxeval=2000000, xtol_rel = 1e-06))
-  min_equiv_threshold <- ifelse(result$solution > 5*max_abs_coef, Inf, result$solution)
+  min_equiv_threshold <- stats::optimize(f = wrapper_func, interval = c(max_abs_coef, 6*max_abs_coef))$minimum
+  
+  min_equiv_threshold <- ifelse(min_equiv_threshold > 5*max_abs_coef, Inf, min_equiv_threshold)
+  
   return(min_equiv_threshold)
   
 }
