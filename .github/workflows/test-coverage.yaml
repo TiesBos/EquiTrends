@@ -1,25 +1,46 @@
-name: API workflow
+name: R-CMD-check
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
 
 jobs:
-  build:
+  R-CMD-check:
     runs-on: ubuntu-latest
-    name: Test R API
-    steps:
-    - uses: actions/checkout@v4
-    - name: Install requirements
-      run: pip install -r requirements.txt
-    - name: Run tests and collect coverage
-      run: pytest --cov .
-    - name: Upload coverage reports to Codecov
-      run: |
-        # Replace `linux` below with the appropriate OS
-        # Options are `alpine`, `linux`, `macos`, `windows`
-        curl -Os https://cli.codecov.io/latest/linux/codecov
-        chmod +x codecov
-        ./codecov --verbose upload-process --fail-on-error -t ${{ secrets.CODECOV_TOKEN }} -n 'service'-${{ github.run_id }} -F service -f coverage-service.xml
+    container: rocker/r-ver:latest
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        install.packages(c("remotes", "covr"))
+        remotes::install_deps(dependencies = TRUE)
+        remotes::install_cran("rcmdcheck")
+        
+    - name: Check package
+      run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error", check_dir = "check")
+
+    - name: Test coverage
+      run: covr::codecov()
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
 
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
