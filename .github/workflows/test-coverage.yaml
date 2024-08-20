@@ -1,61 +1,86 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
-on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+name: API workflow
 
-name: test-coverage.yaml
-
-permissions: read-all
+on: [push, pull_request]
 
 jobs:
-  test-coverage:
+  build:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
+    name: Test R API
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - name: Install requirements
+      run: pip install -r requirements.txt
+    - name: Run tests and collect coverage
+      run: pytest --cov .
+    - name: Upload coverage reports to Codecov
+      run: |
+        # Replace `linux` below with the appropriate OS
+        # Options are `alpine`, `linux`, `macos`, `windows`
+        curl -Os https://cli.codecov.io/latest/linux/codecov
+        chmod +x codecov
+        ./codecov --verbose upload-process --fail-on-error -t ${{ secrets.CODECOV_TOKEN }} -n 'service'-${{ github.run_id }} -F service -f coverage-service.xml
 
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::covr, any::xml2
-          needs: coverage
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+# on:
+#   push:
+#     branches: [main, master]
+#   pull_request:
+#     branches: [main, master]
+# 
+# name: test-coverage.yaml
+# 
+# permissions: read-all
+# 
+# jobs:
+#   test-coverage:
+#     runs-on: ubuntu-latest
+#     env:
+#       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+# 
+#     steps:
+#       - uses: actions/checkout@v4
+# 
+#       - uses: r-lib/actions/setup-r@v2
+#         with:
+#           use-public-rspm: true
+# 
+#       - uses: r-lib/actions/setup-r-dependencies@v2
+#         with:
+#           extra-packages: any::covr, any::xml2
+#           needs: coverage
+# 
+#       - name: Test coverage
+#         run: |
+#           cov <- covr::package_coverage(
+#             quiet = FALSE,
+#             clean = FALSE,
+#             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+#           )
+#           covr::to_cobertura(cov)
+#         shell: Rscript {0}
+# 
+#       - uses: codecov/codecov-action@v4
+#         with:
+#           fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
+#           file: ./cobertura.xml
+#           plugin: noop
+#           disable_search: true
+#           token: ${{ secrets.CODECOV_TOKEN }}
+# 
+#       - name: Show testthat output
+#         if: always()
+#         run: |
+#           ## --------------------------------------------------------------------
+#           find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+#         shell: bash
+# 
+#       - name: Upload test results
+#         if: failure()
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: coverage-test-failures
+#           path: ${{ runner.temp }}/package
 
-      - name: Test coverage
-        run: |
-          cov <- covr::package_coverage(
-            quiet = FALSE,
-            clean = FALSE,
-            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
-          )
-          covr::to_cobertura(cov)
-        shell: Rscript {0}
 
-      - uses: codecov/codecov-action@v4
-        with:
-          fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
-          file: ./cobertura.xml
-          plugin: noop
-          disable_search: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Show testthat output
-        if: always()
-        run: |
-          ## --------------------------------------------------------------------
-          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
-
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-test-failures
-          path: ${{ runner.temp }}/package
