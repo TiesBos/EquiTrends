@@ -362,7 +362,8 @@ meanEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = da
                equiv_threshold = 1, pretreatment_period = 1:4,
                base_period = 4, vcov = "CL", cluster = cluster_ind)
 ```
-Note that the testing procedure can also handle unbalanced panels. 
+
+Note that the testing procedure can also handle unbalanced panels: 
 ```{r echo = TRUE, results='hide'}
 # Finally, one should note that the test procedure also works for unbalanced panels.
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
