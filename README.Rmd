@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/TiesBos/EquiTrends/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/TiesBos/EquiTrends/actions/workflows/R-CMD-check.yaml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Codecov test coverage](https://codecov.io/gh/TiesBos/EquiTrends/graph/badge.svg)](https://app.codecov.io/gh/TiesBos/EquiTrends)
 <!-- badges: end -->
 
 Testing for parallel trends is crucial in the Difference-in-Difference framework. The goal of EquiTrends is to provide a set of functions to test for equivalence of pre-trends in difference-in-differences estimation, based on the placebo coefficients (used to compare the trends of the treated and control group in the pre-treatment period to some base period, generally the final period in the pre-treatment period). The procedures follow the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). 
