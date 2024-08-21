@@ -131,6 +131,7 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
   }
 }
 
+
 # Functions to help find the minimum delta such that the p-value is alpha
 maxTestIU_obj_func <- function(coef, mean, sd, alpha){
   return(1e20*(VGAM::pfoldnorm(coef, mean, sd) - alpha)^2)
@@ -149,21 +150,22 @@ maxTestIU_obj_func <- function(coef, mean, sd, alpha){
 maxTestIU_optim_func <- function(coef, sd, alpha){
   obj_wrapper <- function(x) maxTestIU_obj_func(coef=coef, mean=x, sd=sd, alpha=alpha)
   
-  
-  result <- nloptr::nloptr(x0 = coef,
-                           eval_f = obj_wrapper,
-                           eval_grad_f = NULL,
-                           lb = max(0, coef - 10*sd),
-                           ub = coef + 10*sd,
-                           eval_g_ineq = NULL,
-                           eval_jac_g_ineq = NULL,
-                           eval_g_eq = NULL,
-                           eval_jac_g_eq = NULL,
-                           opts = list("algorithm" = "NLOPT_LN_COBYLA",
-                                       maxeval=20000000, xtol_rel = 1e-25))
-  return(result$solution)
+  result <- stats::optimize(obj_wrapper, c(max(0, coef - 10*sd), 10*sd), tol = 1e-20)
+            # nloptr::nloptr(x0 = coef,
+            #                eval_f = obj_wrapper,
+            #                eval_grad_f = NULL,
+            #                lb = max(0, coef - 10*sd),
+            #                ub = coef + 10*sd,
+            #                eval_g_ineq = NULL,
+            #                eval_jac_g_ineq = NULL,
+            #                eval_g_eq = NULL,
+            #                eval_jac_g_eq = NULL,
+            #                opts = list("algorithm" = "NLOPT_LN_COBYLA",
+            #                            maxeval=20000000, xtol_rel = 1e-25))
+  return(result$minimum)
   
 }
+
 
 # ----------- The Bootstrap Approaches -----------------------------------------
 #' An internal function of the EquiTrends Maximum Equivalence Testing procedure using the Bootstrap approaches.

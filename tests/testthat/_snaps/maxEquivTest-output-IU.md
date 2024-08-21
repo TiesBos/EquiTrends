@@ -13,10 +13,10 @@
       Minimum equivalence threshold to accept the alternative: 0.3899 
       ---
        Estimate	Std. Error 	 Minimum Equivalence Threshold 
-      0.1151   	0.1229   	2.721e-01 
-      0.1367   	0.1229   	2.940e-01 
-      0.2324   	0.1229   	3.899e-01 
-      0.0120   	0.1229   	<2e-16    
+      0.1151   	0.1229   	2.721e-01    
+      0.1367   	0.1229   	2.940e-01    
+      0.2324   	0.1229   	3.899e-01    
+      0.0120   	0.1229   	1.150280e-09 
       ---
       No. placebo coefficients estimated: 4 
       Base period: 5 
@@ -71,10 +71,10 @@
       Minimum equivalence threshold to accept the alternative: 0.3899 
       ---
        Estimate	Std. Error 	 Minimum Equivalence Threshold 
-      0.1151   	0.1229   	2.721e-01 
-      0.1367   	0.1229   	2.940e-01 
-      0.2324   	0.1229   	3.899e-01 
-      0.0120   	0.1229   	<2e-16    
+      0.1151   	0.1229   	2.721e-01    
+      0.1367   	0.1229   	2.940e-01    
+      0.2324   	0.1229   	3.899e-01    
+      0.0120   	0.1229   	1.150280e-09 
       ---
       No. placebo coefficients estimated: 4 
       Base period: 5 
