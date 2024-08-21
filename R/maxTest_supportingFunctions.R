@@ -110,6 +110,7 @@ maxTestIU_func <- function(data, equiv_threshold, vcov, cluster, alpha, n, no_pe
     
     # Calculating the minimum deltas
     minimum_equiv_thresholds <- base::mapply(FUN = function(x,y){maxTestIU_optim_func(coef=x, sd=y, alpha=alpha)}, abs_betas_placebo, beta_se)
+    
     # Then, the minimum delta is the maximum value over all these values:
     minimum_equiv_threshold <- max(minimum_equiv_thresholds)
     
@@ -152,8 +153,8 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
   result <- nloptr::nloptr(x0 = coef,
                            eval_f = obj_wrapper,
                            eval_grad_f = NULL,
-                           lb = max(0, coef - 4*sd),
-                           ub = coef + 4*sd,
+                           lb = max(0, coef - 10*sd),
+                           ub = coef + 10*sd,
                            eval_g_ineq = NULL,
                            eval_jac_g_ineq = NULL,
                            eval_g_eq = NULL,
@@ -396,20 +397,6 @@ boot_optimization_function <- function(x, y, no_placebos, equiv_threshold, start
                                         opts = list("algorithm" = "NLOPT_LN_COBYLA", 
                                                     maxeval=2000000, xtol_rel = 1e-6),
                                         x = x, y=y, no_placebos = no_placebos, equiv_threshold=equiv_threshold)
-  if(!(constrained_optimum$status %in%  c(1, 4))){
-    constrained_optimum <- nloptr::nloptr(x0 = constrained_optimum$solution,
-                                          eval_f = boot_objective_function,
-                                          eval_grad_f = NULL,
-                                          lb = rep(-Inf, length(start_val)),
-                                          ub = rep(Inf, length(start_val)),
-                                          eval_g_ineq = boot_constraint_function,
-                                          eval_jac_g_ineq = NULL,
-                                          eval_g_eq = NULL,
-                                          eval_jac_g_eq = NULL,
-                                          opts = list("algorithm" = "NLOPT_LN_COBYLA",
-                                                      maxeval=1000000, xtol_rel = 1e-6),
-                                          x = x, y=y, no_placebos = no_placebos, equiv_threshold=equiv_threshold)
-  }
 
   return(constrained_optimum$solution)
 }
@@ -455,7 +442,7 @@ min_delta <- function(data, equiv_threshold, alpha, n, B, no_periods,
     bootstrapTest_result <- maxTestBoot_func(data = data, equiv_threshold = x, alpha = alpha, n = n, B = B, 
                                              no_periods = no_periods, base_period = base_period, type = type, 
                                              original_names = original_names, is_panel_balanced = is_panel_balanced)
-    value <- ifelse(bootstrapTest_result$reject_null_hypothesis, -exp(-x), 1)
+    value <- ifelse(bootstrapTest_result$reject_null_hypothesis, -exp(-x), exp(-x))
     return(value)
   }
   
