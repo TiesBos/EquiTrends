@@ -50,6 +50,8 @@ test_that("maxEquivTest return for matrix input and standard variance-covariance
   expect_equal(length(maxEquivTest_results$placebo_coefficients), 4)
   expect_equal(maxEquivTest_results$placebo_coefficients, placebo_coefs)
   
+  expect_snapshot(print(maxEquivTest_results))
+  
   # Equivalence threshold specified:
   maxEquivTest_results2 <- maxEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                         period = period_data, X=X_data, 
@@ -72,6 +74,8 @@ test_that("maxEquivTest return for matrix input and standard variance-covariance
   expect_equal(maxEquivTest_results2$placebo_coefficients, placebo_coefs)
   expect_equal(maxEquivTest_results2$reject_null_hypothesis, FALSE)
   
+  expect_snapshot(print(maxEquivTest_results2))
+  
   
   # with index input:
   maxEquivTest_results3 <- maxEquivTest(Y = 1, ID= 2, G = 4, 
@@ -82,6 +86,8 @@ test_that("maxEquivTest return for matrix input and standard variance-covariance
                                         cluster = 7, data = sim_data,
                                         alpha = alpha,
                                         type = "IU")
+  expect_snapshot(print(maxEquivTest_results3))
+  
   # Equivalence threshold specified:
   maxEquivTest_results4 <- maxEquivTest(Y = 1, ID= 2, G = 4, 
                                         period = 3, X=c(5,6), 
@@ -93,6 +99,7 @@ test_that("maxEquivTest return for matrix input and standard variance-covariance
                                         type = "IU")
   expect_equal(maxEquivTest_results3, maxEquivTest_results)
   expect_equal(maxEquivTest_results4, maxEquivTest_results2)
+  expect_snapshot(print(maxEquivTest_results4))
   
 })
 

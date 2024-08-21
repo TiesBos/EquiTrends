@@ -57,6 +57,7 @@ test_that("results rmsEquivTest", {
   expect_equal(rmsEquivTest_results2$placebo_coefficients, placebo_coefs)
   expect_equal(rmsEquivTest_results2$rms_placebo_coefficients, sqrt(mean((placebo_coefs)^2)))
   
+  
   # If the equivalence threshold is specified:
   rmsEquivTest_results3 <- rmsEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                        period = period_data, X=X_data, 
@@ -101,6 +102,21 @@ test_that("results rmsEquivTest", {
   expect_equal(rmsEquivTest_results4$rms_placebo_coefficients, sqrt(mean((placebo_coefs)^2)))
   expect_equal(rmsEquivTest_results4$equiv_threshold, 1)
   expect_equal(length(rmsEquivTest_results4$rms_critical_value), 1)
+  
+  
+  
+  # Check the print methods:
+  rmsEquivTest_results$minimum_equiv_threshold <- 0
+  expect_snapshot(print(rmsEquivTest_results))
+  
+  rmsEquivTest_results2$minimum_equiv_threshold <- 0
+  expect_snapshot(print(rmsEquivTest_results2))
+  
+  rmsEquivTest_results3$rms_critical_value <- 0
+  expect_snapshot(print(rmsEquivTest_results3))
+  
+  rmsEquivTest_results4$rms_critical_value <- 0
+  expect_snapshot(print(rmsEquivTest_results4))
 })
 
 

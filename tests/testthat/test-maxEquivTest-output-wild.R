@@ -93,4 +93,16 @@ test_that("Output of maxEquivTest with type = Wild",{
   expect_equal(length(maxEquivTest_results3$minimum_equiv_threshold), 1)
   expect_equal((maxEquivTest_results3$minimum_equiv_threshold >= maxEquivTest_results3$max_abs_coefficient), TRUE )
   
+  # Check the print methods:
+  print_maxEquivTest <- maxEquivTest_results
+  print_maxEquivTest$bootstrap_critical_value <- 0
+  expect_snapshot(print(print_maxEquivTest))
+  
+  print_maxEquivTest2 <- maxEquivTest_results2
+  print_maxEquivTest2$bootstrap_critical_value <- 0
+  expect_snapshot(print(print_maxEquivTest2))
+  
+  print_maxEquivTest3 <- maxEquivTest_results3
+  print_maxEquivTest3$minimum_equiv_threshold <- 0
+  expect_snapshot(print(print_maxEquivTest3))
 })

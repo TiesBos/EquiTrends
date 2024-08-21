@@ -50,6 +50,8 @@ test_that("meanEquivTest return for matrix input and standard variance-covarianc
   p_val <- VGAM::pfoldnorm(meanEquivTest_results$abs_mean_placebo_coefs, mean=meanEquivTest_results$minimum_equiv_threshold, sd=sqrt(meanEquivTest_results$var_mean_placebo_coef))
   expect_equal(p_val, alpha)
   
+  expect_snapshot(print(meanEquivTest_results))
+  
   # Equivalence threshold specified:
   meanEquivTest_results2 <- meanEquivTest(Y = Y_data, ID= ID_data, G = G_data, 
                                          period = period_data, X=X_data, 
@@ -77,6 +79,7 @@ test_that("meanEquivTest return for matrix input and standard variance-covarianc
   expect_equal(reject_conclusion, FALSE)
   expect_equal(meanEquivTest_results2$equiv_threshold, 0.2)
   
+  expect_snapshot(print(meanEquivTest_results2))
   # with index input:
   meanEquivTest_results3 <- meanEquivTest(Y = 1, ID= 2, G = 4, 
                                          period = 3, X= c(5,6), 
@@ -85,6 +88,8 @@ test_that("meanEquivTest return for matrix input and standard variance-covarianc
                                          base_period = base_period,
                                          cluster = 7, data = sim_data,
                                          alpha = alpha)
+  
+  expect_snapshot(print(meanEquivTest_results3))
   # Equivalence threshold specified:
   meanEquivTest_results4 <- meanEquivTest(Y = 1, ID= 2, G = 4, 
                                           period = 3, X=c(5,6), 
@@ -93,6 +98,7 @@ test_that("meanEquivTest return for matrix input and standard variance-covarianc
                                           base_period = base_period,
                                           cluster = 7, data = sim_data,
                                           alpha = alpha)
+  expect_snapshot(print(meanEquivTest_results4))
   expect_equal(meanEquivTest_results3, meanEquivTest_results)
   expect_equal(meanEquivTest_results4, meanEquivTest_results2)
   
