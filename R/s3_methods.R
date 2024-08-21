@@ -272,7 +272,7 @@ print.rmsEquivTest <- function(x, ...){
   cat("Type: Root Mean Squared Placebo Effect \n")
   cat("Significance level:", x$significance_level, "\n")
   if(x$equiv_threshold_specified){
-    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
+    cat("Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold of", x$equiv_threshold, ".\n")
     
     df_print <- data.frame(number_rep(x$rms_placebo_coefficients),
                            number_rep(x$rms_critical_value),
@@ -280,7 +280,7 @@ print.rmsEquivTest <- function(x, ...){
     colnames(df_print) <- c("RMS Placebo Effect", "Simulated Crit. Val.", "Reject H0")
     rownames(df_print) <- c("")
   } else {
-    cat("Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.\n")
+    cat("Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold.\n")
     df_print <- data.frame(number_rep(x$rms_placebo_coefficients), 
                            number_rep(x$minimum_equiv_threshold))
     colnames(df_print) <- c("RMS Placebo Effect", "Min. Equiv. Threshold")
