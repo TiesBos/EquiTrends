@@ -28,7 +28,7 @@ The package contains the functions `maxEquivTest` to perform the testing procedu
 
 You can install the development version of EquiTrends from [GitHub](https://github.com/TiesBos/EquiTrends) with:
 
-``` r
+```{r echo=TRUE, message=FALSE, results='hide'}
 # install.packages("devtools")
 devtools::install_github("TiesBos/EquiTrends")
 ```
