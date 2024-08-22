@@ -312,11 +312,17 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
                                    num_individuals = n, num_periods = no_periods, num_observations = nrow(data),
                                    is_panel_balanced = is_panel_balanced), class = "maxEquivTestBoot")
    } else {
+    # Find the maximum placebo variance
+     placebo_variance <- sigma_hathat_c(parameter = unconstrained_coefs, x=X, y=Y, ID = data$ID, time = data$period)
+     vcov_mat <- solve(t(X)%*%X)*placebo_variance
+     vcov_mat_placebos <- vcov_mat[1:length(placebo_names), 1:length(placebo_names)]
+     max_sd <- max(sqrt(diag(vcov_mat_placebos)))
+     
     # Find the minimum delta for which the null hypothesis can be rejected:
     min_equiv_thr <- min_delta(data = data, equiv_threshold = equiv_threshold, alpha = alpha, n = n, B = B,
                                no_periods = no_periods, base_period = base_period, type = type,
                                original_names = original_names, is_panel_balanced = is_panel_balanced,
-                               max_abs_coef = max_unconstr_coef)
+                               max_abs_coef = max_unconstr_coef, max_sd = max_sd)
 
 
     results_list <- structure(list(placebo_coefficients = placebo_coefs,
@@ -437,7 +443,8 @@ sigma_hathat_c <- function(parameter, x, y, ID, time){
 # Minimum equivalence threshold for the Bootstrap approaches:
 
 min_delta <- function(data, equiv_threshold, alpha, n, B, no_periods, 
-                      base_period, type, original_names, is_panel_balanced, max_abs_coef){
+                      base_period, type, original_names, is_panel_balanced, 
+                      max_abs_coef, max_sd){
   
   # Using a wrapper function that 
   wrapper_func <- function(x){
@@ -448,9 +455,9 @@ min_delta <- function(data, equiv_threshold, alpha, n, B, no_periods,
     return(value)
   }
   
-  min_equiv_threshold <- stats::optimize(f = wrapper_func, interval = c(max_abs_coef, 6*max_abs_coef))$minimum
+  min_equiv_threshold <- stats::optimize(f = wrapper_func, interval = c(max_abs_coef, max_abs_coef + 8*max_sd))$minimum
   
-  min_equiv_threshold <- ifelse(min_equiv_threshold > 5*max_abs_coef, Inf, min_equiv_threshold)
+  min_equiv_threshold <- ifelse(min_equiv_threshold > max_abs_coef + 10*max_sd, Inf, min_equiv_threshold)
   
   return(min_equiv_threshold)
   
