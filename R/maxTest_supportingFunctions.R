@@ -151,17 +151,6 @@ maxTestIU_optim_func <- function(coef, sd, alpha){
   obj_wrapper <- function(x) maxTestIU_obj_func(coef=coef, mean=x, sd=sd, alpha=alpha)
   
   result <- stats::optimize(obj_wrapper, c(max(0, coef - 10*sd), 10*sd), tol = 1e-20)
-            # nloptr::nloptr(x0 = coef,
-            #                eval_f = obj_wrapper,
-            #                eval_grad_f = NULL,
-            #                lb = max(0, coef - 10*sd),
-            #                ub = coef + 10*sd,
-            #                eval_g_ineq = NULL,
-            #                eval_jac_g_ineq = NULL,
-            #                eval_g_eq = NULL,
-            #                eval_jac_g_eq = NULL,
-            #                opts = list("algorithm" = "NLOPT_LN_COBYLA",
-            #                            maxeval=20000000, xtol_rel = 1e-25))
   return(result$minimum)
   
 }
@@ -314,9 +303,9 @@ maxTestBoot_func <- function(data, equiv_threshold, alpha, n, B, no_periods,
    } else {
     # Find the maximum placebo variance
      placebo_variance <- sigma_hathat_c(parameter = unconstrained_coefs, x=X, y=Y, ID = data$ID, time = data$period)
-     vcov_mat <- solve(t(X)%*%X)*placebo_variance
-     vcov_mat_placebos <- vcov_mat[1:length(placebo_names), 1:length(placebo_names)]
-     max_sd <- max(sqrt(diag(vcov_mat_placebos)))
+     vcov_mat <- as.matrix(solve(t(X)%*%X)*placebo_variance)
+     vcov_mat_placebos <- as.matrix(vcov_mat[1:length(placebo_names), 1:length(placebo_names)])
+     max_sd <- as.numeric(max(sqrt(diag(vcov_mat_placebos))))
      
     # Find the minimum delta for which the null hypothesis can be rejected:
     min_equiv_thr <- min_delta(data = data, equiv_threshold = equiv_threshold, alpha = alpha, n = n, B = B,
@@ -455,7 +444,7 @@ min_delta <- function(data, equiv_threshold, alpha, n, B, no_periods,
     return(value)
   }
   
-  min_equiv_threshold <- stats::optimize(f = wrapper_func, interval = c(max_abs_coef, max_abs_coef + 8*max_sd))$minimum
+  min_equiv_threshold <- stats::optimize(f = wrapper_func, interval = c(max_abs_coef, max_abs_coef + 15*max_sd))$minimum
   
   return(min_equiv_threshold)
   
