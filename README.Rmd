@@ -248,7 +248,7 @@ Examples of implementing the bootstrap based test are provided below. For both `
   - `bootstrap_critical_value`: The by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,
   - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`,
 - Additionally, if `equiv_threshold_specified = FALSE`:
-  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure. Note that if the minimum equivalence threshold exceeds 5 times the maximum absolute placebo coefficient, the minimum equivalence threshold is returned as `Inf`.
+  - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure. 
 
 
 The bootstrap for spherical errors with 1000 bootstrap iterations:

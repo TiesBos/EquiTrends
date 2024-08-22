@@ -457,8 +457,6 @@ min_delta <- function(data, equiv_threshold, alpha, n, B, no_periods,
   
   min_equiv_threshold <- stats::optimize(f = wrapper_func, interval = c(max_abs_coef, max_abs_coef + 8*max_sd))$minimum
   
-  min_equiv_threshold <- ifelse(min_equiv_threshold > max_abs_coef + 10*max_sd, Inf, min_equiv_threshold)
-  
   return(min_equiv_threshold)
   
 }
