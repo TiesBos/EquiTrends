@@ -220,12 +220,16 @@ EquiTrends_inputcheck <- function(Y, ID, G, period, X, data, equiv_threshold, pr
     return(list(error=TRUE, message = "base_period must be a scalar."))
   }
   
-  # base period must lie in time.prior:
+  # base period must lie in pretreatment_period:
   if(is.null(pretreatment_period)){pretreatment_period <- period}
   if(!is.null(base_period) && !(base_period%in%pretreatment_period)){
     return(list(error=TRUE, message = "base_period must be an element of pretreatment_period."))
   }
   
+  # the pretreatment period must have at least two periods:
+  if(length(unique(pretreatment_period)) < 2){
+    return(list(error=TRUE, message = "pre-treatment period must have at least two unique periods."))
+  }
   
   return(list(error=FALSE))
 }
