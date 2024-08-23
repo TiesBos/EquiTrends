@@ -67,7 +67,7 @@ two-way fixed effect model, similar to the model in equation (2.5) of
 Dette & Schumann
 ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
 
-$$Y_{i,t} =  \alpha_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \text{with} \; i=1,...,N, t=1,...,T+1$$
+$$Y_{i,t} =  \alpha_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \text{with} \  \ i=1,...,N, \ \ t=1,...,T+1$$
 
 where $D_l(t)$ is a dummy variable that equals 1 if $t=l$ and 0
 otherwise. The error-terms $u_{i,t}$ are generated through a normal
@@ -90,13 +90,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G          X_1        X_2
-#> 1  1      1  2.1949937 0  0.067594970  1.5140229
-#> 2  1      2  3.7689422 0 -0.954880821  2.2943440
-#> 3  1      3  2.0297780 0  0.543238902  0.2965636
-#> 4  1      4  1.0378280 0  0.278260038 -0.6978555
-#> 5  1      5 -1.4388054 0  0.001267136 -1.4804992
-#> 6  2      1  0.4561133 1  0.977170171  0.5939873
+#>   ID period          Y G        X_1         X_2
+#> 1  1      1 -1.4249571 0 -2.1150039 -0.03792869
+#> 2  1      2 -2.6591216 0 -1.4512223 -0.10996685
+#> 3  1      3 -4.0942014 0 -2.0768781 -1.18427087
+#> 4  1      4 -0.1545352 0 -1.1120902 -0.09739022
+#> 5  1      5 -1.9593320 0 -0.7408437 -1.32385923
+#> 6  2      1 -2.2474736 1 -0.2129148 -1.87374685
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -170,7 +170,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.06085              0.9406                  TRUE      
+#> 0.05686              0.9552                  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -220,7 +220,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold.
 #> ---
 #> RMS Placebo Effect   Min. Equiv. Threshold 
-#> 0.06085              0.2527                
+#> 0.05686              0.3659                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -344,9 +344,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.10068          0.1270          0.7911        
-#> 0.01055          0.1269          0.7913        
-#> 0.02933          0.1270          0.7911        
+#> 0.01435          0.1291          0.7876        
+#> 0.06233          0.1291          0.7876        
+#> 0.07488          0.1292          0.7875        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -375,9 +375,9 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.10068          0.1270          0.7911        
-#> 0.01055          0.1269          0.7913        
-#> 0.02933          0.1270          0.7911        
+#> 0.01435          0.1291          0.7876        
+#> 0.06233          0.1291          0.7876        
+#> 0.07488          0.1292          0.7875        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -401,12 +401,12 @@ maxEquivTest(Y = 3, ID = 1, G = 4, period = 2,
 #> Type: Intersection Union 
 #> Significance level: 0.05 
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
-#> Minimum equivalence threshold to accept the alternative: 0.6151 
+#> Minimum equivalence threshold to accept the alternative: 0.5339 
 #> ---
 #>  Estimate    Std. Error   Minimum Equivalence Threshold 
-#> 0.004025     0.2286      1.280840e-08 
-#> 0.108649     0.2148      4.530e-01    
-#> 0.255096     0.2189      6.151e-01    
+#> 0.048671     0.2258      3.566e-01    
+#> 0.009532     0.2282      1.305829e-08 
+#> 0.163661     0.2265      5.339e-01    
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -504,7 +504,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.2551                   0.6263                      TRUE      
+#> 0.1637                   0.6704                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -532,7 +532,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.2551                   0.6655                      TRUE      
+#> 0.1637                   0.632                       TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -633,7 +633,7 @@ the `meanEquivTest` function). The function returns an object of class
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.03982                  0.1037      <2e-16  TRUE      
+#> 0.008965                 0.1054      <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -671,7 +671,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
-#> 0.03982                  0.1035      0.2007                
+#> 0.008965                 0.1075      0.0812                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
