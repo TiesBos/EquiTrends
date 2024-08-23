@@ -50,21 +50,21 @@ The `EquiTrends` package contains a function to simulate panel data,
 tailored to the Difference-in-Difference framework. The function
 `sim_paneldata` simulates a panel dataset with a given number of
 individuals $N$ (`N`), number of periods $T+1$ (in the setting of this
-package, indicating the number of pre-treatment periods. In code $T+1$
-is referred to as `tt`), number of covariates $p$ (`p`), and treatment
-effects. Generally, period $T+1$ is referred to as the “base period”.
-The function returns a data frame with the following columns: `ID` (the
-cross-sectional individual identifier), `period` (the time identifier),
-`Y` (the dependent variable), `G` (a binary vector indicating if an
-individual receives treatment, indicated by 1, or not, indicated by 0),
-`X_1`, `X_2`, …, `X_p` (additional control variables). The function also
-allows for the simulation of heterogeneity in treatment effects
-(specified through `alpha`), time fixed effects (through `lambda`),
-heteroscedasticty (specified through the binary variable `het`), serial
-correlation (through the AR(1) coefficient `phi`), and clustering of the
-standard errors. The construction of the dependent variable follows the
-two-way fixed effect model, similar to the model in equation (2.5) of
-Dette & Schumann
+package, indicating the number of pre-treatment periods. In
+`sim_paneldata` $T+1$ is referred to as `tt`), number of covariates $p$
+(`p`), and treatment effects. Generally, period $T+1$ is referred to as
+the “base period”. The function returns a data frame with the following
+columns: `ID` (the cross-sectional individual identifier), `period` (the
+time identifier), `Y` (the dependent variable), `G` (a binary vector
+indicating if an individual receives treatment, indicated by 1, or not,
+indicated by 0), and `X_1`, `X_2`, …, `X_p` (additional control
+variables). The function also allows for the simulation of heterogeneity
+in treatment effects (specified through `alpha`), time fixed effects
+(through `lambda`), heteroscedasticty (specified through the binary
+variable `het`), serial correlation (through the AR(1) coefficient
+`phi`), and clustering of the standard errors. The construction of the
+dependent variable follows the two-way fixed effect model, similar to
+the model in equation (2.5) of Dette & Schumann
 ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
 
 $$Y_{i,t} =  \alpha_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \text{with} \  \ i=1,...,N, \ \ t=1,...,T+1$$
@@ -91,33 +91,33 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           burnins = 50)
 head(sim_data)
 #>   ID period          Y G        X_1        X_2
-#> 1  1      1 -2.3366608 0 -0.8368300 -0.4049568
-#> 2  1      2  1.4701607 0  0.1774667  0.7112901
-#> 3  1      3  1.1602161 0  0.5497902 -1.3010962
-#> 4  1      4  2.3652977 0  0.7932771  1.4733037
-#> 5  1      5  0.8919703 0 -0.2577458 -0.8902577
-#> 6  2      1  3.7868121 1  0.7503553  2.2320628
+#> 1  1      1 -1.2438670 0  0.2021375 -0.6689108
+#> 2  1      2  1.5857022 0  0.7559088  0.9062637
+#> 3  1      3 -2.5663921 0 -1.6592562 -1.6041815
+#> 4  1      4  0.1069906 0  1.3812278 -0.8320939
+#> 5  1      5  2.6881701 0  1.5998156  0.6050796
+#> 6  2      1  2.9680677 1  1.7024192  1.1160693
 ```
 
 ## Testing for Equivalence of Pre-Trends
 
 The `EquiTrends` package contains functions to test for equivalence of
 pre-trends in difference-in-differences estimation. The functions
-``` rmsEquivTest``, ```meanEquivTest`, and`maxEquivTest\` are used to
-test for equivalence of pre-trends in difference-in-differences
-estimation using the placebo coefficients $\beta_{l} \; (l=1,...,T)$
-estimates. The functions are based on the work of Dette & Schumann
+`rmsEquivTest`, `meanEquivTest`, and `maxEquivTest` are used to test for
+equivalence of pre-trends in difference-in-differences estimation using
+the placebo coefficients $\beta_{l} \ (l=1,...,T)$ estimates. The
+functions are based on the work of Dette & Schumann
 ([2024](https://doi.org/10.1080/07350015.2024.2308121)).
 
 ### The `rmsEquivTest` function
 
-The rmsEquivTest implements the equivalence testing procedure
-surrounding the root mean squared placebo coefficient as described in
-section 4.2.3 of Dette & Schumann
+`rmsEquivTest` implements the equivalence testing procedure surrounding
+the root mean squared placebo coefficient as described in section 4.2.3
+of Dette & Schumann
 ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function
 tests the null hypothesis that the root mean squared placebo coefficient
-is larger to a user-specified equivalence threshold, $\delta$,
-indicating the what negligible is to the user. That is, if
+is larger than or equal to a user-specified equivalence threshold,
+$\delta$, indicating what negligible is to the user. That is, if
 
 $$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
 
@@ -136,10 +136,13 @@ The function returns an object of class `rmsEquivTest` containing
 - `significance_level`: The significance level of the test,
 - `base_period`: The base period used in the testing procedure,
 - `num_individuals`: The number of cross-sectional individuals in the
-  panel,
-- `num_periods`: The number of periods in the panel,
-- `num_observations`: The total number of observations in the panel,
-- `is_panel_balanced`: A logical value indicating whether the panel data
+  panel used for testing,
+- `num_periods`: The number of pre-treatment periods in the panel used
+  for testing (if the panel is unbalanced, `num_periods` represents the
+  range in the number of time periods covered by different individuals),
+- `num_observations`: The total number of observations in the panel used
+  for testing,
+- `is_panel_balanced`: A logical value indicating whether the used panel
   is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
@@ -150,8 +153,11 @@ The function returns an object of class `rmsEquivTest` containing
   - `equiv_threshold`: The equivalence threshold specified.
 - If `equiv_threshold_specified = FALSE`, then additionally:
   - `minimum_equiv_threshold`: The minimum equivalence threshold for
-    which the null hypothesis of non-negligible (based on the
-    equivalence threshold) trend-differences can be rejected.
+    which the null hypothesis of non-negligible trend-differences can be
+    rejected.
+
+One should note that rows containing `NA` values are removed from the
+panel before the testing procedure is performed.
 
 ``` r
 # Perform the equivalence test using an equivalence threshold of 1 with periods 
@@ -170,7 +176,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.08472              0.9743                  TRUE      
+#> 0.1281               0.957                   TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -202,10 +208,10 @@ rmsEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 ```
 
 The testing procedures can also be performed without specifying the
-equivalence threshold specified. Then, the minimum equivalence threshold
-is returned for which the null hypothesis of non-negligible
+equivalence threshold. Then, the minimum equivalence threshold is
+returned for which the null hypothesis of non-negligible
 trend-differences can be rejected. Again, the three possible ways of
-entering the data as above can be used:
+entering the data as above can be used.
 
 ``` r
 rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2"),
@@ -220,7 +226,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold.
 #> ---
 #> RMS Placebo Effect   Min. Equiv. Threshold 
-#> 0.08472              0.1691                
+#> 0.1281               0.2436                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -253,9 +259,9 @@ rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
 
 ### The `maxEquivTest` function
 
-The maxEquivTest implements the equivalence testing procedure
-surrounding the maximum absolute placebo coefficient. The function tests
-the null hypothesis that the maximum placebo coefficient is larger than
+`maxEquivTest` implements the equivalence testing procedure surrounding
+the maximum absolute placebo coefficient. The function tests the null
+hypothesis that the maximum absolute placebo coefficient is larger than
 or equal to a user-specified equivalence threshold, $\delta$, indicating
 what negligible is to the user. That is, if
 
@@ -275,21 +281,23 @@ allows for the testing of the equivalence of pre-trends using a
 bootstrap for spherical errors (`type = "Boot"`), a wild bootstrap for
 clustered standard errors (`type = "Wild"`), and an Intersection Union
 approach (`type = "IU"`) that rejects the null if all
-$\beta_1,...,\beta_{T}$ are smaller than their individual critical
-values. The function returns an object of class `maxEquivTestBoot` if
-`type = "Boot"` or `type = "Wild"` or `maxEquivTestIU` if `type = "IU"`.
-If no type is specified, `maxEquivTest` applies the Intersection Union
-procedure for efficiency reasons.
+$\hat{\beta}_1,...,\hat{\beta}_{T}$ are significantly smaller than their
+individual critical values. The function returns an object of class
+`maxEquivTestBoot` if `type = "Boot"` or `type = "Wild"` or
+`maxEquivTestIU` if `type = "IU"`. If no type is specified,
+`maxEquivTest` applies the Intersection Union procedure for efficiency
+reasons.
 
 #### Implemention of the `maxEquivTest` function with `type = "IU"`
 
 Examples of implementing the Intersection unit test with different
-possible variance-covariance matrices (required to perform the test) is
+possible variance-covariance matrices (required to perform the test) are
 provided below (for more information on the possible variance-covariance
 matrices, see the documentation of the `maxEquivTest` function). If an
 equivalence threshold is supplied, the function will test the previous
 hypothesis. If no equivalence threshold is supplied, the function finds
-the critical value for the test at the specified significance level. The
+the minimum equivalence threshold for which the null of non-negligible
+trend-differences can be reject using the Intersection Union test. The
 function returns an object of class `maxEquivTestIU` containing the
 following information:
 
@@ -303,29 +311,34 @@ following information:
 - `base_period`: The base period used in the testing procedure,
 - `placebo_names`: The names corresponding to the placebo coefficients,
 - `num_individuals`: The number of cross-sectional individuals in the
-  panel,
-- `num_periods`: The number of periods in the panel,
-- `num_observations`: The number of observations in the panel,
+  panel used for testing,
+- `num_periods`: The number of pre-treatment periods in the panel used
+  for testing (if the panel is unbalanced, `num_periods` represents the
+  range in the number of time periods covered by different individuals),
+- `num_observations`: The number of observations in the panel used for
+  testing,
 - `is_panel_balanced`: A logical value indicating whether the panel data
   is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
-- Additionally, if `equiv_threshold_specified = TRUE`:
+- If `equiv_threshold_specified = TRUE`, then additionally:
   - `IU_critical_values`: A numeric vector with the individual critical
     values for each of the placebo coefficients,
   - `reject_null_hypothesis`: A logical value indicating whether the
     null hypothesis of negligible pre-trend differences can be rejected
-    at the specified significance level `alpha`,
+    at the specified significance level,
   - `equiv_threshold`: The equivalence threshold employed.
-- Additionally, if `equiv_threshold_specified = FALSE`:
+- If `equiv_threshold_specified = FALSE`, then additionally:
   - `minimum_equiv_thresholds`: A numeric vector including for each
     placebo coefficient the minimum equivalence threshold for which the
     null hypothesis of negligible pre-trend differences can be rejected
     for the corresponding placebo coefficient individually,
   - `minimum_equiv_threshold`: A numeric scalar minimum equivalence
     threshold for which the null hypothesis of negligible pre-trend
-    differences can be rejected for all placebo coefficients
-    individually.
+    differences can be rejected for all placebo coefficients.
+
+One should note that rows containing `NA` values are removed from the
+panel before the testing procedure is performed.
 
 ``` r
 # Perform the test with equivalent threshold specified as 1 based on 
@@ -344,9 +357,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.06125          0.1292          0.7875        
-#> 0.05152          0.1294          0.7872        
-#> 0.12300          0.1293          0.7874        
+#> 0.1223           0.1273          0.7905        
+#> 0.1383           0.1273          0.7905        
+#> 0.1230           0.1273          0.7905        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -375,9 +388,9 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.06125          0.1292          0.7875        
-#> 0.05152          0.1294          0.7872        
-#> 0.12300          0.1293          0.7874        
+#> 0.1223           0.1273          0.7905        
+#> 0.1383           0.1273          0.7905        
+#> 0.1230           0.1273          0.7905        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -401,12 +414,12 @@ maxEquivTest(Y = 3, ID = 1, G = 4, period = 2,
 #> Type: Intersection Union 
 #> Significance level: 0.05 
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
-#> Minimum equivalence threshold to accept the alternative: 0.6681 
+#> Minimum equivalence threshold to accept the alternative: 0.5189 
 #> ---
 #>  Estimate    Std. Error   Minimum Equivalence Threshold 
-#> 0.02013      0.2175      0.1920    
-#> 0.29419      0.2230      0.6610    
-#> 0.29584      0.2264      0.6681    
+#> 0.06835      0.2204      0.3985    
+#> 0.15942      0.2199      0.5189    
+#> 0.14095      0.2162      0.4930    
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -468,24 +481,30 @@ return an object of class “maxEquivTestBoot” containing
 - `base_period`: The base period used in the testing procedure,
 - `placebo_names`: The names corresponding to the placebo coefficients,
 - `num_individuals`: The number of cross-sectional individuals in the
-  panel,
-- `num_periods`: The number of periods in the panel,
-- `num_observations`: The total number of observations in the panel,
+  panel used for testing,
+- `num_periods`: The number of pre-treatment periods in the panel used
+  for testing (if the panel is unbalanced, `num_periods` represents the
+  range in the number of time periods covered by different individuals),
+- `num_observations`: The total number of observations in the panel used
+  for testing,
 - `is_panel_balanced`: A logical value indicating whether the panel data
   is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
   equivalence threshold was specified.
-- Additionally, if `equiv_threshold_specified = TRUE`:
+- If `equiv_threshold_specified = TRUE`, then additionally:
   - `bootstrap_critical_value`: The by bootstrap found critical value
     for the equivalence test based on the maximum absolute placebo
     coefficient,
   - `reject_null_hypothesis`: A logical value indicating whether the
     null hypothesis of negligible pre-trend differences can be rejected
     at the specified significance level `alpha`,
-- Additionally, if `equiv_threshold_specified = FALSE`:
+- If `equiv_threshold_specified = FALSE`, then additionally:
   - `minimum_equiv_threshold`: The minimum equivalence threshold for
     which the null hypothesis of negligible pre-trend differences can be
     rejected for the bootstrap procedure.
+
+One should note that rows containing `NA` values are removed from the
+panel before the testing procedure is performed.
 
 The bootstrap for spherical errors with 1000 bootstrap iterations:
 
@@ -504,7 +523,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.2958                   0.656                       TRUE      
+#> 0.1594                   0.6694                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -532,7 +551,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.2958                   0.6518                      TRUE      
+#> 0.1594                   0.6393                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -575,7 +594,7 @@ of Dette & Schumann
 ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function
 tests the null hypothesis that the absolute mean placebo coefficient is
 larger than or equal to a user-specified equivalence threshold,
-$\delta$, indicating the what negligible is to the user. That is, if
+$\delta$, indicating what negligible is to the user. That is, if
 
 $$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l,$$
 
@@ -585,7 +604,7 @@ $$H_0: |\bar{\beta}| \geq \delta \quad \text{vs.} \quad H_1: |\bar{\beta}| < \de
 
 The null and alternative hypothesis can therefore be seen as
 non-negligible and negligible differences in pre-trends, respectively.
-Implementation of the test is similar to the `maxEquivTest` function, in
+Implementation of the test is similar to the `maxEquivTest` function in
 terms of the possible variance-covariance matrices (for more information
 on the possible variance-covariance matrices, see the documentation of
 the `meanEquivTest` function). The function returns an object of class
@@ -600,9 +619,12 @@ the `meanEquivTest` function). The function returns an object of class
 - `significance_level`: The significance level of the test,
 - `base_period`: The base period used in the testing procedure,
 - `num_individuals`: The number of cross-sectional individuals in the
-  panel,
-- `num_periods`: The number of periods in the panel,
-- `num_observations`: The total number of observations in the panel,
+  panel used for testing,
+- `num_periods`: The number of pre-treatment periods in the panel used
+  for testing (if the panel is unbalanced, `num_periods` represents the
+  range in the number of time periods covered by different individuals)
+- `num_observations`: The total number of observations in the panel used
+  for testing,
 - `is_panel_balanced`: A logical value indicating whether the panel is
   balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an
@@ -617,6 +639,9 @@ the `meanEquivTest` function). The function returns an object of class
   - `minimum_equiv_threshold`: The minimum equivalence threshold for
     which the null hypothesis of non-negligible (based on the
     equivalence threshold) trend-differences can be rejected.
+
+One should note that rows containing `NA` values are removed from the
+panel before the testing procedure is performed.
 
 ``` r
 # Perform the test with equivalent threshold specified as 1 based on 
@@ -633,7 +658,7 @@ the `meanEquivTest` function). The function returns an object of class
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.07859                  0.1056      <2e-16  TRUE      
+#> 0.04634                  0.104       <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -671,7 +696,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
-#> 0.07859                  0.1081      0.2554                
+#> 0.04634                  0.1047      0.212                 
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 

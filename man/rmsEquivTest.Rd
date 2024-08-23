@@ -47,9 +47,9 @@ An object of class "rmsEquivTest" containing:
 \item{\code{rms_placebo_coefs}}{the root mean squared value of the placebo coefficients,}
 \item{\code{significance_level}}{the significance level of the test,}
 \item{\code{base_period}}{the base period used in the testing procedure,}
-\item{\code{num_individuals}}{the number of cross-sectional individuals in the panel,}
-\item{\code{num_periods}}{the number of pre-treatment periods in the panel,}
-\item{\code{num_observations}}{the total number of observations in the panel,}
+\item{\code{num_individuals}}{the number of cross-sectional individuals in the panel used for testing,}
+\item{\code{num_periods}}{the number of pre-treatment periods in the panel used for testing (if the panel is unbalanced, \code{num_periods} represents the range in the number of time periods covered by different individuals),}
+\item{\code{num_observations}}{the total number of observations in the panel used for testing,}
 \item{\code{is_panel_balanced}}{a logical value indicating whether the panel is balanced,}
 \item{\code{equiv_threshold_specified}}{a logical value indicating whether an equivalence threshold was specified.}
 
@@ -67,6 +67,8 @@ This function performs an equivalence test for pre-trends based on the root mean
 }
 \details{
 \code{no_lambda} determines the proportions lambda/\code{no.lambda} for lambda = 1,...,\code{no_lambda} of the cross-sectional units at which the placebo coefficients are estimated. The placebo coefficients are estimated for each of these proportions and the root mean squared (RMS) of the placebo coefficients is calculated, which are then used to construct the critical value at a significance level of \code{alpha}. See Dette & Schumann (2024, s. 4.2.3.) for more details.
+
+One should note that rows containing \code{NA} values are removed from the panel before the testing procedure is performed.
 }
 \examples{
 # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 

@@ -58,9 +58,9 @@ If \code{type = "IU"}, an object of class \code{maxEquivTestIU}  with \itemize{
 \item{\code{significance_level}: the chosen significance level of the test,}
 \item{\code{base_period}: the base period used in the testing procedure,}
 \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
-\item{\code{num_individuals}: the number of cross-sectional individuals in the panel,}
-\item{\code{num_periods}: the number of periods in the panel,}
-\item{\code{num_observations}: the total number of observations in the panel,}
+\item{\code{num_individuals}: the number of cross-sectional individuals in the panel used for testing,}
+\item{\code{num_periods}: the number of periods in the panel used for testing (if the panel is unbalanced, \code{num_periods} indicates the range of time periods across all individuals),}
+\item{\code{num_observations}: the total number of observations in the panel used for testing,}
 \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced,}
 \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
 \item{if \code{equiv_threshold_specified = TRUE}, then additionally\itemize{
@@ -82,9 +82,9 @@ if \code{type = "Boot"} or \code{type = "Wild"}, an object of class "maxEquivTes
  \item{\code{base_period}: the base period used in the testing procedure,}
  \item{\code{placebo_names}: the names corresponding to the placebo coefficients,}
  \item{\code{equiv_threshold_specified}: a logical value indicating whether an equivalence threshold was specified.}
- \item{\code{num_individuals}: the number of cross-sectional individuals in the panel,}
- \item{\code{num_periods}: the number of periods in the panel,}
- \item{\code{num_observations}: the total number of observations in the panel,}
+ \item{\code{num_individuals}: the number of cross-sectional individuals in the panel used for testing,}
+ \item{\code{num_periods}: the number of pre-treatment periods in the panel used for testing (if the panel is unbalanced, \code{num_periods} represents the range in the number of time periods covered by different individuals),}
+ \item{\code{num_observations}: the total number of observations in the panel used for testing,}
  \item{\code{is_panel_balanced}: a logical value indicating whether the panel is balanced.}
  \item{if \code{equiv_threshold_specified = TRUE}, then additionally}\itemize{
    \item{\code{bootstrap_critical_value}: the by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,}
@@ -115,6 +115,8 @@ This parameter can take two types of inputs:
 }
 If no \code{vcov} parameter is provided, the function defaults to using the variance-covariance matrix 
 estimated by the \link[plm:plm]{plm::plm()} function.
+
+One should note that rows containing \code{NA} values are removed from the panel before the testing procedure is performed.
 
 NOTE: Please be aware that including control variables (X) might lead to higher computation times for type = \"Boot\" and type = \"Wild\", due to unconstrained parameters in the optimization problem that estimates the constrained placebo coefficients.
 }

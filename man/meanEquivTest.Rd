@@ -51,9 +51,9 @@ An object of class "meanEquivTest" containing:
 \item{\code{var_mean_placebo_coef}}{ the estimated variance of the mean placebo coefficient,}
 \item{\code{significance_level}}{ the significance level of the test,}
 \item{\code{base_period}}{ the base period used in the testing procedure,}
-\item{\code{num_individuals}}{ the number of cross-sectional individuals in the panel,}
-\item{\code{num_periods}}{ the number of periods in the panel,}
-\item{\code{num_observations}}{ the total number of observations in the panel,}
+\item{\code{num_individuals}}{ the number of cross-sectional individuals in the panel used for testing,}
+\item{\code{num_periods}}{ the number of periods in the panel used for testing (if the panel is unbalanced, \code{num_periods} represents the range in the number of time periods covered by different individuals),}
+\item{\code{num_observations}}{ the total number of observations in the panel used for testing,}
 \item{\code{is_panel_balanced}}{ a logical value indicating whether the panel is balanced,}
 \item{\code{equiv_threshold_specified}}{ a logical value indicating whether an equivalence threshold was specified.}
 
@@ -86,6 +86,8 @@ This parameter can take two types of inputs:
 }
 If no \code{vcov} parameter is provided, the function defaults to using the variance-covariance matrix 
 estimated by the \link[plm:plm]{plm::plm()} function.
+
+One should note that rows containing \code{NA} values are removed from the panel before the testing procedure is performed.
 }
 \examples{
 # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
