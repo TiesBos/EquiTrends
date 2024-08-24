@@ -20,7 +20,13 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/TiesBos/EquiTrends/graph/badge.svg)](https://app.codecov.io/gh/TiesBos/EquiTrends)
 <!-- badges: end -->
 
-Testing for parallel trends is crucial in the Difference-in-Difference framework. The goal of EquiTrends is to provide a set of functions to test for equivalence of pre-trends in difference-in-differences estimation, based on the placebo coefficients (used to compare the trends of the treated and control group in the pre-treatment period to some base period, generally the final period in the pre-treatment period). The procedures follow the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). 
+EquiTrends is an R package for equivalence testing in the context of Difference-in-Differences
+estimation. It allows users to test if pre-treatment trends in the treated group are
+“equivalent” to those in the control group. Here, “equivalence” means that rejection of the
+null hypothesis implies that a function of the pre-treatment placebo effects (maximum
+absolute, average or root mean squared value) does not exceed a pre-specified threshold
+below which trend differences are considered negligible. The package is based on the theory
+developed in Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). 
 
 The package contains the functions `maxEquivTest` to perform the testing procedure surrounding the maximum placebo coefficient (see equation (3.1) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121))), `meanEquivTest` to perform the testing procedure surrounding the mean placebo coefficient (see equation (3.2) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121))) and `rmsEquivTest` to perform the testing procedure surrounding the root mean squared placebo coefficient (see equation (3.3) and (3.4) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121))). Furthermore, the package contains the function `sim_paneldata` to simulate a paneldataset for such testing purposes.
 
@@ -35,9 +41,9 @@ devtools::install_github("TiesBos/EquiTrends")
 
 ## Data Simulation
 
-The `EquiTrends` package contains a function to simulate panel data, tailored to the Difference-in-Difference framework. The function `sim_paneldata` simulates a panel dataset with a given number of individuals $N$ (`N`), number of periods $T+1$ (in the setting of this package, indicating the number of pre-treatment periods. In `sim_paneldata` $T+1$ is referred to as `tt`), number of covariates $p$ (`p`), and treatment effects. Generally, period $T+1$ is referred to as the "base period". The function returns a data frame with the following columns: `ID` (the cross-sectional individual identifier), `period` (the time identifier), `Y` (the dependent variable), `G` (a binary vector indicating if an individual receives treatment, indicated by 1, or not, indicated by 0), and `X_1`, `X_2`, ..., `X_p` (additional control variables). The function also allows for the simulation of heterogeneity in treatment effects (specified through `alpha`), time fixed effects (through `lambda`), heteroscedasticty (specified through the binary variable `het`), serial correlation (through the AR(1) coefficient `phi`), and clustering of the standard errors. The construction of the dependent variable follows the two-way fixed effect model, similar to the model in equation (2.5) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
+The `EquiTrends` package contains a function to simulate panel data, tailored to the Difference-in-Difference framework. The function `sim_paneldata` simulates a panel dataset with a given number of individuals $N$ (`N`), number of periods $T+1$ (in the setting of this package, indicating the number of pre-treatment periods. In `sim_paneldata` $T+1$ is referred to as `tt`), number of covariates $p$ (`p`), and treatment effects. Typically, period $T+1$ is referred to as the "base period". The function returns a data frame with the following columns: `ID` (the cross-sectional individual identifier), `period` (the time identifier), `Y` (the dependent variable), `G` (a binary vector indicating if an individual receives treatment, indicated by 1, or not, indicated by 0), and `X_1`, `X_2`, ..., `X_p` (additional control variables). The function also allows for the simulation of heterogeneity in treatment effects (specified through `eta`) and time fixed effects (through `lambda`). Furthermore, the function allows for heteroscedasticty (specified through the binary variable `het`), serial correlation (through the AR(1) coefficient `phi`), and clustering in the model errors $u_{i,t}$. The construction of the dependent variable follows the two-way fixed effect model, similar to the model in equation (2.5) of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
 
-$$Y_{i,t} =  \alpha_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \text{with} \  \ i=1,...,N, \ \ t=1,...,T+1$$
+$$Y_{i,t} =  \eta_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \text{with} \  \ i=1,...,N, \ \ t=1,...,T+1$$
 
 where $D_l(t)$ is a dummy variable that equals 1 if $t=l$ and 0 otherwise. The error-terms $u_{i,t}$ are generated through a normal distribution with mean 0 and a variance-covariance structure depending on the user-specified parameters. In the following, the $\beta_l$ coefficients are referred to as placebo coefficients, since they represent the difference in pre-trends between the treatment and control group before treatment has been assigned.
 
@@ -60,7 +66,7 @@ head(sim_data)
 The `EquiTrends` package contains functions to test for equivalence of pre-trends in difference-in-differences estimation. The functions `rmsEquivTest`, `meanEquivTest`, and `maxEquivTest` are used to test for equivalence of pre-trends in difference-in-differences estimation using the placebo coefficients $\beta_{l} \ (l=1,...,T)$ estimates. The functions are based on the work of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)).
 
 ### The `rmsEquivTest` function
-`rmsEquivTest` implements the equivalence testing procedure surrounding the root mean squared placebo coefficient as described in section 4.2.3 of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the root mean squared placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating what negligible is to the user. That is, if 
+`rmsEquivTest` implements the equivalence testing procedure surrounding the root mean squared placebo coefficient as described in section 4.2.3 of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the root mean squared placebo coefficient is larger than or equal to a user-specified equivalence threshold $\delta$. That is, if 
 
 $$\beta_{RMS} = \sqrt{\frac{1}{T}\sum_{l=1}^{T} \beta_l^2},$$
 
@@ -80,7 +86,7 @@ The null and alternative hypothesis can therefore be seen as non-negligible and 
 - `is_panel_balanced`: A logical value indicating whether the used panel is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
 - If `equiv_threshold_specified = TRUE`, then additionally:
-  - `rms_critical_value`: The critical value at the alpha level,
+  - `rms_critical_value`: The critical value at the chosen significance level,
   - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis,
   - `equiv_threshold`: The equivalence threshold specified.
 - If `equiv_threshold_specified = FALSE`, then additionally:
@@ -128,8 +134,8 @@ Finally, one should note that the test procedure also works for unbalanced panel
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:
 
-random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
-unbalanced_sim_data <- sim_data[random_indeces, ]
+random_indices <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indices, ]
 #  With Equivalence Threshold:
 rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
              data = unbalanced_sim_data, equiv_threshold = 1, 
@@ -143,7 +149,8 @@ rmsEquivTest(Y = 3, ID = 1, G = 4, period = 2, X = c(5, 6),
 
 
 ### The `maxEquivTest` function
-`maxEquivTest` implements the equivalence testing procedure surrounding the maximum absolute placebo coefficient. The function tests the null hypothesis that the maximum absolute placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating what negligible is to the user. That is, if 
+The `maxEquivTest` function tests the null hypothesis that the maximum placebo coefficient is
+larger than or equal to a user-specified equivalence threshold $\delta$. That is, if 
 
 $$\lVert\beta\rVert_\infty = \max_{l=1,...T} |\beta_l|,$$ 
 
@@ -225,8 +232,8 @@ Note that the testing procedure can also handle unbalanced panels.
 ```{r echo = TRUE, results = 'hide'}
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:
-random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
-unbalanced_sim_data <- sim_data[random_indeces, ]
+random_indices <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indices, ]
 maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
               data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
               base_period = 4, type = "IU", vcov = "HAC")
@@ -240,7 +247,7 @@ Examples of implementing the bootstrap based test are provided below. For both `
 - `abs_placebo_coefficients`: A numeric vector with the absolute values of estimated placebo coefficients,
 - `max_abs_coefficient`: The maximum absolute estimated placebo coefficient,
 - `B`: The number of bootstrap samples used to find the critical value,
-- `significance_level`: The chosen significance level of the test `alpha`,
+- `significance_level`: The chosen significance level of the test,
 - `base_period`: The base period used in the testing procedure,
 - `placebo_names`: The names corresponding to the placebo coefficients,
 - `num_individuals`: The number of cross-sectional individuals in the panel used for testing,
@@ -250,7 +257,7 @@ Examples of implementing the bootstrap based test are provided below. For both `
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
 - If `equiv_threshold_specified = TRUE`, then additionally:
   - `bootstrap_critical_value`: The by bootstrap found critical value for the equivalence test based on the maximum absolute placebo coefficient,
-  - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level `alpha`,
+  - `reject_null_hypothesis`: A logical value indicating whether the null hypothesis of negligible pre-trend differences can be rejected at the specified significance level,
 - If `equiv_threshold_specified = FALSE`, then additionally:
   - `minimum_equiv_threshold`: The minimum equivalence threshold for which the null hypothesis of negligible pre-trend differences can be rejected for the bootstrap procedure. 
 
@@ -296,7 +303,7 @@ The bootstrap procedures can handle unbalanced panels:
 ```
 
 ### The `meanEquivTest` function
-The meanEquivTest implements the equivalence testing procedure surrounding the mean placebo coefficient, as described in Section 4.2.2. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the absolute mean placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$, indicating what negligible is to the user. That is, if 
+The `meanEquivTest` implements the equivalence testing procedure surrounding the mean placebo coefficient, as described in Section 4.2.2. of Dette & Schumann ([2024](https://doi.org/10.1080/07350015.2024.2308121)). The function tests the null hypothesis that the absolute mean placebo coefficient is larger than or equal to a user-specified equivalence threshold, $\delta$. That is, if 
 
 $$\bar{\beta} = \frac{1}{T}\sum_{l=1}^{T} \beta_l,$$ 
 
@@ -318,7 +325,7 @@ The null and alternative hypothesis can therefore be seen as non-negligible and 
 - `is_panel_balanced`: A logical value indicating whether the panel is balanced,
 - `equiv_threshold_specified`: A logical value indicating whether an equivalence threshold was specified.
 - If `equiv_threshold_specified = TRUE`, then additionally:
-  - `mean_critical_value`: The critical value at the alpha level,
+  - `mean_critical_value`: The critical value at the chosen significance level,
   - `p_value`: The p-value of the test,
   - `reject_null_hypothesis`: A logical value indicating whether to reject the null hypothesis,
   - `equiv_threshold`: The equivalence threshold specified.
@@ -376,8 +383,8 @@ Note that the testing procedure can also handle unbalanced panels:
 # Finally, one should note that the test procedure also works for unbalanced panels.
 # To illustrate this, we generate an unbalanced panel dataset by randomly selecting
 # 70% of the observations from the balanced panel dataset:
-random_indeces <- sample(nrow(sim_data), 0.7*nrow(sim_data))
-unbalanced_sim_data <- sim_data[random_indeces, ]
+random_indices <- sample(nrow(sim_data), 0.7*nrow(sim_data))
+unbalanced_sim_data <- sim_data[random_indices, ]
 meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
               data = unbalanced_sim_data, equiv_threshold = 1, pretreatment_period = 1:4,
               base_period = 4, vcov = "HAC")

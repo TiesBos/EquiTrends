@@ -101,7 +101,7 @@
 #' # 5 time periods (labeled 1-5), a binary variable indicating which individual 
 #' # receives treatment and 2 control variables ("X_1" and "X_2") The error-terms are generated without 
 #' # heteroscedasticity,  autocorrelation, or any significant clusters. 
-#' # Furthermore, there are no fixed effects (lambda and alpha are both vectors 
+#' # Furthermore, there are no fixed effects (lambda and eta are both vectors 
 #' # containing only 0) and no pre-trends present in the data (all values in 
 #' # beta are 0). See sim_paneldata() for more details.
 #' 

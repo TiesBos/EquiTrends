@@ -4,7 +4,7 @@
 \alias{sim_check}
 \title{Checking input for the sim_paneldata function}
 \usage{
-sim_check(N, tt, beta, p, gamma, alpha, lambda, het, phi, sd, burnins)
+sim_check(N, tt, beta, p, gamma, eta, lambda, het, phi, sd, burnins)
 }
 \arguments{
 \item{N}{The number of cross-sectional units in the panel-data}
@@ -17,7 +17,7 @@ sim_check(N, tt, beta, p, gamma, alpha, lambda, het, phi, sd, burnins)
 
 \item{gamma}{The vector of coefficients for the additional regressors}
 
-\item{alpha}{The vector of fixed effects. Must be of size N.}
+\item{eta}{The vector of fixed effects. Must be of size N.}
 
 \item{lambda}{The vector of time effects. Must be of size tt.}
 

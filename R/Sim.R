@@ -7,7 +7,7 @@
 #' @param beta The vector of coefficients for the placebo variables. Must be of size tt.
 #' @param p The number of additional regressors
 #' @param gamma The vector of coefficients for the additional regressors
-#' @param alpha The vector of fixed effects. Must be of size N.
+#' @param eta The vector of fixed effects. Must be of size N.
 #' @param lambda The vector of time effects. Must be of size tt.
 #' @param het The heteroskedasticity parameter. Must be 0 or 1: \code{het = 1} indicates that the error terms are generated under heteroskedasticity, \code{het = 0} indicates the error terms are generated under homoscedasticity. 
 #' @param phi The AR(1) parameter for the error terms. Must be in the interval [0,1). 
@@ -29,10 +29,10 @@
 #'                           gamma = rep(0,1), het = 1, phi = 0.5, sd = 1, 
 #'                           burnins = 100)
 sim_paneldata <- function(N = 500, tt = 5, beta = rep(0, tt), p=1, gamma = rep(1, p),
-                          alpha = rep(0, N), lambda = rep(0, tt), het = 0, 
+                          eta = rep(0, N), lambda = rep(0, tt), het = 0, 
                           phi = c(0), sd = 1, burnins = 100){
   # Check input:
-  checks <- sim_check(N, tt, beta, p, gamma, alpha, lambda, het, phi, sd, burnins)
+  checks <- sim_check(N, tt, beta, p, gamma, eta, lambda, het, phi, sd, burnins)
   if(checks$error){stop(checks$message)}
   
   # Create the cross-sectional individual identifier
@@ -47,7 +47,7 @@ sim_paneldata <- function(N = 500, tt = 5, beta = rep(0, tt), p=1, gamma = rep(1
   X <- matrix(stats::rnorm(N*tt*p), nrow = N*tt, ncol = p)
   
   # create N*tt vector of fixed effects that are constant for each i
-  alpha_full <- rep(alpha, each = tt)
+  alpha_full <- rep(eta, each = tt)
   
   # create N*tt vector of time effects that are constant for each t
   lambda_full = rep(lambda, N)
@@ -103,7 +103,7 @@ sim_paneldata <- function(N = 500, tt = 5, beta = rep(0, tt), p=1, gamma = rep(1
 #' @param beta The vector of coefficients for the placebo variables. Must be of size tt.
 #' @param p The number of additional regressors
 #' @param gamma The vector of coefficients for the additional regressors
-#' @param alpha The vector of fixed effects. Must be of size N.
+#' @param eta The vector of fixed effects. Must be of size N.
 #' @param lambda The vector of time effects. Must be of size tt.
 #' @param het The heteroskedasticity parameter. Must be 0 or 1: \code{het = 1} indicates that the error terms are generated under heteroskedasticity, \code{het = 0} indicates the error terms are generated under homoscedasticity. 
 #' @param phi The AR(1) parameter for the error terms. Must be in the interval [0,1). 
@@ -113,7 +113,7 @@ sim_paneldata <- function(N = 500, tt = 5, beta = rep(0, tt), p=1, gamma = rep(1
 #' @return
 #' A list with two elements: a logical object error indicating if an error is encountered and a message (a character string) corresponding to the error. If error is TRUE, message contains an error message. If error is FALSE, message is an empty string.
 #' 
-sim_check <- function(N, tt, beta, p, gamma, alpha, lambda, het, phi, sd, burnins){
+sim_check <- function(N, tt, beta, p, gamma, eta, lambda, het, phi, sd, burnins){
   if(!is.numeric(N) || N <= 0 || N != round(N)){
     return(list(error=TRUE, message="N must be a positive integer"))
   }
@@ -138,8 +138,8 @@ sim_check <- function(N, tt, beta, p, gamma, alpha, lambda, het, phi, sd, burnin
   if(!is.numeric(burnins) || burnins <= 0 || burnins != round(burnins)){
     return(list(error=TRUE, message="burnins must be a positive integer"))
   }
-  if(length(alpha) != N){
-    return(list(error=TRUE, message="alpha must be a vector of length N"))
+  if(length(eta) != N){
+    return(list(error=TRUE, message="eta must be a vector of length N"))
   }
   if(length(lambda) != tt){
     return(list(error=TRUE, message="lambda must be a vector of length tt"))

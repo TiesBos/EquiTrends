@@ -3,28 +3,63 @@
 test_that("sim_paneldata input", {
   #N is not a positive integer
   expect_error(sim_paneldata(N = -1, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
-                             alpha = rep(0, 1), lambda = rep(0, 5), het = 0, phi = 0, 
+                             eta = rep(0, 1), lambda = rep(0, 5), het = 0, phi = 0, 
                              sd = 1, burnins = 100))
   
   #tt is not a positive integer
   expect_error(sim_paneldata(N = 500, tt = 0, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
-                             alpha = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
                              sd = 1, burnins = 100))
   
   # beta length does not match tt
   expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 4), p = 1, gamma = rep(1, 1), 
-                             alpha = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
                              sd = 1, burnins = 100))
   
   # phi not in interval [0,1)
   expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
-                             alpha = rep(0, 500), lambda = rep(0, 5), het = 0, 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 0, 
                              phi = 1, sd = 1, burnins = 100))
   
   # all inputs correct
   expect_no_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1),
-                                alpha = rep(0, 500), lambda = rep(0, 5), het = 0, 
+                                eta = rep(0, 500), lambda = rep(0, 5), het = 0, 
                                 phi = 0.5, sd = 1, burnins = 100))
+  
+  # p is not a non-negative integer
+  expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = -1, gamma = rep(1, 1), 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
+                             sd = 1, burnins = 100))
+  
+  # het is not 0 or 1
+  expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 2, phi = 0, 
+                             sd = 1, burnins = 100))
+  
+  # sd is not a positive number
+  expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
+                             sd = -1, burnins = 100))
+  
+  # burnins is not a positive integer
+  expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
+                             sd = 1, burnins = -1))
+  
+  # eta length does not match N
+  expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
+                             eta = rep(0, 499), lambda = rep(0, 5), het = 0, phi = 0, 
+                             sd = 1, burnins = 100))
+  
+  # lambda length does not match tt
+  expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 1), 
+                             eta = rep(0, 500), lambda = rep(0, 4), het = 0, phi = 0, 
+                             sd = 1, burnins = 100))
+  
+  # gamma length does not match p
+  expect_error(sim_paneldata(N = 500, tt = 5, beta = rep(0, 5), p = 1, gamma = rep(1, 2), 
+                             eta = rep(0, 500), lambda = rep(0, 5), het = 0, phi = 0, 
+                             sd = 1, burnins = 100))
 })
 
 # Test for function output structure

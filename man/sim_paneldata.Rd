@@ -10,7 +10,7 @@ sim_paneldata(
   beta = rep(0, tt),
   p = 1,
   gamma = rep(1, p),
-  alpha = rep(0, N),
+  eta = rep(0, N),
   lambda = rep(0, tt),
   het = 0,
   phi = c(0),
@@ -29,7 +29,7 @@ sim_paneldata(
 
 \item{gamma}{The vector of coefficients for the additional regressors}
 
-\item{alpha}{The vector of fixed effects. Must be of size N.}
+\item{eta}{The vector of fixed effects. Must be of size N.}
 
 \item{lambda}{The vector of time effects. Must be of size tt.}
 
