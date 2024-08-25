@@ -184,7 +184,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
               base_period = 4, type = "IU", vcov = "HAC")
 
 #-----------------  Bootstrap Approach -----------------
-
+ \dontrun{
  # Perform the test with equivalence threshold specified as 1 based on 
  # pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
@@ -215,7 +215,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
              base_period = 4, type = "Wild")           
-
+}
 }
 \references{
 Arellano M (1987). “Computing Robust Standard Errors for Within-groups Estimators.” \emph{Oxford bulletin of Economics and Statistics}, 49(4), 431–434.

@@ -160,7 +160,7 @@
 #'               base_period = 4, type = "IU", vcov = "HAC")
 #' 
 #' #-----------------  Bootstrap Approach -----------------
-#' 
+#'  \dontrun{
 #'  # Perform the test with equivalence threshold specified as 1 based on 
 #'  # pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
 #'  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
@@ -191,7 +191,7 @@
 #'  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 
 #'              data = sim_data, equiv_threshold = NULL, pretreatment_period = 1:4,
 #'              base_period = 4, type = "Wild")           
-#' 
+#' }
 #' @export
 #' 
 maxEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_threshold = NULL,  
