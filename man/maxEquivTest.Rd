@@ -184,7 +184,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
               base_period = 4, type = "IU", vcov = "HAC")
 
 #-----------------  Bootstrap Approach -----------------
- \dontrun{
+ \donttest{
  # Perform the test with equivalence threshold specified as 1 based on 
  # pre-treatment periods 1:4 (with base period 4) with the general bootstrap procedure:
  maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", 

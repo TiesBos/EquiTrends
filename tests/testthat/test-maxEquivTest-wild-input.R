@@ -1,6 +1,6 @@
 # The general bootstrap approach:
 test_that("Input data of type = boot for maxEquivTest",{
-  #skip_on_cran()
+  skip_on_cran()
   #   # Data
   sim_data <- sim_paneldata(N = 100, tt = 5, p = 2, gamma = c(1, 1), beta = rep(0, 5), phi = 0, het = 0, sd = 1, burnins = 50)
   # The data in vector/matrix form:
@@ -63,7 +63,7 @@ test_that("Input data of type = boot for maxEquivTest",{
 })
 
 test_that("Remaining data inputs for type = boot of maxEquivTest",{
-  #skip_on_cran()
+  skip_on_cran()
   # Data
   sim_data <- sim_paneldata(N = 100, tt = 5, p = 2, gamma = c(1, 1), beta = rep(0, 5), phi = 0, het = 0, sd = 1, burnins = 50)
   cluster_data <- ifelse(sim_data$ID %% 3 ==0, 1, 2)

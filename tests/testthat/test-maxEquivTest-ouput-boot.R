@@ -1,6 +1,6 @@
 # Unit Tests for the output of the bootstrap version of the maxEquivTest function
 test_that("Output of maxEquivTest with type = Boot",{
-  #skip_on_cran()
+  skip_on_cran()
   sim_data <- readRDS(test_path("fixtures", "test_data.rds"))
   
   # The data in vector/matrix form:
