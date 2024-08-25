@@ -54,19 +54,21 @@ individuals $N$ (`N`), number of periods $T+1$ (in the setting of this
 package, indicating the number of pre-treatment periods. In
 `sim_paneldata` $T+1$ is referred to as `tt`), number of covariates $p$
 (`p`), and treatment effects. Typically, period $T+1$ is referred to as
-the “base period”. The function returns a data frame with the following
-columns: `ID` (the cross-sectional individual identifier), `period` (the
-time identifier), `Y` (the dependent variable), `G` (a binary vector
-indicating if an individual receives treatment, indicated by 1, or not,
-indicated by 0), and `X_1`, `X_2`, …, `X_p` (additional control
-variables). The function also allows for the simulation of heterogeneity
-in treatment effects (specified through `eta`) and time fixed effects
-(through `lambda`). Furthermore, the function allows for
+the “base period”. The function also allows for the simulation of
+heterogeneity in treatment effects (specified through `eta`) and time
+fixed effects (through `lambda`). Furthermore, the function allows for
 heteroscedasticty (specified through the binary variable `het`), serial
-correlation (through the AR(1) coefficient `phi`), and clustering in the
-model errors $u_{i,t}$. The construction of the dependent variable
-follows the two-way fixed effect model, similar to the model in equation
-(2.5) of Dette & Schumann
+correlation (through the AR(1) coefficient `phi`:
+$u_{i,t} = \phi u_{i,t-1} + v_{i,t}$ where $v_{i,t}$ follows an i.i.d.
+$N(0,\sigma^2)$ distribution and $\sigma$ is specified through `sd`),
+and clustering in the model errors $u_{i,t}$. The function returns a
+data frame with the following columns: `ID` (the cross-sectional
+individual identifier), `period` (the time identifier), `Y` (the
+dependent variable), `G` (a binary vector indicating if an individual
+receives treatment, indicated by 1, or not, indicated by 0), and `X_1`,
+`X_2`, …, `X_p` (additional control variables). The construction of the
+dependent variable follows the two-way fixed effect model, similar to
+the model in equation (2.5) of Dette & Schumann
 ([2024](https://doi.org/10.1080/07350015.2024.2308121)):
 
 $$Y_{i,t} =  \eta_i + \lambda_t + \sum_{l=1}^{T}{\beta_l}G_iD_l(t) + X_{1, i, t}\gamma_1+ \dots + X_{p,i,t}\gamma_p +u_{i,t} \quad \text{with} \  \ i=1,...,N, \ \ t=1,...,T+1$$
@@ -92,13 +94,13 @@ sim_data <- sim_paneldata(N = 500, tt = 5, p = 2, beta = rep(0, 5),
                           gamma = rep(1, 2), het = 0, phi = 0, sd = 1, 
                           burnins = 50)
 head(sim_data)
-#>   ID period          Y G        X_1        X_2
-#> 1  1      1  0.1626377 0 -0.3148236  0.7297909
-#> 2  1      2 -0.4917773 0 -2.1432208  1.4976605
-#> 3  1      3  1.4520546 0 -0.1846402 -0.1210055
-#> 4  1      4  0.1523211 0 -0.3094418 -0.3504884
-#> 5  1      5  2.3026954 0  0.6385543  1.1648787
-#> 6  2      1 -0.5286663 1 -1.1906067 -0.2048438
+#>   ID period          Y G        X_1         X_2
+#> 1  1      1  0.2360773 0  0.1440742  0.08900155
+#> 2  1      2 -1.2535981 0 -0.3855007 -0.06428798
+#> 3  1      3 -0.9389796 0 -0.3615485 -0.32920657
+#> 4  1      4  1.4744084 0 -0.3503046  1.37829633
+#> 5  1      5  0.2250017 0 -0.5572574  1.32138197
+#> 6  2      1 -2.3242887 1 -0.2440621  0.28554004
 ```
 
 ## Testing for Equivalence of Pre-Trends
@@ -162,6 +164,12 @@ The function returns an object of class `rmsEquivTest` containing
 One should note that rows containing `NA` values are removed from the
 panel before the testing procedure is performed.
 
+Please be aware that the equivalence test based on the root mean squared
+placebo coefficient applies a randomization technique (as described by
+Dette & Schumann (2024)), leading to a stochastic critical value and
+minimum equivalence threshold. Therefore, the results may vary between
+different runs of the function.
+
 ``` r
 # Perform the equivalence test using an equivalence threshold of 1 with periods 
 # 1-4 as pre-treatment periods based on the RMS testing procedure:
@@ -179,7 +187,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> RMS Placebo Effect   Simulated Crit. Val.    Reject H0 
-#> 0.06082              0.9599                  TRUE      
+#> 0.1812               0.9495                  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -229,7 +237,7 @@ rmsEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c("X_1", "X_2")
 #> Alternative hypothesis: the root mean squared placebo effect does not exceed the equivalence threshold.
 #> ---
 #> RMS Placebo Effect   Min. Equiv. Threshold 
-#> 0.06082              0.185                 
+#> 0.1812               0.3111                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -282,12 +290,11 @@ allows for the testing of the equivalence of pre-trends using a
 bootstrap for spherical errors (`type = "Boot"`), a wild bootstrap for
 clustered standard errors (`type = "Wild"`), and an Intersection Union
 approach (`type = "IU"`) that rejects the null if all estimates for
-$\beta_1,...,\beta_{T}$ are significantly smaller than their individual
-critical values. The function returns an object of class
-`maxEquivTestBoot` if `type = "Boot"` or `type = "Wild"` or
-`maxEquivTestIU` if `type = "IU"`. If no type is specified,
-`maxEquivTest` applies the Intersection Union procedure for efficiency
-reasons.
+$\beta_1,...,\beta_{T}$ are smaller than their individual critical
+values. The function returns an object of class `maxEquivTestBoot` if
+`type = "Boot"` or `type = "Wild"` or `maxEquivTestIU` if `type = "IU"`.
+If no type is specified, `maxEquivTest` applies the Intersection Union
+procedure for efficiency reasons.
 
 #### Implemention of the `maxEquivTest` function with `type = "IU"`
 
@@ -358,9 +365,9 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = 2, X= c(5,6),
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.01095          0.1251          0.7943        
-#> 0.07086          0.1250          0.7943        
-#> 0.07718          0.1252          0.7940        
+#> 0.29257          0.1276          0.7902        
+#> 0.07849          0.1276          0.7901        
+#> 0.08192          0.1277          0.7900        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -389,9 +396,9 @@ maxEquivTest(Y = data_Y, ID = data_ID, G = data_G, period = data_period, X = dat
 #> ( Critical values are printed for the significance level: 0.05 )
 #> ---
 #> Abs. Estimate    Std. Error  Critical Value 
-#> 0.01095          0.1251          0.7943        
-#> 0.07086          0.1250          0.7943        
-#> 0.07718          0.1252          0.7940        
+#> 0.29257          0.1276          0.7902        
+#> 0.07849          0.1276          0.7901        
+#> 0.08192          0.1277          0.7900        
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -415,12 +422,12 @@ maxEquivTest(Y = 3, ID = 1, G = 4, period = 2,
 #> Type: Intersection Union 
 #> Significance level: 0.05 
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold.
-#> Minimum equivalence threshold to accept the alternative: 0.7499 
+#> Minimum equivalence threshold to accept the alternative: 0.6308 
 #> ---
 #>  Estimate    Std. Error   Minimum Equivalence Threshold 
-#> 0.05695      0.2196      0.3728    
-#> 0.18146      0.2094      0.5251    
-#> 0.38595      0.2212      0.7499    
+#> 0.2533       0.2296      0.6308    
+#> 0.2132       0.2267      0.5855    
+#> 0.1569       0.2216      0.5190    
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -506,6 +513,13 @@ return an object of class “maxEquivTestBoot” containing
 One should note that rows containing `NA` values are removed from the
 panel before the testing procedure is performed.
 
+On top of that, please be aware that the bootstrap procedures for the
+equivalence test based on the maximum absolute placebo coefficient apply
+a bootstrap procedure (as described by Dette & Schumann (2024)), leading
+to a stochastic critical value and minimum equivalence threshold.
+Therefore, the results may vary slightly between different runs of the
+function.
+
 The bootstrap for spherical errors with 1000 bootstrap iterations:
 
 ``` r
@@ -523,7 +537,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.3859                   0.6419                      TRUE      
+#> 0.2533                   0.6584                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -551,7 +565,7 @@ maxEquivTest(Y = "Y", ID = "ID", G = "G", period = "period",
 #> Alternative hypothesis: the maximum placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Max. Abs. Coefficient    Bootstrap Critical Value    Reject H0 
-#> 0.3859                   0.6545                      TRUE      
+#> 0.2533                   0.6332                      TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -659,7 +673,7 @@ panel before the testing procedure is performed.
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold of 1 .
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  p-value Reject H0 
-#> 0.001542                 0.1022      <2e-16  TRUE      
+#> 0.151                    0.1042      <2e-16  TRUE      
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 
@@ -697,7 +711,7 @@ meanEquivTest(Y = "Y", ID = "ID", G = "G", period = "period", X = c(5, 6),
 #> Alternative hypothesis: the mean placebo effect does not exceed the equivalence threshold.
 #> ---
 #> Abs. Mean Placebo Effect Std. Error  Min. Equiv. Threshold 
-#> 0.001542                 0.102       1.663906e-09          
+#> 0.151                    0.1065      0.3261                
 #> ---
 #> No. placebo coefficients estimated: 3 
 #> Base period: 4 

@@ -39,6 +39,8 @@
 #' 
 #' NOTE: Please be aware that including control variables (X) might lead to higher computation times for type = \"Boot\" and type = \"Wild\", due to unconstrained parameters in the optimization problem that estimates the constrained placebo coefficients.
 #' 
+#' On top of that, please be aware that the bootstrap procedures for the equivalence test based on the maximum absolute placebo coefficient apply a bootstrap procedure (as described by Dette & Schumann (2024)), leading to a stochastic critical value and minimum equivalence threshold. Therefore, the results may vary slightly between different runs of the function.
+#' 
 #' @references
 #' Arellano M (1987). “Computing Robust Standard Errors for Within-groups Estimators.” \emph{Oxford bulletin of Economics and Statistics}, 49(4), 431–434.
 #' 
@@ -443,6 +445,8 @@ meanEquivTest <- function(Y, ID, G, period, X = NULL, data = NULL, equiv_thresho
 #' \code{no_lambda} determines the proportions lambda/\code{no.lambda} for lambda = 1,...,\code{no_lambda} of the cross-sectional units at which the placebo coefficients are estimated. The placebo coefficients are estimated for each of these proportions and the root mean squared (RMS) of the placebo coefficients is calculated, which are then used to construct the critical value at a significance level of \code{alpha}. See Dette & Schumann (2024, s. 4.2.3.) for more details.
 #' 
 #' One should note that rows containing \code{NA} values are removed from the panel before the testing procedure is performed.
+#' 
+#' Please be aware that the equivalence test based on the root mean squared placebo coefficient uses a randomization technique (as described by Dette & Schumann (2024)), leading to a stochastic critical value and minimum equivalence threshold. Therefore, the results may vary slightly between different runs of the function.
 #' 
 #' @seealso \code{\link[=print.rmsEquivTest]{print.rmsEquivTest}}
 #' 
