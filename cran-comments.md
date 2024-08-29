@@ -2,7 +2,7 @@
 
 ## Resubmission
 This is a resubmission. In this version I have:
-* Removed the space in the doi in the Descrption field of DESCRIPTION.
+* Removed the space in the doi in the Description field of DESCRIPTION.
 * Solved the issue of EquiTrends not being in singles quotes in the DESCRIPTION file by omitting the name from the Description field.
 
 ## R CMD check results
