@@ -120,7 +120,7 @@ One should note that rows containing \code{NA} values are removed from the panel
 
 NOTE: Please be aware that including control variables (X) might lead to higher computation times for type = "Boot" and type = "Wild", due to unconstrained parameters in the optimization problem that estimates the constrained placebo coefficients.
 
-On top of that, please be aware that the bootstrap procedures for the equivalence test based on the maximum absolute placebo coefficient apply a bootstrap procedure (as described by Dette & Schumann (2024)), leading to a stochastic critical value and minimum equivalence threshold. Therefore, the results may vary slightly between different runs of the function.
+On top of that, please be aware that the bootstrap procedures for the equivalence test based on the maximum absolute placebo coefficient apply a bootstrap procedure (as described by Dette & Schumann (2024)), leading to a stochastic critical value and minimum equivalence threshold. Therefore, the results may vary slightly between different runs of the function. For reproducibility of the bootstrap procedures, it is recommended to set a seed before using the function.
 }
 \examples{
 # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 

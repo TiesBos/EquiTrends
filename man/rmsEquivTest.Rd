@@ -70,7 +70,7 @@ This function performs an equivalence test for pre-trends based on the root mean
 
 One should note that rows containing \code{NA} values are removed from the panel before the testing procedure is performed.
 
-Please be aware that the equivalence test based on the root mean squared placebo coefficient uses a randomization technique (as described by Dette & Schumann (2024)), leading to a stochastic critical value and minimum equivalence threshold. Therefore, the results may vary slightly between different runs of the function.
+Please be aware that the equivalence test based on the root mean squared placebo coefficient uses a randomization technique (as described by Dette & Schumann (2024)), leading to a stochastic critical value and minimum equivalence threshold. Therefore, the results may vary slightly between different runs of the function. For reproducibility, it is recommended to set a seed before using the function.
 }
 \examples{
 # Generate a balanced panel dataset with 500 cross-sectional units (individuals), 
