@@ -1,7 +1,7 @@
 Package: EquiTrends
 Type: Package
 Title: Equivalence Testing for Pre-Trends in Difference-in-Differences Designs
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: c(
     person("Ties", "Bos", email = "tc.bos@student.maastrichtuniversity.nl", role = c("aut","cre")),
     person("Martin", "Schumann", email = "m.schumann@maastrichtuniversity.nl", role = "ctb"))
