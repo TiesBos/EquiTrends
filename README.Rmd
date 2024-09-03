@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 # EquiTrends
 
 <!-- badges: start -->
+[![CRAN status](http://www.r-pkg.org/badges/version/EquiTrends)](https://cran.r-project.org/package=EquiTrends) 
+[![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/grand-total/EquiTrends)](https://cran.r-project.org/package=EquiTrends) 
 [![R-CMD-check](https://github.com/TiesBos/EquiTrends/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/TiesBos/EquiTrends/actions/workflows/R-CMD-check.yaml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Codecov test coverage](https://codecov.io/gh/TiesBos/EquiTrends/graph/badge.svg)](https://app.codecov.io/gh/TiesBos/EquiTrends)
 <!-- badges: end -->
